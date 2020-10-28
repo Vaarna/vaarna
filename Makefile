@@ -7,7 +7,8 @@ init: init-node
 
 .PHONY: init-node
 init-node:
-	yarn
+	@echo "+ yarn"
+	@yarn
 
 # --- FORMAT ---
 
@@ -16,11 +17,28 @@ format: format-node format-go
 
 .PHONY: format-node
 format-node:
-	yarn prettier --write '**/*.ts'
+	@echo "+ prettier"
+	@yarn prettier --write '**/*.ts'
 
 .PHONY: format-go
 format-go:
-	go fmt ./backend
+	@echo "+ go fmt"
+	@go fmt ./backend
+
+# --- CHECK ---
+
+.PHONY: check
+check: check-node check-go
+
+.PHONY: check-node
+check-node:
+	@echo "+ prettier check"
+	@yarn prettier --check '**/*.ts'
+
+.PHONY: check-go
+check-go:
+	@echo "+ go fmt check"
+	@[ "$(shell gofmt -l -e backend/ | wc -l)" -eq 0 ]
 
 # --- CLEAN ---
 
