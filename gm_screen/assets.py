@@ -3,13 +3,13 @@ import hashlib
 import os
 import tempfile
 import typing as t
+from email.utils import format_datetime
 from enum import Enum
 
-from fastapi import APIRouter, File, UploadFile, HTTPException, Header, Depends
+import boto3
+from fastapi import APIRouter, Depends, File, Header, HTTPException, UploadFile
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
-from email.utils import format_datetime
-import boto3
 
 from .config import Settings, get_settings
 
