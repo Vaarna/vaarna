@@ -1,31 +1,53 @@
 .SUFFIXES:
 
+YARN = yarn
 PYTHON = poetry run python
 
 # --- INIT ---
 
 .PHONY: init
-init: init-node init-python
+init: init-js init-python
 
-.PHONY: init-node
-init-node:
+.PHONY: init-js
+init-js:
 	@echo "+ yarn"
-	@yarn
+	@${YARN}
 
 .PHONY: init-python
 init-python:
 	@echo "+ poetry"
 	@poetry install --no-root
 
+# --- BUILD ---
+
+.PHONY: build
+build: build-js
+
+.PHONY: build-js
+build-js:
+	@echo "+ parcel build"
+	@${YARN} parcel build --no-cache --no-source-maps frontend/index.html
+
+# --- DEV ---
+
+.PHONY: dev-js
+dev-js:
+	${YARN} parcel serve --no-cache --no-autoinstall frontend/index.html
+
+.PHONY: dev-python
+dev-python:
+	CORS_ALLOW_ORIGINS='["http://localhost:1234"]' \
+	${PYTHON} -m gm_screen start --dev
+
 # --- FORMAT ---
 
 .PHONY: format
-format: format-node format-python
+format: format-js format-python
 
-.PHONY: format-node
-format-node:
+.PHONY: format-js
+format-js:
 	@echo "+ prettier"
-	@yarn prettier --write infra frontend
+	@${YARN} prettier --write infra frontend
 
 .PHONY: format-python
 format-python:
@@ -38,12 +60,12 @@ format-python:
 # --- CHECK ---
 
 .PHONY: check
-check: check-node check-python
+check: check-js check-python
 
-.PHONY: check-node
-check-node:
+.PHONY: check-js
+check-js:
 	@echo "+ prettier check"
-	@yarn prettier --check infra frontend
+	@${YARN} prettier --check infra/ frontend/
 
 .PHONY: check-python
 check-python:
@@ -59,8 +81,16 @@ check-python:
 # --- CLEAN ---
 
 .PHONY: clean
-clean: clean-node
+clean: clean-js clean-python clean-cache
 
-.PHONY: clean-node
-clean-node:
-	rm -rf node_modules cdk.out
+.PHONY: clean-js
+clean-js:
+	rm -rf node_modules/ cdk.out/ dist/
+
+.PHONY: clean-python
+clean-python:
+	find . -name __pycache__ -or -name '*.pyc' -delete
+
+.PHONY: clean-cache
+clean-cache:
+	rm -rf .cache/ .mypy_cache/
