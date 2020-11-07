@@ -21,3 +21,9 @@ body {
   margin: 0.5rem;
   border: 1px solid black;
 }
+
+img,
+video,
+audio {
+  max-width: 100%;
+}

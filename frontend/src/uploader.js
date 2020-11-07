@@ -1,20 +1,20 @@
 import m from "mithril";
 import s from "mithril/stream";
 import _ from "lodash";
-import { Base64 } from "js-base64";
+import { randomId } from "./utils";
 
-function randomId() {
-  const array = new Uint8Array(16);
-  window.crypto.getRandomValues(array);
-  return Base64.fromUint8Array(array);
-}
+export class UploadsState {
+  constructor(removeDelay = 1000) {
+    this._removeDelay = removeDelay;
 
-export const uploads = {
-  state: s([]),
-  uploadComplete: s(),
+    this.state = s([]);
+    this.uploadComplete = s();
+  }
+
   create({ id, loaded = 0, total = null }) {
     this.state([...this.state(), { id, loaded, total }]);
-  },
+  }
+
   update({ id, loaded, total }) {
     this.state(
       this.state().map((v) => {
@@ -25,58 +25,63 @@ export const uploads = {
         return v;
       })
     );
-  },
+  }
+
   remove({ id }) {
     this.state(this.state().filter((v) => v.id !== id));
     this.uploadComplete(id);
-  },
-};
+  }
 
-export function uploadAssets(files) {
-  return Promise.all(
-    files.map((file) => {
+  _config(id) {
+    const update = (event) => {
+      this.update({ id, loaded: event.loaded, total: event.total });
+      m.redraw();
+    };
+    const done = (event) => {
+      m.redraw();
+      setTimeout(() => {
+        this.remove({ id });
+        m.redraw();
+      }, this._removeDelay);
+    };
+
+    return (xhr) => {
+      xhr.addEventListener("loadstart", update);
+      xhr.addEventListener("progress", update);
+      xhr.addEventListener("load", done);
+
+      return xhr;
+    };
+  }
+
+  upload(files) {
+    const ps = files.map((file) => {
       const body = new FormData();
       body.append("files", file);
 
       const id = randomId();
 
-      uploads.create({ id, total: file.size });
-
-      const config = (xhr) => {
-        const update = (event) => {
-          uploads.update({ id, loaded: event.loaded, total: event.total });
-          m.redraw();
-        };
-        const done = (event) => {
-          m.redraw();
-          setTimeout(() => {
-            uploads.remove({ id });
-            m.redraw();
-          }, 2500);
-        };
-
-        xhr.addEventListener("loadstart", update);
-        xhr.addEventListener("progress", update);
-        xhr.addEventListener("load", done);
-
-        return xhr;
-      };
+      this.create({ id, total: file.size });
 
       return m.request({
         url: `//localhost:8000/assets/`,
         method: "POST",
-        config,
+        config: this._config(id),
         body,
       });
-    })
-  ).then((v) => _.flatten(v));
+    });
+
+    return Promise.all(ps).then(_.flatten);
+  }
 }
 
-export const Uploads = {
-  view({ attrs: { uploads } }) {
-    const uploadsElements = uploads().map(({ id, loaded, total }) =>
-      m(".upload", [m("p", id), m("progress", { value: loaded, max: total })])
-    );
+export const UploadList = {
+  view({ attrs: { uploadsState } }) {
+    const uploadsElements = uploadsState
+      .state()
+      .map(({ id, loaded, total }) =>
+        m(".upload", [m("p", id), m("progress", { value: loaded, max: total })])
+      );
 
     return m(".uploads", uploadsElements);
   },
