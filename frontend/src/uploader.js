@@ -20,8 +20,8 @@ export const uploads = {
       this.state().map((v) => {
         if (v.id !== id) return v;
 
-        v.loaded = event.loaded;
-        v.total = event.total;
+        v.loaded = loaded;
+        v.total = total;
         return v;
       })
     );
@@ -75,16 +75,16 @@ export function uploadAssets(files) {
 export function Uploads() {
   return {
     view() {
-      return (
-        <div class="uploads">
-          {uploads.state().map(({ id, loaded, total }) => (
-            <div class="upload">
-              <p>{id}</p>
-              <progress value={loaded} max={total} />
-            </div>
-          ))}
-        </div>
-      );
+      const uploadsElements = uploads
+        .state()
+        .map(({ id, loaded, total }) =>
+          m(".upload", [
+            m("p", id),
+            m("progress", { value: loaded, max: total }),
+          ])
+        );
+
+      return m(".uploads", uploadsElements);
     },
   };
 }

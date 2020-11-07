@@ -1,6 +1,5 @@
 {
   "devDependencies": {
-    "@babel/core": "^7.12.3",
     "@types/lodash": "^4.14.165",
     "@types/mithril": "^2.0.6",
     "parcel": "^1.12.4",
