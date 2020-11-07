@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@types/lodash": "^4.14.165",
+    "@types/mithril": "^2.0.6",
+    "parcel": "^1.12.4",
+    "prettier": "^2.1.2",
+    "sass": "^1.29.0"
+  },
+  "dependencies": {
+    "js-base64": "^3.6.0",
+    "lodash": "^4.17.20",
+    "mithril": "^2.0.4",
+    "normalize.css": "^8.0.1"
+  }
+}

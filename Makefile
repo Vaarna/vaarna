@@ -1,96 +1,129 @@
 .SUFFIXES:
 
 YARN = yarn
-PYTHON = poetry run python
+POETRY = poetry
+PYTHON = ${POETRY} run python
 
 # --- INIT ---
 
 .PHONY: init
-init: init-js init-python
+init: init-backend init-frontend init-infra
 
-.PHONY: init-js
-init-js:
-	@echo "+ yarn"
-	@${YARN}
-
-.PHONY: init-python
-init-python:
+.PHONY: init-backend
+init-backend:
 	@echo "+ poetry"
-	@poetry install --no-root
+	@cd backend && ${POETRY} install --no-root
+
+.PHONY: init-frontend
+init-frontend:
+	@echo "+ yarn"
+	@cd frontend && ${YARN}
+
+.PHONY: init-infra
+init-infra:
+	@echo "+ yarn"
+	@cd infra && ${YARN}
 
 # --- BUILD ---
 
 .PHONY: build
-build: build-js
+build: build-frontend
 
-.PHONY: build-js
-build-js:
+.PHONY: build-frontend
+build-frontend:
 	@echo "+ parcel build"
-	@${YARN} parcel build --no-cache --no-source-maps frontend/index.html
+	@cd frontend \
+	&& ${YARN} parcel build \
+		--no-cache --no-source-maps \
+		frontend/index.html
 
 # --- DEV ---
 
-.PHONY: dev-js
-dev-js:
-	${YARN} parcel serve --no-cache --no-autoinstall frontend/index.html
+.PHONY: dev-backend
+dev-backend:
+	cd backend \
+	&& CORS_ALLOW_ORIGINS='["http://localhost:1234"]' \
+		${PYTHON} -m gm_screen start --dev
 
-.PHONY: dev-python
-dev-python:
-	CORS_ALLOW_ORIGINS='["http://localhost:1234"]' \
-	${PYTHON} -m gm_screen start --dev
+.PHONY: dev-frontend
+dev-frontend:
+	cd frontend \
+	&& ${YARN} parcel serve \
+		--no-cache --no-autoinstall \
+		src/index.html
 
 # --- FORMAT ---
 
 .PHONY: format
-format: format-js format-python
+format: format-backend format-frontend format-infra
 
-.PHONY: format-js
-format-js:
-	@echo "+ prettier"
-	@${YARN} prettier --write infra frontend
-
-.PHONY: format-python
-format-python:
+.PHONY: format-backend
+format-backend:
 	@echo "+ isort"
-	@${PYTHON} -m isort gm_screen
+	@cd backend \
+	&& ${PYTHON} -m isort gm_screen
 
 	@echo "+ black"
-	@${PYTHON} -m black gm_screen
+	@cd backend \
+	&& ${PYTHON} -m black gm_screen
+
+.PHONY: format-frontend
+format-frontend:
+	@echo "+ prettier"
+	@cd frontend \
+	&& ${YARN} prettier --write frontend
+
+.PHONY: format-infra
+format-infra:
+	@echo "+ prettier"
+	@cd infra \
+	&& ${YARN} prettier --write infra
 
 # --- CHECK ---
 
 .PHONY: check
-check: check-js check-python
+check: check-backend check-frontend check-infra
 
-.PHONY: check-js
-check-js:
-	@echo "+ prettier check"
-	@${YARN} prettier --check infra/ frontend/
-
-.PHONY: check-python
-check-python:
+.PHONY: check-backend
+check-backend:
 	@echo "+ isort"
-	@${PYTHON} -m isort --check-only gm_screen
+	@cd backend \
+	&& ${PYTHON} -m isort --check-only gm_screen
 
 	@echo "+ black"
-	@${PYTHON} -m black --check gm_screen
+	@cd backend \
+	&& ${PYTHON} -m black --check gm_screen
 
 	@echo "+ mypy"
-	@${PYTHON} -m mypy gm_screen
+	@cd backend \
+	&& ${PYTHON} -m mypy gm_screen
+
+.PHONY: check-frontend
+check-frontend:
+	@echo "+ prettier check"
+	@cd frontend \
+	&& ${YARN} prettier --check src/
+
+.PHONY: check-infra
+check-infra:
+	@echo "+ prettier check"
+	@cd infra \
+	&& ${YARN} prettier --check src/
 
 # --- CLEAN ---
 
 .PHONY: clean
-clean: clean-js clean-python clean-cache
+clean: clean-backend clean-frontend clean-infra
 
-.PHONY: clean-js
-clean-js:
-	rm -rf node_modules/ cdk.out/ dist/
+.PHONY: clean-backend
+clean-backend:
+	find backend/ -name __pycache__ -or -name '*.pyc' -delete
+	rm -rf backend/.mypy_cache/
 
-.PHONY: clean-python
-clean-python:
-	find . -name __pycache__ -or -name '*.pyc' -delete
+.PHONY: clean-frontend
+clean-frontend:
+	rm -rf frontend/node_modules/ frontend/.cache/ frontend/dist/
 
-.PHONY: clean-cache
-clean-cache:
-	rm -rf .cache/ .mypy_cache/
+.PHONY: clean-frontend
+clean-infra:
+	rm -rf infra/node_modules/ infra/cdk.out/
