@@ -106,6 +106,7 @@ def upload_asset(
             ContentType=a.media_type,
             ContentMD5=md5,
         )
+        asset_db[a.id] = a
 
     return out
 
