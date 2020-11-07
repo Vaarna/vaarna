@@ -12,7 +12,7 @@ function randomId() {
 export const uploads = {
   state: s([]),
   uploadComplete: s(),
-  create({ id, loaded = null, total = null }) {
+  create({ id, loaded = 0, total = null }) {
     this.state([...this.state(), { id, loaded, total }]);
   },
   update({ id, loaded, total }) {
@@ -40,7 +40,7 @@ export function uploadAssets(files) {
 
       const id = randomId();
 
-      uploads.create({ id });
+      uploads.create({ id, total: file.size });
 
       const config = (xhr) => {
         const update = (event) => {
@@ -72,19 +72,12 @@ export function uploadAssets(files) {
   ).then((v) => _.flatten(v));
 }
 
-export function Uploads() {
-  return {
-    view() {
-      const uploadsElements = uploads
-        .state()
-        .map(({ id, loaded, total }) =>
-          m(".upload", [
-            m("p", id),
-            m("progress", { value: loaded, max: total }),
-          ])
-        );
+export const Uploads = {
+  view({ attrs: { uploads } }) {
+    const uploadsElements = uploads().map(({ id, loaded, total }) =>
+      m(".upload", [m("p", id), m("progress", { value: loaded, max: total })])
+    );
 
-      return m(".uploads", uploadsElements);
-    },
-  };
-}
+    return m(".uploads", uploadsElements);
+  },
+};

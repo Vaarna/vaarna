@@ -107,10 +107,10 @@ function Assets() {
     oninit: update,
     view() {
       return [
-        m(Uploads),
+        m(Uploads, { uploads: uploads.state }),
         m(
           "ul",
-          _.map(assets(), (v) => m(Asset, v))
+          _.map(assets(), (v) => m(Asset, { key: v.id, ...v }))
         ),
       ];
     },
