@@ -18,7 +18,7 @@ class Notifier:
         await ws.accept()
         try:
             self.active_connections.append((client_id, ws))
-            yield lambda: ws.send_json({"ping": True})
+            yield lambda: ws.send_json({"kind": "ping"})
         finally:
             self.active_connections.remove((client_id, ws))
 
@@ -54,7 +54,7 @@ async def listen_notifications(
 ):
     async with notifier.connect(client_id, websocket) as ping:
         while True:
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
             await ping()
 
 

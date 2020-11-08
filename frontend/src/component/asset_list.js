@@ -2,27 +2,30 @@ import m from "mithril";
 import s from "mithril/stream";
 import _ from "lodash";
 import { Asset } from "./asset";
+import { store } from "../state";
 
-export const AssetList = ({ attrs: { uploadsState } }) => {
-  let assets = s({});
-
-  const update = () => {
-    console.log("update assets");
-    return m
-      .request({
-        url: "//localhost:8000/assets/",
-      })
-      .then(assets);
-  };
-
-  uploadsState.uploadComplete.map(update);
-
+export const AssetList = () => {
   return {
-    oninit: update,
-    view() {
+    view({ attrs: { notify } }) {
+      const { assets } = store.getState();
+
       return m(
-        "ul",
-        _.map(assets(), (v) => m(Asset, { key: v.id, asset: v }))
+        ".asset-list",
+        _.map(assets, (v) =>
+          m(".asset-list--item", { key: v.id }, [
+            m(Asset, { asset: v }),
+            m(
+              "button",
+              {
+                onclick: (e) => {
+                  console.log(`display asset ${v.id}`);
+                  return notify.showAsset(v.id);
+                },
+              },
+              "SHOW"
+            ),
+          ])
+        )
       );
     },
   };

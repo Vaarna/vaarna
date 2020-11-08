@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import base64
 import hashlib
 import typing as t
@@ -48,6 +50,20 @@ class AssetKind(str, Enum):
     AUDIO = "audio"
     PDF = "pdf"
 
+    @classmethod
+    def from_content_type(cls, content_type: str) -> AssetKind:
+        kind = cls.OTHER
+        if content_type.startswith("image/"):
+            kind = cls.IMAGE
+        elif content_type.startswith("video/"):
+            kind = cls.VIDEO
+        elif content_type.startswith("audio/"):
+            kind = cls.AUDIO
+        elif content_type == "application/pdf":
+            kind = cls.PDF
+
+        return kind
+
 
 class Asset(BaseModel):
     id: str
@@ -59,17 +75,7 @@ class Asset(BaseModel):
     def __init__(self, file: UploadFile) -> None:
         h = calculate_hash(file)
         s = get_size(file)
-
-        kind = AssetKind.OTHER
-        ct = file.content_type
-        if ct.startswith("image/"):
-            kind = AssetKind.IMAGE
-        elif ct.startswith("video/"):
-            kind = AssetKind.VIDEO
-        elif ct.startswith("audio/"):
-            kind = AssetKind.AUDIO
-        elif ct == "application/pdf":
-            kind = AssetKind.PDF
+        kind = AssetKind.from_content_type(file.content_type)
 
         super().__init__(
             filename=file.filename,
@@ -80,7 +86,7 @@ class Asset(BaseModel):
         )
 
 
-asset_db = {}
+asset_db: t.Dict[str, Asset] = {}
 
 
 @router.post("/")
@@ -115,12 +121,25 @@ def get_assets():
 
 
 @router.get("/{asset_id}")
+def get_asset(asset_id: str):
+    if asset_id in asset_db:
+        return asset_db[asset_id]
+
+    raise HTTPException(404, "Asset Not Found")
+
+
+@router.get("/show/{asset_id}")
 async def get_asset(
     asset_id: str,
     thumbnail: bool = False,
     range: t.Optional[str] = Header(None),
     settings: Settings = Depends(get_settings),
 ):
+    if asset_id not in asset_db:
+        raise HTTPException(404, "Asset Not Found")
+
+    asset = asset_db[asset_id]
+
     if thumbnail:
         asset_id += "-thumbnail"
 
@@ -136,7 +155,7 @@ async def get_asset(
     try:
         data = s3.get_object(**req)
     except s3.exceptions.NoSuchKey:
-        raise HTTPException(404, "Asset not found")
+        raise HTTPException(404, "Asset Not Found")
 
     headers = {
         "accept-ranges": data["AcceptRanges"],
@@ -151,9 +170,14 @@ async def get_asset(
     if range is not None:
         headers["content-range"] = data["ContentRange"]
 
+    content_type = data["ContentType"]
+    kind = AssetKind.from_content_type(content_type)
+    if kind in {AssetKind.OTHER, AssetKind.PDF}:
+        headers["content-disposition"] = f'attachment; filename="{asset.filename}"'
+
     return StreamingResponse(
         data["Body"],
         status_code=200 if range is None else 206,
-        media_type=data["ContentType"],
+        media_type=content_type,
         headers=headers,
     )
