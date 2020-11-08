@@ -16,6 +16,6 @@ jobs:
         run: make check-backend
       - name: Run gm_screen hello
         run: |
+          mkdir -p frontend/dist/
           cd backend/
-          export CORS_ALLOW_ORIGIN=
-          poetry run python -m gm_screen hello
+          CORS_ALLOW_ORIGIN= poetry run python -m gm_screen hello
