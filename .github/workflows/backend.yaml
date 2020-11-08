@@ -1,0 +1,16 @@
+name: backend
+on: [push]
+jobs:
+  check-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+      - name: Upgrade and install pip and poetry, install dependencies
+        run: |
+          pip install --upgrade pip poetry
+          make init-backend
+      - name: Run checks
+        run: make check-backend
