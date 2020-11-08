@@ -73,13 +73,13 @@ format-backend:
 format-frontend:
 	@echo "+ prettier"
 	@cd frontend \
-	&& ${YARN} prettier --write frontend
+	&& ${YARN} prettier --write src/
 
 .PHONY: format-infra
 format-infra:
 	@echo "+ prettier"
 	@cd infra \
-	&& ${YARN} prettier --write infra
+	&& ${YARN} prettier --write src/
 
 # --- CHECK ---
 
