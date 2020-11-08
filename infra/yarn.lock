@@ -482,18 +482,6 @@
     string-width "^4.2.0"
     table "^6.0.3"
 
-"@aws-cdk/core@1.70.0":
-  version "1.70.0"
-  resolved "https://registry.yarnpkg.com/@aws-cdk/core/-/core-1.70.0.tgz#e567c6259ad435ebd044ee623813817f484872f8"
-  integrity sha512-Lg8KVCDQf9nRDqm6nWzQTuJLOkZvPXEkSuyLhycG5Oio7np/ODhZyeSzbcG2PBNGd2cOvXmL+Vi/nxV08Rg0Qg==
-  dependencies:
-    "@aws-cdk/cloud-assembly-schema" "1.70.0"
-    "@aws-cdk/cx-api" "1.70.0"
-    "@aws-cdk/region-info" "1.70.0"
-    constructs "^3.0.4"
-    fs-extra "^9.0.1"
-    minimatch "^3.0.4"
-
 "@aws-cdk/core@1.72.0":
   version "1.72.0"
   resolved "https://registry.yarnpkg.com/@aws-cdk/core/-/core-1.72.0.tgz#db97bcd30bf879103aaf382eb0c5f21066a0d6ef"
@@ -820,7 +808,7 @@ concat-map@0.0.1:
   resolved "https://registry.yarnpkg.com/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
   integrity sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=
 
-constructs@^3.0.4, constructs@^3.2.0:
+constructs@^3.2.0:
   version "3.2.16"
   resolved "https://registry.yarnpkg.com/constructs/-/constructs-3.2.16.tgz#69f5d86da914e863df5b2a757d17a7076d05e76c"
   integrity sha512-/H8Oca+qdOKX40sMDUcrGWHyL3CUH2+fiSTYznDuDi/r77W+TmFdMbWJlD5SrjhltUYPYBSM+gwKHmc4PE0LyQ==
