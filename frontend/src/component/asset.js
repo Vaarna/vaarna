@@ -1,7 +1,11 @@
 import m from "mithril";
 
 const ImageAsset = {
-  view({ attrs: { id, filename } }) {
+  view({
+    attrs: {
+      asset: { id, filename },
+    },
+  }) {
     return [
       m("p", filename),
       m("img", {
@@ -12,7 +16,11 @@ const ImageAsset = {
 };
 
 const VideoAsset = {
-  view({ attrs: { id, filename } }) {
+  view({
+    attrs: {
+      asset: { id, filename },
+    },
+  }) {
     return [
       m("p", filename),
       m("video", {
@@ -25,7 +33,11 @@ const VideoAsset = {
 };
 
 const AudioAsset = {
-  view({ attrs: { id, filename } }) {
+  view({
+    attrs: {
+      asset: { id, filename },
+    },
+  }) {
     return [
       m("p", filename),
       m("audio", {
@@ -38,14 +50,26 @@ const AudioAsset = {
 };
 
 const OtherAsset = {
-  view({ attrs: { id, filename } }) {
+  view({
+    attrs: {
+      asset: { id, filename },
+    },
+  }) {
     return m("a", { href: `//localhost:8000/assets/${id}` }, filename);
   },
 };
 
+function showAsset(asset_id) {
+  return m.request({
+    url: "/notify/show-asset",
+    method: "POST",
+    params: { asset_id },
+  });
+}
+
 export const Asset = {
-  view({ attrs }) {
-    const { kind, id } = attrs;
+  view({ attrs: { asset } }) {
+    const { kind, id } = asset;
     const el =
       kind == "image"
         ? ImageAsset
@@ -55,6 +79,9 @@ export const Asset = {
         ? AudioAsset
         : OtherAsset;
 
-    return m("li", { key: id }, m(el, attrs));
+    return m("li", [
+      m(el, { asset }),
+      m("button", { onclick: (e) => showAsset(id) }, "SHOW"),
+    ]);
   },
 };

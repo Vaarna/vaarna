@@ -22,7 +22,7 @@ export const AssetList = ({ attrs: { uploadsState } }) => {
     view() {
       return m(
         "ul",
-        _.map(assets(), (v) => m(Asset, { key: v.id, ...v }))
+        _.map(assets(), (v) => m(Asset, { key: v.id, asset: v }))
       );
     },
   };
