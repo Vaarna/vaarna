@@ -7,7 +7,6 @@ from pydantic import BaseSettings
 class Settings(BaseSettings):
     asset_bucket: str
     asset_key_prefix: str = ""
-    cors_allow_origins: t.List[str]
 
 
 @lru_cache()

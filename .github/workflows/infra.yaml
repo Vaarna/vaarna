@@ -1,7 +1,7 @@
 name: infra
 on: [push]
 jobs:
-  check-infra:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,3 +12,7 @@ jobs:
         run: make init-infra
       - name: Run checks
         run: make check-infra
+      - name: cdk synthesize
+        run: |
+          yarn cdk synthesize Repository
+          yarn cdk synthesize Infra

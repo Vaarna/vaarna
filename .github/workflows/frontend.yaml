@@ -1,7 +1,7 @@
 name: frontend
 on: [push]
 jobs:
-  check-frontend:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,3 +12,5 @@ jobs:
         run: make init-frontend
       - name: Run checks
         run: make check-frontend
+      - name: Build
+        run: make build-frontend

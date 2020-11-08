@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import os
 import typing as t
 
 from fastapi import FastAPI, File, UploadFile
@@ -14,7 +15,7 @@ app = FastAPI()
 app.include_router(assets.router, prefix="/assets")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=get_settings().cors_allow_origins,
+    allow_origins=[os.environ["CORS_ALLOW_ORIGIN"]],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

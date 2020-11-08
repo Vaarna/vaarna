@@ -35,14 +35,14 @@ build-frontend:
 	@cd frontend \
 	&& ${YARN} parcel build \
 		--no-cache --no-source-maps \
-		frontend/index.html
+		src/index.html
 
 # --- DEV ---
 
 .PHONY: dev-backend
 dev-backend:
 	cd backend \
-	&& CORS_ALLOW_ORIGINS='["http://localhost:1234"]' \
+	&& CORS_ALLOW_ORIGIN=http://localhost:1234 \
 		${PYTHON} -m gm_screen start --dev
 
 .PHONY: dev-frontend
