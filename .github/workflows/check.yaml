@@ -1,0 +1,43 @@
+name: check
+on: [push]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "15"
+      - name: Upgrade and install pip and poetry
+        run: pip install --upgrade pip poetry
+      - name: Install dependencies
+        run: make init
+
+      - name: Run style checks
+        run: make check
+
+      # needs to be done before using backend
+      - name: Build frontend
+        run: make build-frontend
+
+      - name: Run `gm_screen hello`
+        run: |
+          cd backend/
+          CORS_ALLOW_ORIGIN= poetry run python -m gm_screen hello
+
+      - name: Synthesize infra
+        run: |
+          cd infra/
+          yarn cdk synthesize Repository
+          yarn cdk synthesize Infra
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build .
