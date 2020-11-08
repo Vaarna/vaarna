@@ -129,7 +129,7 @@ def get_asset(asset_id: str):
 
 
 @router.get("/show/{asset_id}")
-async def get_asset(
+async def show_asset(
     asset_id: str,
     thumbnail: bool = False,
     range: t.Optional[str] = Header(None),
