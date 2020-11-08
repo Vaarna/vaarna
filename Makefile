@@ -100,6 +100,10 @@ check-backend:
 	@cd backend \
 	&& ${PYTHON} -m mypy gm_screen
 
+	@echo "+ pyflakes"
+	@cd backend \
+	&& ${PYTHON} -m pyflakes gm_screen
+
 .PHONY: check-frontend
 check-frontend:
 	@echo "+ prettier check"
