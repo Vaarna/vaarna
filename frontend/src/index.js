@@ -56,7 +56,7 @@ function Notify() {
       new_uri = "ws:";
     }
     new_uri += "//" + loc.host;
-    new_uri += loc.pathname + `notify?client_id=${client_id}`;
+    new_uri += loc.pathname + `notify/?client_id=${client_id}`;
     return new_uri;
   };
 
