@@ -49,7 +49,7 @@ dev-backend:
 .PHONY: dev-frontend
 dev-frontend:
 	cd frontend \
-	&& ${YARN} parcel serve \
+	&& ${YARN} parcel watch \
 		--no-cache --no-autoinstall \
 		--public-url /static \
 		src/index.html
