@@ -35,6 +35,7 @@ build-frontend:
 	@cd frontend \
 	&& ${YARN} parcel build \
 		--no-cache --no-source-maps \
+		--public-url /static \
 		src/index.html
 
 # --- DEV ---
@@ -50,6 +51,7 @@ dev-frontend:
 	cd frontend \
 	&& ${YARN} parcel serve \
 		--no-cache --no-autoinstall \
+		--public-url /static \
 		src/index.html
 
 # --- FORMAT ---
