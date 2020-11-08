@@ -1,14 +1,12 @@
 import base64
 import hashlib
-import os
-import tempfile
 import typing as t
 from email.utils import format_datetime
 from enum import Enum
 
 import boto3
 from fastapi import APIRouter, Depends, File, Header, HTTPException, UploadFile
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from .config import Settings, get_settings
@@ -99,7 +97,7 @@ def upload_asset(
 
         md5 = calculate_md5(file)
 
-        ret = s3.put_object(
+        s3.put_object(
             Bucket=settings.asset_bucket,
             Key=settings.asset_key_prefix + a.id,
             Body=file.file,
@@ -137,8 +135,8 @@ async def get_asset(
 
     try:
         data = s3.get_object(**req)
-    except s3.exceptions.NoSuchKey as e:
-        raise HTTPException(404, f"Asset not found")
+    except s3.exceptions.NoSuchKey:
+        raise HTTPException(404, "Asset not found")
 
     headers = {
         "accept-ranges": data["AcceptRanges"],
