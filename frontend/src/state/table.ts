@@ -7,10 +7,10 @@ type Table = {
   filename: string;
 };
 
-export type TableState = Stream<Table | undefined>;
-export const TableState = () => Stream<Table | undefined>();
+export type State = Stream<Table | undefined>;
+export const State = () => Stream<Table | undefined>();
 
-export const TableActions = (state: TableState) => {
+export const Actions = (state: State) => {
   const showAsset = (asset_id: string) => {
     return m
       .request({
@@ -31,4 +31,4 @@ export const TableActions = (state: TableState) => {
   return { showAsset, tableAsset };
 };
 
-export type TableActions = ReturnType<typeof TableActions>;
+export type Actions = ReturnType<typeof Actions>;

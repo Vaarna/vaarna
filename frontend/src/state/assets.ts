@@ -7,10 +7,10 @@ type Asset = {
   filename: string;
 };
 
-export type AssetsState = Stream<Asset[]>;
-export const AssetsState = () => Stream<Asset[]>([]);
+export type State = Stream<Asset[]>;
+export const State = () => Stream<Asset[]>([]);
 
-export const AssetsActions = (state: AssetsState) => {
+export const Actions = (state: State) => {
   const updateAssets = () => {
     return m
       .request({
@@ -22,4 +22,4 @@ export const AssetsActions = (state: AssetsState) => {
   return { updateAssets };
 };
 
-export type AssetsActions = ReturnType<typeof AssetsActions>;
+export type Actions = ReturnType<typeof Actions>;

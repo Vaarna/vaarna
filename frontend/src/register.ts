@@ -1,10 +1,10 @@
 import _ from "lodash";
 import m from "mithril";
 import Stream from "mithril/stream";
-import { MasterActions } from "./state/master";
+import { Actions } from "./state/master";
 import { randomId } from "./utils";
 
-export function registerFileUploads(actions: MasterActions) {
+export function registerFileUploads(actions: Actions) {
   const uploadItems = (items: DataTransferItemList | undefined) => {
     if (!items) return;
     actions
@@ -50,7 +50,7 @@ const uri = (client_id: string) => {
   );
 };
 
-export function registerNotifier(actions: MasterActions) {
+export function registerNotifier(actions: Actions) {
   const connected = Stream(false);
 
   const open = (event: Event) => {

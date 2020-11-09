@@ -8,10 +8,10 @@ type Upload = {
   total: number;
 };
 
-export type UploadState = Stream<Upload[]>;
-export const UploadState = (): UploadState => Stream<Upload[]>([]);
+export type State = Stream<Upload[]>;
+export const State = () => Stream<Upload[]>([]);
 
-export const UploadActions = (state: UploadState) => {
+export const Actions = (state: State) => {
   const createUpload = (upload: Upload) => {
     state([...state(), upload]);
   };
@@ -69,4 +69,4 @@ export const UploadActions = (state: UploadState) => {
   return { upload };
 };
 
-export type UploadActions = ReturnType<typeof UploadActions>;
+export type Actions = ReturnType<typeof Actions>;

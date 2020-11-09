@@ -1,19 +1,19 @@
-import { UploadState, UploadActions } from "./upload";
-import { TableState, TableActions } from "./table";
-import { AssetsActions, AssetsState } from "./assets";
+import * as upload from "./upload";
+import * as table from "./table";
+import * as assets from "./assets";
 
-export const MasterState = () => ({
-  uploads: UploadState(),
-  table: TableState(),
-  assets: AssetsState(),
+export const State = () => ({
+  uploads: upload.State(),
+  table: table.State(),
+  assets: assets.State(),
 });
 
-export type MasterState = ReturnType<typeof MasterState>;
+export type State = ReturnType<typeof State>;
 
-export const MasterActions = (state: MasterState) => ({
-  ...UploadActions(state.uploads),
-  ...TableActions(state.table),
-  ...AssetsActions(state.assets),
+export const Actions = (state: State) => ({
+  ...upload.Actions(state.uploads),
+  ...table.Actions(state.table),
+  ...assets.Actions(state.assets),
 });
 
-export type MasterActions = ReturnType<typeof MasterActions>;
+export type Actions = ReturnType<typeof Actions>;

@@ -1,16 +1,16 @@
 import m from "mithril";
 import { round } from "../utils";
-import { MasterActions, MasterState } from "../state/master";
+import * as master from "../state/master";
 import { Asset } from "./Asset";
 
-const Table = (state: MasterState, _actions: MasterActions) => {
+const Table = (state: master.State, _actions: master.Actions) => {
   const table = state.table();
   if (!table) return null;
 
   return m(".table", Asset({ ...table, autoplay: true }));
 };
 
-const Uploads = (state: MasterState, _actions: MasterActions) => {
+const Uploads = (state: master.State, _actions: master.Actions) => {
   const uploads = state.uploads();
   if (uploads.length === 0) return null;
 
@@ -23,7 +23,7 @@ const Uploads = (state: MasterState, _actions: MasterActions) => {
   );
 };
 
-const Assets = (state: MasterState, actions: MasterActions) => {
+const Assets = (state: master.State, actions: master.Actions) => {
   const assets = state.assets();
   if (assets.length === 0) return null;
 

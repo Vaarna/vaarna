@@ -1,10 +1,10 @@
 import m from "mithril";
-import { MasterState, MasterActions } from "./state/master";
+import * as master from "./state/master";
 import { registerFileUploads, registerNotifier } from "./register";
 import { Table, Assets, Uploads } from "./component/index";
 
-const state = MasterState();
-const actions = MasterActions(state);
+const state = master.State();
+const actions = master.Actions(state);
 
 registerFileUploads(actions);
 registerNotifier(actions);
