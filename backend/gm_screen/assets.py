@@ -121,14 +121,28 @@ def upload_asset(
 
 
 @router.get("/")
-def get_assets(settings: Settings = Depends(get_settings)):
+def get_assets(
+    settings: Settings = Depends(get_settings),
+):
     db = boto3.client("dynamodb")
-    # TODO: separate to function and implement paging by checking LastEvaluatedKey
+
+    data = []
+
     ret = db.scan(
         TableName=settings.asset_table,
     )
+    data.extend(deserialize(item) for item in ret["Items"])
+    lek = ret.get("LastEvaluatedKey", None)
 
-    return [deserialize(item) for item in ret["Items"]]
+    while lek is not None:
+        ret = db.scan(
+            TableName=settings.asset_table,
+            ExclusiveStartKey=lek,
+        )
+        data.extend(deserialize(item) for item in ret["Items"])
+        lek = ret.get("LastEvaluatedKey", None)
+
+    return data
 
 
 @router.get("/{asset_id}")
