@@ -43,8 +43,7 @@ build-frontend:
 .PHONY: dev-backend
 dev-backend:
 	cd backend \
-	&& CORS_ALLOW_ORIGIN=http://localhost:1234 \
-		${PYTHON} -m gm_screen start --dev
+	&& ${PYTHON} -m gm_screen start --dev
 
 .PHONY: dev-frontend
 dev-frontend:
@@ -115,6 +114,10 @@ check-infra:
 	@echo "+ prettier check"
 	@cd infra \
 	&& ${YARN} prettier --check src/
+
+	@echo "+ tsc check"
+	@cd frontend \
+	&& ${YARN} tsc --noEmit
 
 # --- CLEAN ---
 
