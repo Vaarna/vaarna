@@ -20,11 +20,13 @@ const VideoAsset = {
   view({
     attrs: {
       asset: { id },
+      autoplay = false,
     },
   }) {
     return m("video", {
       src: `/assets/show/${id}`,
-      controls: true,
+      controls: !autoplay,
+      autoplay,
     });
   },
 };
@@ -33,11 +35,13 @@ const AudioAsset = {
   view({
     attrs: {
       asset: { id },
+      autoplay = false,
     },
   }) {
     return m("audio", {
       src: `/assets/show/${id}`,
-      controls: true,
+      controls: !autoplay,
+      autoplay,
     });
   },
 };
@@ -84,6 +88,6 @@ export const CurrentAsset = {
         ? AudioAsset
         : OtherAsset;
 
-    return m(".asset", m(el, { asset: asset }));
+    return m(".current-asset", m(el, { asset: asset, autoplay: true }));
   },
 };
