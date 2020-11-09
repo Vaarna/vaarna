@@ -7,7 +7,7 @@ COPY Makefile /app
 RUN make init-frontend build-frontend
 
 
-FROM python:3.8-alpine as requirements
+FROM python:3.9.0-alpine as requirements
 
 WORKDIR /app
 COPY backend/pyproject.toml /app
@@ -18,7 +18,7 @@ RUN apk add make curl \
 && $HOME/.poetry/bin/poetry export -f requirements.txt > requirements.txt
 
 
-FROM python:3.8-alpine as python
+FROM python:3.9.0-alpine as python
 
 WORKDIR /app
 COPY --from=node /app/frontend/dist /app/frontend/dist
