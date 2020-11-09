@@ -73,12 +73,13 @@ class Asset(BaseModel):
     media_type: str
     kind: AssetKind
 
-    def __init__(self, file: UploadFile) -> None:
+    @classmethod
+    def from_file(cls, file: UploadFile) -> Asset:
         h = calculate_hash(file)
         s = get_size(file)
         kind = AssetKind.from_content_type(file.content_type)
 
-        super().__init__(
+        return cls(
             filename=file.filename,
             media_type=file.content_type,
             id=h,
@@ -99,7 +100,7 @@ def upload_asset(
 
     out = []
     for file in files:
-        a = Asset(file)
+        a = Asset.from_file(file)
         out.append(a)
         asset_db[a.id] = a
 
@@ -126,12 +127,12 @@ def get_assets(
 ):
     db = boto3.client("dynamodb")
 
-    data = []
+    data: t.List[Asset] = []
 
     ret = db.scan(
         TableName=settings.asset_table,
     )
-    data.extend(deserialize(item) for item in ret["Items"])
+    data.extend(Asset(**deserialize(item)) for item in ret["Items"])
     lek = ret.get("LastEvaluatedKey", None)
 
     while lek is not None:
@@ -139,7 +140,7 @@ def get_assets(
             TableName=settings.asset_table,
             ExclusiveStartKey=lek,
         )
-        data.extend(deserialize(item) for item in ret["Items"])
+        data.extend(Asset(**deserialize(item)) for item in ret["Items"])
         lek = ret.get("LastEvaluatedKey", None)
 
     return data
@@ -154,7 +155,7 @@ def get_asset(asset_id: str, settings: Settings = Depends(get_settings)):
     )
 
     if "Item" in ret:
-        return deserialize(ret["Item"])
+        return Asset(**deserialize(ret["Item"]))
     else:
         raise HTTPException(404, "Asset Not Found")
 
@@ -175,7 +176,7 @@ async def show_asset(
     if "Item" not in ret:
         raise HTTPException(404, "Asset Not Found")
 
-    asset = deserialize(ret["Item"])
+    asset = Asset(**deserialize(ret["Item"]))
 
     if thumbnail:
         asset_id += "-thumbnail"
