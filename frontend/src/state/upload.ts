@@ -56,7 +56,7 @@ export const UploadActions = (state: UploadState) => {
       m.redraw();
 
       return m.request({
-        url: `//localhost:8000/assets/`,
+        url: "/assets",
         method: "POST",
         config: config(id),
         body,
