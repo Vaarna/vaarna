@@ -4,15 +4,13 @@
     "@types/mithril": "^2.0.6",
     "parcel": "^1.12.4",
     "prettier": "^2.1.2",
-    "sass": "^1.29.0"
+    "sass": "^1.29.0",
+    "typescript": "^4.0.5"
   },
   "dependencies": {
-    "immer": "^7.0.14",
     "js-base64": "^3.6.0",
     "lodash": "^4.17.20",
     "mithril": "^2.0.4",
-    "normalize.css": "^8.0.1",
-    "redux": "^4.0.5",
-    "redux-logger": "^3.0.6"
+    "normalize.css": "^8.0.1"
   }
 }

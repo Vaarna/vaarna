@@ -109,6 +109,10 @@ check-frontend:
 	@cd frontend \
 	&& ${YARN} prettier --check src/
 
+	@echo "+ tsc check"
+	@cd frontend \
+	&& ${YARN} tsc --noEmit
+
 .PHONY: check-infra
 check-infra:
 	@echo "+ prettier check"
