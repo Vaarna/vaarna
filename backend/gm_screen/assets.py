@@ -12,6 +12,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from .config import Settings, get_settings
+from .dynamo import deserialize, serialize
 
 router = APIRouter()
 
@@ -94,6 +95,7 @@ def upload_asset(
     files: t.List[UploadFile] = File(...), settings: Settings = Depends(get_settings)
 ):
     s3 = boto3.client("s3")
+    db = boto3.client("dynamodb")
 
     out = []
     for file in files:
@@ -110,22 +112,37 @@ def upload_asset(
             ContentType=a.media_type,
             ContentMD5=md5,
         )
-        asset_db[a.id] = a
+        db.put_item(
+            TableName=settings.asset_table,
+            Item=serialize(a.dict()),
+        )
 
     return out
 
 
 @router.get("/")
-def get_assets():
-    return asset_db
+def get_assets(settings: Settings = Depends(get_settings)):
+    db = boto3.client("dynamodb")
+    # TODO: separate to function and implement paging by checking LastEvaluatedKey
+    ret = db.scan(
+        TableName=settings.asset_table,
+    )
+
+    return [deserialize(item) for item in ret["Items"]]
 
 
 @router.get("/{asset_id}")
-def get_asset(asset_id: str):
-    if asset_id in asset_db:
-        return asset_db[asset_id]
+def get_asset(asset_id: str, settings: Settings = Depends(get_settings)):
+    db = boto3.client("dynamodb")
+    ret = db.get_item(
+        TableName=settings.asset_table,
+        Key=serialize({"id": asset_id}),
+    )
 
-    raise HTTPException(404, "Asset Not Found")
+    if "Item" in ret:
+        return deserialize(ret["Item"])
+    else:
+        raise HTTPException(404, "Asset Not Found")
 
 
 @router.get("/show/{asset_id}")
@@ -135,10 +152,16 @@ async def show_asset(
     range: t.Optional[str] = Header(None),
     settings: Settings = Depends(get_settings),
 ):
-    if asset_id not in asset_db:
+    db = boto3.client("dynamodb")
+    ret = db.get_item(
+        TableName=settings.asset_table,
+        Key=serialize({"id": asset_id}),
+    )
+
+    if "Item" not in ret:
         raise HTTPException(404, "Asset Not Found")
 
-    asset = asset_db[asset_id]
+    asset = deserialize(ret["Item"])
 
     if thumbnail:
         asset_id += "-thumbnail"

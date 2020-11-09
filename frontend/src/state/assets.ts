@@ -16,7 +16,7 @@ export const AssetsActions = (state: AssetsState) => {
       .request({
         url: "/assets",
       })
-      .then((v) => state(Object.values(v as { [key: string]: Asset })));
+      .then((v) => state(v as Asset[]));
   };
 
   return { updateAssets };
