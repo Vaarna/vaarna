@@ -14,7 +14,7 @@ export const Actions = (state: State) => {
   const showAsset = (asset_id: string) => {
     return m
       .request({
-        url: "/assets/:id",
+        url: "/assets/:id/",
         params: { id: asset_id },
       })
       .then((v) => state(v as Table));
@@ -22,7 +22,7 @@ export const Actions = (state: State) => {
 
   const tableAsset = (asset_id: string) => {
     return m.request({
-      url: "/notify/show-asset",
+      url: "/notify/show-asset/",
       method: "POST",
       params: { asset_id },
     });

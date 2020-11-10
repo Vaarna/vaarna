@@ -27,14 +27,17 @@ export const Actions = (state: State) => {
 
   const config = (id: string) => {
     const update = (event: ProgressEvent) => {
+      console.log("[Upload] upload event", event);
       updateUpload({ id, loaded: event.loaded, total: event.total });
       m.redraw();
     };
 
     const done = () => {
-      console.log(state());
-      removeUpload(id);
-      m.redraw();
+      console.log("[Upload] upload done");
+      setTimeout(() => {
+        removeUpload(id);
+        m.redraw();
+      }, 2000);
     };
 
     return (xhr: XMLHttpRequest) => {
@@ -55,8 +58,9 @@ export const Actions = (state: State) => {
       createUpload({ id, loaded: 0, total: file.size });
       m.redraw();
 
+      console.log("[Upload] upload starting", file);
       return m.request({
-        url: "/assets",
+        url: "/assets/",
         method: "POST",
         config: config(id),
         body,

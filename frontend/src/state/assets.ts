@@ -14,7 +14,7 @@ export const Actions = (state: State) => {
   const updateAssets = () => {
     return m
       .request({
-        url: "/assets",
+        url: "/assets/",
       })
       .then((v) => state(v as Asset[]));
   };
