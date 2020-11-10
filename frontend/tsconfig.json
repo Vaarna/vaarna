@@ -5,6 +5,7 @@
     "target": "ES6",
     "module": "CommonJS",
     "lib": ["ES2020", "DOM"],
+    "isolatedModules": true, // needed to make sure sucrase works
     "esModuleInterop": true,
     "strict": true,
     "noUnusedLocals": true,
