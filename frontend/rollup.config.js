@@ -1,5 +1,6 @@
 import resolve from "@rollup/plugin-node-resolve";
 import sucrase from "@rollup/plugin-sucrase";
+import livereload from "rollup-plugin-livereload";
 
 import fs from "fs";
 import path from "path";
@@ -64,6 +65,7 @@ export default [
       include: ["src/**/*"],
     },
     plugins: [
+      livereload("dist"),
       resolve(),
       sucrase({ exclude: ["node_modules/**"], transforms: ["typescript"] }),
       copy("node_modules/normalize.css/normalize.css", "dist/normalize.css"),
