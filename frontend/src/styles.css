@@ -1,9 +1,4 @@
 body {
-  height: 100vh;
-  // width: 100vw;
-
-  padding: 1rem;
-
   display: flex;
   flex-direction: column;
 }
@@ -22,10 +17,25 @@ body {
   border: 1px solid black;
 }
 
+.table {
+  width: 100%;
+  height: 100%;
+}
+
+.table-item-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* .table--item {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+} */
+
 .asset {
-  * {
-    // height: 100vh;
-  }
 }
 
 img,

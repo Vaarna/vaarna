@@ -46,5 +46,5 @@ export const Asset = (asset: Asset & Autoplay) => {
       ? AudioAsset
       : OtherAsset;
 
-  return el(asset);
+  return m(".table-item-container", el(asset));
 };
