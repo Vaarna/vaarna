@@ -1,6 +1,7 @@
 import resolve from "@rollup/plugin-node-resolve";
 import sucrase from "@rollup/plugin-sucrase";
 import livereload from "rollup-plugin-livereload";
+import multi from "@rollup/plugin-multi-entry";
 
 import fs from "fs";
 import path from "path";
@@ -17,36 +18,16 @@ const copy = (from, to) => ({
 
 export default [
   {
-    input: "node_modules/pdfjs-dist/build/pdf.js",
-    output: {
-      file: "dist/pdf.js",
-      format: "iife",
-      sourcemap: true,
-    },
-  },
-  {
-    input: "node_modules/pdfjs-dist/build/pdf.worker.js",
-    output: {
-      file: "dist/pdf.worker.js",
-      format: "iife",
-      sourcemap: true,
-    },
-  },
-  {
-    input: "node_modules/mithril/mithril.js",
+    input: [
+      "node_modules/mithril/mithril.js",
+      "node_modules/mithril/stream/stream.js",
+    ],
     output: {
       file: "dist/mithril.js",
       format: "iife",
       sourcemap: true,
     },
-  },
-  {
-    input: "node_modules/mithril/stream/stream.js",
-    output: {
-      file: "dist/mithril.stream.js",
-      format: "iife",
-      sourcemap: true,
-    },
+    plugins: [multi()],
   },
 
   {
