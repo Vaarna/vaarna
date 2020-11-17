@@ -16,7 +16,7 @@ const copy = (from, to) => ({
   },
 });
 
-export default [
+export default (args) => [
   {
     input: [
       "node_modules/mithril/mithril.js",
@@ -46,7 +46,7 @@ export default [
       include: ["src/**/*"],
     },
     plugins: [
-      livereload("dist"),
+      args.configLivereload ? livereload("dist") : undefined,
       resolve(),
       sucrase({ exclude: ["node_modules/**"], transforms: ["typescript"] }),
       copy("node_modules/normalize.css/normalize.css", "dist/normalize.css"),

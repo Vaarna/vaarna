@@ -45,7 +45,7 @@ dev-backend:
 .PHONY: dev-frontend
 dev-frontend:
 	cd frontend \
-	&& ${YARN} rollup --config --watch
+	&& ${YARN} rollup --config --watch --configLivereload
 
 # --- FORMAT ---
 
