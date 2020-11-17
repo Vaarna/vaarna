@@ -13,7 +13,7 @@ WORKDIR /app
 COPY backend/pyproject.toml /app
 COPY backend/poetry.lock /app
 
-RUN apk add make curl \
+RUN apk add curl \
 && curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python \
 && $HOME/.poetry/bin/poetry export -f requirements.txt > requirements.txt
 
