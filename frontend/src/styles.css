@@ -3,43 +3,31 @@ body {
   flex-direction: column;
 }
 
-.uploads {
-  display: flex;
-  flex-direction: column;
+img,
+video,
+audio {
+  max-width: 100%;
 }
 
-.upload {
+#container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+}
 
-  padding: 0.5rem;
-  margin: 0.5rem;
-  border: 1px solid black;
+.asset-list {
+  overflow-y: scroll;
+  height: 100vh;
 }
 
 .table {
+  height: 100vh;
   width: 100%;
-  height: 100%;
-}
-
-.table-item-container {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* .table--item {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-} */
-
-.asset {
-}
-
-img,
-video,
-audio {
-  max-width: 100%;
+.uploads {
+  display: flex;
+  flex-direction: column;
 }

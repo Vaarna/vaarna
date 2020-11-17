@@ -1,7 +1,7 @@
 import m from "mithril";
 import * as master from "./state/master";
 import { registerFileUploads, registerNotifier } from "./register";
-import { Table, Assets, Uploads } from "./component/index";
+import { Table, AssetList } from "./component/index";
 
 const state = master.State();
 const actions = master.Actions(state);
@@ -12,15 +12,14 @@ actions.updateAssets();
 
 m.route(document.body, "/", {
   "/": {
-    view: () => [Table(state, actions)],
+    view: () => m("#container", [m(".table", Table(state, actions))]),
   },
   "/gm": {
     view() {
-      return [
-        Table(state, actions),
-        Assets(state, actions),
-        Uploads(state, actions),
-      ];
+      return m("#container", [
+        m(".asset-list", AssetList(state, actions)),
+        m(".table", Table(state, actions)),
+      ]);
     },
   },
 });
