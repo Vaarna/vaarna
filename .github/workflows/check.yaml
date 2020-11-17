@@ -16,8 +16,8 @@ jobs:
       - name: Install dependencies
         run: make init
 
-      - name: Run style checks
-        run: make check
+      - name: Run style checks and tests
+        run: make check test
 
       # needs to be done before using backend
       - name: Build frontend
