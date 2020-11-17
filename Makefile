@@ -117,6 +117,17 @@ check-infra:
 	@cd frontend \
 	&& ${YARN} tsc --noEmit
 
+# --- TEST ---
+
+.PHONY: test
+test: test-frontend
+
+.PHONY: test-frontend
+test-frontend:
+	@echo "+ jest"
+	@cd frontend \
+	&& ${YARN} jest
+
 # --- CLEAN ---
 
 .PHONY: clean
