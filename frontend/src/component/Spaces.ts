@@ -2,7 +2,7 @@ import m from "mithril";
 
 import * as master from "../state/master";
 
-export default (state: master.State, actions: master.Actions) =>
+export default (_state: master.State, _actions: master.Actions) =>
   m(
     ".spaces",
     m(

@@ -1,5 +1,4 @@
 import m from "mithril";
-import Stream from "mithril/stream";
 
 import GM from "./component/GM";
 import Player from "./component/Player";
