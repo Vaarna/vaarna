@@ -1,6 +1,6 @@
-import * as upload from "./upload";
-import * as table from "./table";
 import * as assets from "./assets";
+import * as table from "./table";
+import * as upload from "./upload";
 
 export const State = () => ({
   uploads: upload.State(),

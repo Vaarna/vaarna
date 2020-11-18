@@ -1,7 +1,11 @@
 import m from "mithril";
-import * as master from "./state/master";
+import Stream from "mithril/stream";
+
+import GM from "./component/GM";
+import Player from "./component/Player";
+import Spaces from "./component/Spaces";
 import { registerFileUploads, registerNotifier } from "./register";
-import { Table, AssetList } from "./component/index";
+import * as master from "./state/master";
 
 const state = master.State();
 const actions = master.Actions(state);
@@ -10,16 +14,14 @@ registerFileUploads(actions);
 registerNotifier(actions);
 actions.updateAssets();
 
-m.route(document.body, "/", {
-  "/": {
-    view: () => m("#container", [m(".table", Table(state, actions))]),
+m.route(document.body, "/spaces", {
+  "/spaces": {
+    view: () => Spaces(state, actions),
+  },
+  "/player": {
+    view: () => Player(state, actions),
   },
   "/gm": {
-    view() {
-      return m("#container", [
-        m(".asset-list", AssetList(state, actions)),
-        m(".table", Table(state, actions)),
-      ]);
-    },
+    view: () => GM(state, actions),
   },
 });

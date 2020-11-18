@@ -1,9 +1,11 @@
-import { Asset } from "./Asset";
+import m from "mithril";
+
 import * as master from "../state/master";
+import Asset from "./Asset";
 
-export const Table = (state: master.State, _actions: master.Actions) => {
+export default (state: master.State, _actions: master.Actions) => {
   const table = state.table();
-  if (!table) return null;
+  if (!table) return m(".table");
 
-  return Asset({ ...table, autoplay: true });
+  return m(".table", Asset({ ...table, autoplay: true }));
 };

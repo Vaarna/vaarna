@@ -1,6 +1,6 @@
-import _ from "lodash";
 import m from "mithril";
 import Stream from "mithril/stream";
+
 import { Actions } from "./state/master";
 import { randomId } from "./utils";
 

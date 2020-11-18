@@ -3,31 +3,50 @@ body {
   flex-direction: column;
 }
 
-img,
-video,
-audio {
-  max-width: 100%;
+.asset {
+  display: flex;
+  height: 100%;
+  width: 100%;
 }
 
-#container {
-  display: flex;
-  flex-direction: row;
+.asset * {
+  width: 100%;
+  object-fit: scale-down;
 }
 
 .asset-list {
   overflow-y: scroll;
+  box-sizing: border-box;
   height: 100vh;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
 }
 
-.table {
-  height: 100vh;
-  width: 100%;
+.gm {
   display: flex;
+  flex-direction: row;
+}
+
+.player {
+  display: flex;
+  flex-direction: row;
+}
+
+.spaces {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.uploads {
+.table {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+
+  flex: 3;
 }

@@ -35,7 +35,7 @@ const AudioAsset = ({ id, autoplay = false }: Asset & Autoplay) =>
 const OtherAsset = ({ id, filename }: Asset) =>
   m("a", { href: `/assets/show/${id}` }, filename);
 
-export const Asset = (asset: Asset & Autoplay) => {
+export default (asset: Asset & Autoplay) => {
   const { kind } = asset;
   const el =
     kind == "image"
@@ -46,5 +46,5 @@ export const Asset = (asset: Asset & Autoplay) => {
       ? AudioAsset
       : OtherAsset;
 
-  return m(".table-item-container", el(asset));
+  return m(".asset", el(asset));
 };

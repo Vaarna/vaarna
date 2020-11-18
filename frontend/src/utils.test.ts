@@ -1,4 +1,4 @@
-import { round, randomId } from "./utils";
+import { randomId, round } from "./utils";
 
 describe("randomId", () => {
   test("creates a different id on calls", () => {
