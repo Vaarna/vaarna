@@ -37,6 +37,9 @@ build-frontend:
 
 # --- DEV ---
 
+.PHONY: dev
+dev: dev-backend dev-frontend
+
 .PHONY: dev-backend
 dev-backend:
 	cd backend \
@@ -45,7 +48,7 @@ dev-backend:
 .PHONY: dev-frontend
 dev-frontend:
 	cd frontend \
-	&& ${YARN} rollup --config --watch --configLivereload
+	&& ${YARN} rollup --config --watch --no-watch.clearScreen --configLivereload
 
 # --- FORMAT ---
 
