@@ -32,7 +32,7 @@ def main() -> int:
     start = subparser.add_parser("start")
     start.set_defaults(_do=do_start)
     start.add_argument("--host", "-b", default="0.0.0.0")
-    start.add_argument("--port", "-p", default=8000, type=int)
+    start.add_argument("--port", "-p", default=9999, type=int)
     start.add_argument("--dev", "-d", action="store_true")
 
     args = parser.parse_args()
