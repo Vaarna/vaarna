@@ -1,110 +1,34 @@
-from __future__ import annotations
-
-import base64
-import hashlib
 import typing as t
 from email.utils import format_datetime
-from enum import Enum
 
 import boto3
 from fastapi import APIRouter, Depends, File, Header, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
 
 from .config import Settings, get_settings
-from .dynamo import deserialize, serialize
+from .model.asset import Asset, AssetKind
+from .model.asset_db import AssetDB, AssetDynamoDB
 
 router = APIRouter()
 
 
-def calculate_hash(file: UploadFile) -> str:
-    m = hashlib.sha256()
-    while True:
-        data = file.file.read(2 ** 12)
-        if not data:
-            break
-        m.update(data)
-    return base64.urlsafe_b64encode(m.digest()).decode()
-
-
-def calculate_md5(file: UploadFile) -> str:
-    m = hashlib.md5()
-    while True:
-        data = file.file.read(2 ** 12)
-        if not data:
-            break
-        m.update(data)
-    return base64.b64encode(m.digest()).decode()
-
-
-def get_size(file: UploadFile) -> int:
-    file.file.seek(0, 2)
-    size = file.file.tell()
-    file.file.seek(0)
-    return size
-
-
-class AssetKind(str, Enum):
-    OTHER = "other"
-    IMAGE = "image"
-    VIDEO = "video"
-    AUDIO = "audio"
-    PDF = "pdf"
-
-    @classmethod
-    def from_content_type(cls, content_type: str) -> AssetKind:
-        kind = cls.OTHER
-        if content_type.startswith("image/"):
-            kind = cls.IMAGE
-        elif content_type.startswith("video/"):
-            kind = cls.VIDEO
-        elif content_type.startswith("audio/"):
-            kind = cls.AUDIO
-        elif content_type == "application/pdf":
-            kind = cls.PDF
-
-        return kind
-
-
-class Asset(BaseModel):
-    id: str
-    filename: str
-    size: str
-    media_type: str
-    kind: AssetKind
-
-    @classmethod
-    def from_file(cls, file: UploadFile) -> Asset:
-        h = calculate_hash(file)
-        s = get_size(file)
-        kind = AssetKind.from_content_type(file.content_type)
-
-        return cls(
-            filename=file.filename,
-            media_type=file.content_type,
-            id=h,
-            size=s,
-            kind=kind,
-        )
-
-
-asset_db: t.Dict[str, Asset] = {}
+def get_asset_db(settings: Settings = Depends(get_settings)) -> AssetDB:
+    return AssetDynamoDB(settings.asset_table)
 
 
 @router.post("/")
 def upload_asset(
-    files: t.List[UploadFile] = File(...), settings: Settings = Depends(get_settings)
+    space_id: str,
+    files: t.List[UploadFile] = File(...),
+    settings: Settings = Depends(get_settings),
+    asset_db: AssetDB = Depends(get_asset_db),
 ):
     s3 = boto3.client("s3")
-    db = boto3.client("dynamodb")
 
     out = []
     for file in files:
-        a = Asset.from_file(file)
+        a, md5 = Asset.from_file(file)
         out.append(a)
-        asset_db[a.id] = a
-
-        md5 = calculate_md5(file)
 
         s3.put_object(
             Bucket=settings.asset_bucket,
@@ -113,70 +37,46 @@ def upload_asset(
             ContentType=a.media_type,
             ContentMD5=md5,
         )
-        db.put_item(
-            TableName=settings.asset_table,
-            Item=serialize(a.dict()),
-        )
+        asset_db.put_asset(space_id, a)
 
     return out
 
 
 @router.get("/")
 def get_assets(
+    space_id: str,
     settings: Settings = Depends(get_settings),
+    asset_db: AssetDB = Depends(get_asset_db),
 ):
-    db = boto3.client("dynamodb")
-
-    data: t.List[Asset] = []
-
-    ret = db.scan(
-        TableName=settings.asset_table,
-    )
-    data.extend(Asset(**deserialize(item)) for item in ret["Items"])
-    lek = ret.get("LastEvaluatedKey", None)
-
-    while lek is not None:
-        ret = db.scan(
-            TableName=settings.asset_table,
-            ExclusiveStartKey=lek,
-        )
-        data.extend(Asset(**deserialize(item)) for item in ret["Items"])
-        lek = ret.get("LastEvaluatedKey", None)
-
-    return data
+    return list(asset_db.list_assets(space_id))
 
 
 @router.get("/{asset_id}")
-def get_asset(asset_id: str, settings: Settings = Depends(get_settings)):
-    db = boto3.client("dynamodb")
-    ret = db.get_item(
-        TableName=settings.asset_table,
-        Key=serialize({"id": asset_id}),
-    )
-
-    if "Item" in ret:
-        return Asset(**deserialize(ret["Item"]))
-    else:
+def get_asset(
+    space_id: str,
+    asset_id: str,
+    settings: Settings = Depends(get_settings),
+    asset_db: AssetDB = Depends(get_asset_db),
+):
+    asset = asset_db.get_asset(space_id, asset_id)
+    if asset is None:
         raise HTTPException(404, "Asset Not Found")
+
+    return asset
 
 
 @router.get("/show/{asset_id}")
 async def show_asset(
+    space_id: str,
     asset_id: str,
     thumbnail: bool = False,
     range: t.Optional[str] = Header(None),
     settings: Settings = Depends(get_settings),
+    asset_db: AssetDB = Depends(get_asset_db),
 ):
-    db = boto3.client("dynamodb")
-    ret = db.get_item(
-        TableName=settings.asset_table,
-        Key=serialize({"id": asset_id}),
-    )
-
-    if "Item" not in ret:
+    asset = asset_db.get_asset(space_id, asset_id)
+    if asset is None:
         raise HTTPException(404, "Asset Not Found")
-
-    asset = Asset(**deserialize(ret["Item"]))
 
     if thumbnail:
         asset_id += "-thumbnail"

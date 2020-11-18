@@ -120,7 +120,14 @@ check-infra:
 # --- TEST ---
 
 .PHONY: test
-test: test-frontend
+test: test-backend test-frontend
+
+.PHONY: test-backend
+test-backend:
+	@echo "+ pytest"
+	@cd backend \
+	&& ${PYTHON} -m pytest
+
 
 .PHONY: test-frontend
 test-frontend:

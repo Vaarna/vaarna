@@ -3,6 +3,12 @@ on: [push]
 jobs:
   check:
     runs-on: ubuntu-latest
+
+    services:
+      dynamodb-local:
+        port: 8000:8000
+        image: amazon/dynamodb-local
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
