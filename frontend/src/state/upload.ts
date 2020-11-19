@@ -1,6 +1,7 @@
 import m from "mithril";
 import Stream from "mithril/stream";
 
+import * as space from "./space";
 import { randomId } from "../utils";
 
 type Upload = {
@@ -9,21 +10,23 @@ type Upload = {
   total: number;
 };
 
-export type State = Stream<Upload[]>;
-export const State = () => Stream<Upload[]>([]);
+export const State = () => ({ uploads: Stream<Upload[]>([]) });
+export type State = ReturnType<typeof State>;
 
-export const Actions = (state: State) => {
+export const Actions = (state: State & space.State) => {
   const createUpload = (upload: Upload) => {
-    state([...state(), upload]);
+    state.uploads([...state.uploads(), upload]);
   };
 
   const updateUpload = (upload: Upload) => {
-    console.log(upload, state());
-    state(state().map((v) => (v.id === upload.id ? upload : v)));
+    console.log(upload, state.uploads());
+    state.uploads(
+      state.uploads().map((v) => (v.id === upload.id ? upload : v))
+    );
   };
 
   const removeUpload = (id: string) => {
-    state(state().filter((v) => v.id !== id));
+    state.uploads(state.uploads().filter((v) => v.id !== id));
   };
 
   const config = (id: string) => {
@@ -62,6 +65,7 @@ export const Actions = (state: State) => {
       console.log("[Upload] upload starting", file);
       return m.request({
         url: "/assets/",
+        params: { space_id: state.space() },
         method: "POST",
         config: config(id),
         body,

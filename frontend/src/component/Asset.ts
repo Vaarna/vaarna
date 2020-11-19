@@ -6,36 +6,39 @@ type Asset = {
   kind: string;
 };
 
-type Autoplay = {
+type Extra = {
   autoplay?: boolean;
 };
 
-const ImageAsset = ({ id, filename }: Asset) =>
+const src = (space_id: string, asset_id: string) =>
+  `/assets/show/${asset_id}?space_id=${space_id}`;
+
+const ImageAsset = (src: string, { filename }: Asset & Extra) =>
   m("img", {
-    src: `/assets/show/${id}`,
+    src,
     alt: filename,
   });
 
-const VideoAsset = ({ id, autoplay = false }: Asset & Autoplay) =>
+const VideoAsset = (src: string, { autoplay = false }: Asset & Extra) =>
   m("video", {
-    src: `/assets/show/${id}`,
+    src,
     controls: !autoplay,
     loop: true,
     autoplay,
   });
 
-const AudioAsset = ({ id, autoplay = false }: Asset & Autoplay) =>
+const AudioAsset = (src: string, { autoplay = false }: Asset & Extra) =>
   m("audio", {
-    src: `/assets/show/${id}`,
+    src,
     controls: !autoplay,
     loop: true,
     autoplay,
   });
 
-const OtherAsset = ({ id, filename }: Asset) =>
-  m("a", { href: `/assets/show/${id}` }, filename);
+const OtherAsset = (href: string, { filename }: Asset) =>
+  m("a", { href }, filename);
 
-export default (asset: Asset & Autoplay) => {
+export default (space_id: string, asset: Asset & Extra) => {
   const { kind } = asset;
   const el =
     kind == "image"
@@ -46,5 +49,5 @@ export default (asset: Asset & Autoplay) => {
       ? AudioAsset
       : OtherAsset;
 
-  return m(".asset", el(asset));
+  return m(".asset", el(src(space_id, asset.id), asset));
 };

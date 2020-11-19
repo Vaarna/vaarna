@@ -11,16 +11,22 @@ const actions = master.Actions(state);
 
 registerFileUploads(actions);
 registerNotifier(actions);
-actions.updateAssets();
+// actions.updateAssets();
 
 m.route(document.body, "/spaces", {
   "/spaces": {
     view: () => Spaces(state, actions),
   },
   "/player": {
-    view: () => Player(state, actions),
+    view: () => {
+      if (state.space() === "") m.route.set("/spaces");
+      return Player(state, actions);
+    },
   },
   "/gm": {
-    view: () => GM(state, actions),
+    view: () => {
+      if (state.space() === "") m.route.set("/spaces");
+      return GM(state, actions);
+    },
   },
 });

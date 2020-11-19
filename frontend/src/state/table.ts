@@ -1,5 +1,6 @@
 import m from "mithril";
 import Stream from "mithril/stream";
+import * as space from "./space";
 
 type Table = {
   id: string;
@@ -7,24 +8,24 @@ type Table = {
   filename: string;
 };
 
-export type State = Stream<Table | undefined>;
-export const State = () => Stream<Table | undefined>();
+export const State = () => ({ table: Stream<Table | undefined>() });
+export type State = ReturnType<typeof State>;
 
-export const Actions = (state: State) => {
+export const Actions = (state: State & space.State) => {
   const showAsset = (asset_id: string) => {
     return m
       .request({
-        url: "/assets/:id/",
-        params: { id: asset_id },
+        url: "/assets/:asset_id/",
+        params: { space_id: state.space(), asset_id },
       })
-      .then((v) => state(v as Table));
+      .then((v) => state.table(v as Table));
   };
 
-  const tableAsset = (asset_id: string) => {
+  const tableAsset = (space_id: string, asset_id: string) => {
     return m.request({
       url: "/notify/show-asset/",
       method: "POST",
-      params: { asset_id },
+      params: { space_id, asset_id },
     });
   };
 

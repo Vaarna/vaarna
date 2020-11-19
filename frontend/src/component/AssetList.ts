@@ -14,8 +14,12 @@ export default (state: master.State, actions: master.Actions) => {
     items.map((v) =>
       "kind" in v
         ? [
-            Asset(v),
-            m("button", { onclick: () => actions.tableAsset(v.id) }, "SHOW ME"),
+            Asset(state.space(), v),
+            m(
+              "button",
+              { onclick: () => actions.tableAsset(state.space(), v.id) },
+              "SHOW ME"
+            ),
           ]
         : `${v.id} ${round((v.loaded / v.total) * 100, 2)}%`
     )

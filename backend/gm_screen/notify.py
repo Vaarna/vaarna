@@ -60,8 +60,9 @@ async def listen_notifications(
 
 @router.post("/show-asset")
 async def notify(
+    space_id: str,
     asset_id: str,
     settings: Settings = Depends(get_settings),
     notifier: Notifier = Depends(get_notifier),
 ):
-    await notifier.broadcast("show-asset", {"asset_id": asset_id})
+    await notifier.broadcast("show-asset", {"space_id": space_id, "asset_id": asset_id})

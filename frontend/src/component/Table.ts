@@ -7,5 +7,5 @@ export default (state: master.State, _actions: master.Actions) => {
   const table = state.table();
   if (!table) return m(".table");
 
-  return m(".table", Asset({ ...table, autoplay: true }));
+  return m(".table", Asset(state.space(), { ...table, autoplay: true }));
 };

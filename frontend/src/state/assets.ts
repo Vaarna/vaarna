@@ -1,5 +1,6 @@
 import m from "mithril";
 import Stream from "mithril/stream";
+import * as space from "./space";
 
 type Asset = {
   id: string;
@@ -7,16 +8,17 @@ type Asset = {
   filename: string;
 };
 
-export type State = Stream<Asset[]>;
-export const State = () => Stream<Asset[]>([]);
+export const State = () => ({ assets: Stream<Asset[]>([]) });
+export type State = ReturnType<typeof State>;
 
-export const Actions = (state: State) => {
+export const Actions = (state: State & space.State) => {
   const updateAssets = () => {
     return m
       .request({
         url: "/assets/",
+        params: { space_id: state.space() },
       })
-      .then((v) => state(v as Asset[]));
+      .then((v) => state.assets(v as Asset[]));
   };
 
   return { updateAssets };
