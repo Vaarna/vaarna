@@ -4,11 +4,6 @@ import sys
 import uvicorn
 
 
-def do_hello(args: argparse.Namespace) -> int:
-    print("hello :)")
-    return 0
-
-
 def do_start(args: argparse.Namespace) -> int:
     uvicorn.run("app:app", host=args.host, port=args.port, reload=args.dev)
     return 0
@@ -19,9 +14,6 @@ def main() -> int:
     parser.set_defaults(_do=None)
 
     subparser = parser.add_subparsers()
-
-    hello = subparser.add_parser("hello")
-    hello.set_defaults(_do=do_hello)
 
     start = subparser.add_parser("start")
     start.set_defaults(_do=do_start)

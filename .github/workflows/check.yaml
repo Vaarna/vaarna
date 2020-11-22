@@ -40,11 +40,6 @@ jobs:
       - name: Run tests
         run: make test
 
-      - name: Run `gm_screen hello`
-        run: |
-          cd backend/
-          poetry run python -m gm_screen hello
-
       - name: Synthesize infra
         run: |
           cd infra/
