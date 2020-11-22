@@ -19,7 +19,6 @@ export const Actions = (state: State & space.State) => {
   };
 
   const updateUpload = (upload: Upload) => {
-    console.log(upload, state.uploads());
     state.uploads(
       state.uploads().map((v) => (v.id === upload.id ? upload : v))
     );
@@ -31,7 +30,6 @@ export const Actions = (state: State & space.State) => {
 
   const config = (id: string) => {
     const update = (event: ProgressEvent) => {
-      console.log("[Upload] upload event", event);
       updateUpload({ id, loaded: event.loaded, total: event.total });
       m.redraw();
     };

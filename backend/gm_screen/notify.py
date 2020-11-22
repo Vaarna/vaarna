@@ -47,12 +47,12 @@ def get_notifier():
 
 @router.websocket("/")
 async def listen_notifications(
-    client_id: str,
+    space_id: str,
     websocket: WebSocket,
     settings: Settings = Depends(get_settings),
     notifier: Notifier = Depends(get_notifier),
 ):
-    async with notifier.connect(client_id, websocket) as ping:
+    async with notifier.connect(space_id, websocket) as ping:
         while True:
             await asyncio.sleep(10)
             await ping()

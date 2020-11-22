@@ -1,10 +1,9 @@
 import m from "mithril";
-import Stream from "mithril/stream";
 
-import { Actions } from "./state/master";
-import { randomId } from "./utils";
+import * as master from "./state/master";
+import * as space from "./state/space";
 
-export function registerFileUploads(actions: Actions) {
+export function registerFileUploads(actions: master.Actions) {
   const uploadItems = (items: DataTransferItemList | undefined) => {
     if (!items) return;
     actions
@@ -28,12 +27,16 @@ export function registerFileUploads(actions: Actions) {
     uploadItems(event.dataTransfer?.items);
   };
 
+  console.log("[file uploads] adding event listeners");
+
   document.body.addEventListener("paste", paste);
   window.addEventListener("dragenter", prevent);
   window.addEventListener("dragover", prevent);
   window.addEventListener("drop", drop);
 
   return () => {
+    console.log("[file uploads] removing event listeners listeners");
+
     document.body.removeEventListener("paste", paste);
     window.removeEventListener("dragenter", prevent);
     window.removeEventListener("dragover", prevent);
@@ -41,32 +44,30 @@ export function registerFileUploads(actions: Actions) {
   };
 }
 
-const uri = (client_id: string) => {
+const uri = (space_id: string) => {
   const loc = window.location;
 
   return (
     (loc.protocol === "https:" ? "wss:" : "ws:") +
-    `//${loc.host}/notify/?client_id=${client_id}`
+    `//${loc.host}/notify/?space_id=${space_id}`
   );
 };
 
-export function registerNotifier(actions: Actions) {
-  const connected = Stream(false);
-
+export function registerNotifier(state: space.State, actions: master.Actions) {
   const open = (event: Event) => {
     console.log("[socket] opened", event);
-    connected(true);
     m.redraw();
   };
 
   const error = (event: Event) => {
-    // TODO: reopen socket after a delay
     console.log("[socket] error", event);
   };
 
   const close = (event: CloseEvent) => {
-    // TODO: reopen socket after a delay
     console.log("[socket] closed", event);
+    setTimeout(() => {
+      ws = connect();
+    }, 500);
   };
 
   const message = (event: MessageEvent<string>) => {
@@ -85,12 +86,24 @@ export function registerNotifier(actions: Actions) {
     m.redraw();
   };
 
-  const notifyUri = uri(randomId());
-  const ws = new WebSocket(notifyUri);
-  console.log(`[socket] connecting to ${notifyUri}`);
+  const connect = () => {
+    const notifyUri = uri(state.space());
+    const ws = new WebSocket(notifyUri);
+    console.log(`[socket] connecting to ${notifyUri}`);
 
-  ws.addEventListener("open", open);
-  ws.addEventListener("message", message);
-  ws.addEventListener("error", error);
-  ws.addEventListener("close", close);
+    ws.addEventListener("open", open);
+    ws.addEventListener("message", message);
+    ws.addEventListener("error", error);
+    ws.addEventListener("close", close);
+
+    return ws;
+  };
+
+  let ws = connect();
+
+  return () => {
+    console.log("[socket] manually closing notifier");
+    ws.removeEventListener("close", close);
+    ws.close(1000);
+  };
 }
