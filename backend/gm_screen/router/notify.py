@@ -4,7 +4,7 @@ from functools import lru_cache
 
 from fastapi import APIRouter, Depends, WebSocket
 
-from .config import Settings, get_settings
+from ..config import Settings, get_settings
 
 router = APIRouter()
 

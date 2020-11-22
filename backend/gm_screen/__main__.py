@@ -3,8 +3,6 @@ import sys
 
 import uvicorn
 
-from .app import app
-
 
 def do_hello(args: argparse.Namespace) -> int:
     print("hello :)")
@@ -12,11 +10,7 @@ def do_hello(args: argparse.Namespace) -> int:
 
 
 def do_start(args: argparse.Namespace) -> int:
-    application = "gm_screen:app" if args.dev else app
-    kwargs = {"host": args.host, "port": args.port, "reload": args.dev}
-
-    uvicorn.run(application, **kwargs)
-
+    uvicorn.run("app:app", host=args.host, port=args.port, reload=args.dev)
     return 0
 
 
