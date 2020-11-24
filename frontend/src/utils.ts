@@ -17,7 +17,7 @@ export const round = (num: number, acc: number = 0) => {
  * @param timeout Milliseconds to wait before resolving the promise.
  * @param value Value that will be used to resolve the promise (optional).
  */
-export function wait<T>(timeout: number, value?: T): Promise<T> {
+export function wait<T>(timeout: number, value?: T): Promise<T | void> {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(value);
@@ -31,7 +31,7 @@ export function wait<T>(timeout: number, value?: T): Promise<T> {
  * @param timeout Milliseconds to wait before resolving with the given value.
  * @returns A function that can be passed to `Promise.then`.
  */
-export function delay<T>(timeout: number): (value: T) => Promise<T> {
+export function delay<T>(timeout: number): (value: T) => Promise<T | void> {
   return (value) => {
     return wait(timeout, value);
   };
