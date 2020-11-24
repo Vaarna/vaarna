@@ -2,6 +2,7 @@ import resolve from "@rollup/plugin-node-resolve";
 import sucrase from "@rollup/plugin-sucrase";
 import livereload from "rollup-plugin-livereload";
 import multi from "@rollup/plugin-multi-entry";
+import { terser } from "rollup-plugin-terser";
 
 import fs from "fs";
 import path from "path";
@@ -27,7 +28,7 @@ export default (args) => [
       format: "iife",
       sourcemap: true,
     },
-    plugins: [multi()],
+    plugins: [multi(), args.configDev ? undefined : terser()],
   },
 
   {
@@ -46,9 +47,10 @@ export default (args) => [
       include: ["src/**/*"],
     },
     plugins: [
-      args.configLivereload ? livereload("dist") : undefined,
+      args.configDev ? livereload("dist/") : undefined,
       resolve(),
       sucrase({ exclude: ["node_modules/**"], transforms: ["typescript"] }),
+      args.configDev ? undefined : terser(),
       copy("node_modules/normalize.css/normalize.css", "dist/normalize.css"),
       copy("src/styles.css", "dist/styles.css"),
       copy("src/index.html", "dist/index.html"),
