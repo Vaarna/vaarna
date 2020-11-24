@@ -1,6 +1,6 @@
 name: check
 
-on: [push, pull_request]
+on: [push]
 
 env:
   AWS_DEFAULT_REGION: eu-north-1
