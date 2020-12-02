@@ -2,6 +2,7 @@ import typing as t
 from email.utils import format_datetime
 
 import boto3
+from botocore.exceptions import ClientError
 from fastapi import APIRouter, Depends, File, Header, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
@@ -66,6 +67,8 @@ async def show_asset(
     asset_id: str,
     thumbnail: bool = False,
     range: t.Optional[str] = Header(None),
+    if_modified_since: t.Optional[str] = Header(None),
+    if_none_match: t.Optional[str] = Header(None),
     settings: Settings = Depends(get_settings),
     asset_db: AssetDB = Depends(get_asset_db),
 ):
@@ -84,11 +87,19 @@ async def show_asset(
 
     if range is not None:
         req["Range"] = range
+    if if_modified_since is not None:
+        req["IfModifiedSince"] = if_modified_since
+    if if_none_match is not None:
+        req["IfNoneMatch"] = if_none_match
 
     try:
         data = s3.get_object(**req)
     except s3.exceptions.NoSuchKey:
         raise HTTPException(404, "Asset Not Found")
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "304":
+            raise HTTPException(304)
+        raise
 
     headers = {
         "accept-ranges": data["AcceptRanges"],
