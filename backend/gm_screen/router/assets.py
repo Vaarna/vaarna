@@ -39,21 +39,15 @@ def upload_asset(
 
 
 @router.get("/")
-def get_assets(
-    space_id: str,
-    settings: Settings = Depends(get_settings),
-    asset_db: AssetDB = Depends(get_asset_db),
-):
-    return list(asset_db.list_assets(space_id))
-
-
-@router.get("/{asset_id}")
 def get_asset(
     space_id: str,
-    asset_id: str,
+    asset_id: t.Optional[str] = None,
     settings: Settings = Depends(get_settings),
     asset_db: AssetDB = Depends(get_asset_db),
 ):
+    if asset_id is None:
+        return list(asset_db.list_assets(space_id))
+
     asset = asset_db.get_asset(space_id, asset_id)
     if asset is None:
         raise HTTPException(404, "Asset Not Found")
@@ -61,7 +55,7 @@ def get_asset(
     return asset
 
 
-@router.get("/show/{asset_id}")
+@router.get("/show/")
 async def show_asset(
     space_id: str,
     asset_id: str,

@@ -15,7 +15,7 @@ export const Actions = (state: State & space.State) => {
   const showAsset = (asset_id: string) => {
     return m
       .request({
-        url: "/assets/:asset_id/",
+        url: "/assets/",
         params: { space_id: state.space(), asset_id },
       })
       .then((v) => state.table(v as Table));

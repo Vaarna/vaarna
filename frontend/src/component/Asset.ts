@@ -11,7 +11,7 @@ type Extra = {
 };
 
 const src = (space_id: string, asset_id: string) =>
-  `/assets/show/${asset_id}?space_id=${space_id}`;
+  "/assets/show/?" + m.buildQueryString({ space_id, asset_id });
 
 const ImageAsset = (src: string, { filename }: Asset & Extra) =>
   m("img", {
