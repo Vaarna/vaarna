@@ -5,15 +5,10 @@ import boto3
 from fastapi import APIRouter, Depends, File, Header, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 
-from ..config import Settings, get_settings
-from ..model.asset import Asset, AssetKind
-from ..model.asset_db import AssetDB, AssetDynamoDB
+from ..config import Settings, get_asset_db, get_settings
+from ..model import Asset, AssetDB, AssetKind
 
 router = APIRouter()
-
-
-def get_asset_db(settings: Settings = Depends(get_settings)) -> AssetDB:
-    return AssetDynamoDB(settings.asset_table)
 
 
 @router.post("/")

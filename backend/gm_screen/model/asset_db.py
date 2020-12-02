@@ -1,7 +1,7 @@
 import typing as t
 from abc import ABC
 
-from .asset import Asset
+from . import Asset
 
 
 class AssetDB(ABC):

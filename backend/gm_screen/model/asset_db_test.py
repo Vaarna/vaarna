@@ -1,13 +1,11 @@
-import secrets
-import time
 from io import BytesIO
 
 import _pytest
-import boto3
 import pytest
 from fastapi import UploadFile
 
-from .asset_db import Asset, AssetDB, AssetDynamoDB, AssetInMemory
+from ..tests.fixtures import dynamodb_table
+from . import Asset, AssetDB, AssetDynamoDB, AssetInMemory
 
 
 @pytest.fixture
@@ -31,38 +29,17 @@ def db(request: _pytest.fixtures.FixtureRequest):
         yield cls()
 
     elif cls is AssetDynamoDB:
-        endpoint_url = "http://localhost:8000"
-        db = boto3.client("dynamodb", endpoint_url=endpoint_url)
-        table_name = secrets.token_urlsafe()
-        db.create_table(
-            TableName=table_name,
-            AttributeDefinitions=[
+        yield from dynamodb_table(
+            cls,
+            [
                 {"AttributeName": "space_id", "AttributeType": "S"},
                 {"AttributeName": "asset_id", "AttributeType": "S"},
             ],
-            KeySchema=[
+            [
                 {"AttributeName": "space_id", "KeyType": "HASH"},
                 {"AttributeName": "asset_id", "KeyType": "RANGE"},
             ],
-            ProvisionedThroughput={
-                "ReadCapacityUnits": 1,
-                "WriteCapacityUnits": 1,
-            },
         )
-
-        try:
-            for _ in range(10):
-                res = db.describe_table(TableName=table_name)
-                if res["Table"]["TableStatus"] == "ACTIVE":
-                    break
-                time.sleep(1)
-            else:
-                raise RuntimeError("failed to create dynamodb table")
-
-            yield AssetDynamoDB(table_name, endpoint_url=endpoint_url)
-
-        finally:
-            db.delete_table(TableName=table_name)
 
     else:
         raise RuntimeError("unreachable")

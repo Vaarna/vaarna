@@ -21,15 +21,24 @@ export const Actions = (state: State & space.State) => {
       .then((v) => state.table(v as Table));
   };
 
+  const showCurrentAsset = (space_id: string) => {
+    return m
+      .request({
+        url: "/table/",
+        params: { space_id },
+      })
+      .then((v) => showAsset((v as { table: string }).table));
+  };
+
   const tableAsset = (space_id: string, asset_id: string) => {
     return m.request({
-      url: "/notify/show-asset/",
+      url: "/table/",
       method: "POST",
       params: { space_id, asset_id },
     });
   };
 
-  return { showAsset, tableAsset };
+  return { showCurrentAsset, showAsset, tableAsset };
 };
 
 export type Actions = ReturnType<typeof Actions>;

@@ -14,8 +14,8 @@ function PlayerRoute(state: master.State, actions: master.Actions) {
 
   return {
     oncreate() {
-      console.log("oncreate", state.space(), unregisterNotifier);
       unregisterNotifier = registerNotifier(state, actions);
+      actions.showCurrentAsset(state.space());
     },
 
     view() {
@@ -37,6 +37,7 @@ function GMRoute(state: master.State, actions: master.Actions) {
     oncreate() {
       unregisterNotifier = registerNotifier(state, actions);
       unregisterFileUploads = registerFileUploads(actions);
+      actions.showCurrentAsset(state.space());
       actions.updateAssets();
     },
 
