@@ -96,6 +96,7 @@ async def show_asset(
         raise
 
     headers = {
+        "cache-control": "private, immutable, max-age=43200",
         "accept-ranges": data["AcceptRanges"],
         "last-modified": format_datetime(data["LastModified"]),
         "content-length": str(data["ContentLength"]),
