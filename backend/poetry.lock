@@ -397,7 +397,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "uvicorn"
-version = "0.13.0"
+version = "0.13.2"
 description = "The lightning-fast ASGI server."
 category = "main"
 optional = false
@@ -444,7 +444,7 @@ python-versions = ">=3.6.1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "322996626a6c09f780baccdb4c410086d488c5bb1e968682aa96564ca8b0e70e"
+content-hash = "c38472e8af7b71e7b600185d75021d5088ced66f02b4e347591973b4b9bb5650"
 
 [metadata.files]
 aiofiles = [
@@ -717,8 +717,8 @@ urllib3 = [
     {file = "urllib3-1.25.11.tar.gz", hash = "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2"},
 ]
 uvicorn = [
-    {file = "uvicorn-0.13.0-py3-none-any.whl", hash = "sha256:5123606e0f1d15ffbe0f63161c5078f7c28f350c5eb102435671eae58046db0f"},
-    {file = "uvicorn-0.13.0.tar.gz", hash = "sha256:28420526640d800aabe648038f8e2ea8ba2a8bdc363002eecd5dfc57a0f75ab7"},
+    {file = "uvicorn-0.13.2-py3-none-any.whl", hash = "sha256:6707fa7f4dbd86fd6982a2d4ecdaad2704e4514d23a1e4278104311288b04691"},
+    {file = "uvicorn-0.13.2.tar.gz", hash = "sha256:d19ca083bebd212843e01f689900e5c637a292c63bb336c7f0735a99300a5f38"},
 ]
 uvloop = [
     {file = "uvloop-0.14.0-cp35-cp35m-macosx_10_11_x86_64.whl", hash = "sha256:08b109f0213af392150e2fe6f81d33261bb5ce968a288eb698aad4f46eb711bd"},
