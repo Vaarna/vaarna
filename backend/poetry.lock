@@ -60,20 +60,20 @@ d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [[package]]
 name = "boto3"
-version = "1.16.35"
+version = "1.16.45"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-botocore = ">=1.19.35,<1.20.0"
+botocore = ">=1.19.45,<1.20.0"
 jmespath = ">=0.7.1,<1.0.0"
 s3transfer = ">=0.3.0,<0.4.0"
 
 [[package]]
 name = "botocore"
-version = "1.19.35"
+version = "1.19.45"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
@@ -444,7 +444,7 @@ python-versions = ">=3.6.1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "d1a2ea4b9d5c45908a0ff9b9a2c8b167e8f591a8d7544a39a01cf4e34a4f00bb"
+content-hash = "b88d724f24ae7638383e3ccf240753c6732a53b0767536ba7fa8e081bb1f0b74"
 
 [metadata.files]
 aiofiles = [
@@ -467,12 +467,12 @@ black = [
     {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
 ]
 boto3 = [
-    {file = "boto3-1.16.35-py2.py3-none-any.whl", hash = "sha256:2a6e92194bd6f2341908dc9b133af057ea1ff20b7d7e54674f48cdb531d93ca5"},
-    {file = "boto3-1.16.35.tar.gz", hash = "sha256:a35e0915547ea659ddd832c9aaf55038c56fa894c4cc2a2a46cd6c642494012a"},
+    {file = "boto3-1.16.45-py2.py3-none-any.whl", hash = "sha256:95dcf1bf53f4bb8f77ebdab6f6ee5ac2034b53e374e524db3e554147c514b564"},
+    {file = "boto3-1.16.45.tar.gz", hash = "sha256:4afc98aacc72fa3da27fdf9330dcd8fe059d0a987de5c5105a0b4a9d7240b528"},
 ]
 botocore = [
-    {file = "botocore-1.19.35-py2.py3-none-any.whl", hash = "sha256:d31dce56799edb5796085d5296931faae201e28e14e568d9db4dac237a135fe3"},
-    {file = "botocore-1.19.35.tar.gz", hash = "sha256:633aa910509b060717df4130f7e2841f1101c0c47fd5871f4903b4b1dbab7e23"},
+    {file = "botocore-1.19.45-py2.py3-none-any.whl", hash = "sha256:0a322c8ed766cfe7975dda81f7c04fc6f163dd83d80f17c1ff1c8df635a863a4"},
+    {file = "botocore-1.19.45.tar.gz", hash = "sha256:805cc0299f61b641d39277d14d43e4aac8e4d04bf170a1953c3bafb79a9f2e55"},
 ]
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
