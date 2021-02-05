@@ -60,29 +60,29 @@ d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [[package]]
 name = "boto3"
-version = "1.16.59"
+version = "1.17.2"
 description = "The AWS SDK for Python"
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">= 2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [package.dependencies]
-botocore = ">=1.19.59,<1.20.0"
+botocore = ">=1.20.2,<1.21.0"
 jmespath = ">=0.7.1,<1.0.0"
 s3transfer = ">=0.3.0,<0.4.0"
 
 [[package]]
 name = "botocore"
-version = "1.19.59"
+version = "1.20.2"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">= 2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [package.dependencies]
 jmespath = ">=0.7.1,<1.0.0"
 python-dateutil = ">=2.1,<3.0.0"
-urllib3 = {version = ">=1.25.4,<1.27", markers = "python_version != \"3.4\""}
+urllib3 = ">=1.25.4,<1.27"
 
 [[package]]
 name = "click"
@@ -444,7 +444,7 @@ python-versions = ">=3.6.1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "64c5d71b7f2bac4373d8c46d195b8cfea3179ee76c5fa7679f9e764a9615d7c0"
+content-hash = "ecc272eb01e5868249fd8e8d640f1f317c1e6816e40d14b0652ecdcc438b3de4"
 
 [metadata.files]
 aiofiles = [
@@ -467,12 +467,12 @@ black = [
     {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
 ]
 boto3 = [
-    {file = "boto3-1.16.59-py2.py3-none-any.whl", hash = "sha256:f8a2f0bf929af92c4d254d1e495f6642dd335818cc7172e1bdc3dfe28655fb94"},
-    {file = "boto3-1.16.59.tar.gz", hash = "sha256:550a513315194292651bb6cc96e94185bfc4dc6b299c3cf1594882bdd16b3905"},
+    {file = "boto3-1.17.2-py2.py3-none-any.whl", hash = "sha256:6a7f9e2fb631d39bd089cb7e83b4a8ce5e572bdc6545ac51b761bd9ea2ad80c6"},
+    {file = "boto3-1.17.2.tar.gz", hash = "sha256:1a282c1cd7d5028cbb3a75d747df32162295253f55d263ac85840e264830963b"},
 ]
 botocore = [
-    {file = "botocore-1.19.59-py2.py3-none-any.whl", hash = "sha256:67d273b5dcc5033edb2def244ecab51ca24351becf5c1644de279e5653e4e932"},
-    {file = "botocore-1.19.59.tar.gz", hash = "sha256:33959aa19cb6d336c47495c871b00d8670de0023b53bbbbd25790ba0bc5cefe9"},
+    {file = "botocore-1.20.2-py2.py3-none-any.whl", hash = "sha256:7442fdbbdc841bfac7f94f92ecb807de070e32ed205743eb72d4ea27c5e8e778"},
+    {file = "botocore-1.20.2.tar.gz", hash = "sha256:bf587b044983a91a0124cc133ff167b8528c19fbbc8f0b956d9a1ac256cad7d7"},
 ]
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
