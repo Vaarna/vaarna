@@ -2,54 +2,12 @@ name: check
 
 on: [push]
 
-env:
-  AWS_DEFAULT_REGION: eu-north-1
-  AWS_ACCESS_KEY_ID: dummyaccesskeyid
-  AWS_SECRET_ACCESS_KEY: dummysecretaccesskey
-
 jobs:
   check:
     runs-on: ubuntu-latest
 
-    services:
-      dynamodb-local:
-        ports:
-          - 8000:8000
-        image: amazon/dynamodb-local
-
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.8"
       - uses: actions/setup-node@v1
         with:
           node-version: "14"
-      - name: Upgrade and install pip and poetry
-        run: pip install --upgrade pip poetry
-      - name: Install dependencies
-        run: make init
-
-      - name: Run style checks
-        run: make check
-
-      # needs to be done before using backend
-      - name: Build frontend
-        run: make build-frontend
-
-      - name: Run tests
-        run: make test
-
-      - name: Synthesize infra
-        run: |
-          cd infra/
-          yarn cdk synthesize Repository
-          yarn cdk synthesize Infra
-
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Build Docker image
-        run: docker build .

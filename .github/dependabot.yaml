@@ -1,24 +1,6 @@
 version: 2
 updates:
-  - package-ecosystem: "pip"
-    directory: "/backend"
-    schedule:
-      interval: "weekly"
-      day: "saturday"
-
   - package-ecosystem: "npm"
-    directory: "/frontend"
-    schedule:
-      interval: "weekly"
-      day: "saturday"
-
-  - package-ecosystem: "npm"
-    directory: "/infra"
-    schedule:
-      interval: "weekly"
-      day: "saturday"
-
-  - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"

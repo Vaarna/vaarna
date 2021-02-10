@@ -1,0 +1,25 @@
+{
+  "name": "gm-screen",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": "git@github.com:PolarPayne/gm-screen.git",
+  "author": "Maximilian Remming <maximilian@remming.fi>",
+  "license": "AGPL-3.0-or-later",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^10.0.6",
+    "normalize.css": "^8.0.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "sass": "^1.32.7"
+  },
+  "devDependencies": {
+    "@types/node": "^14.14.25",
+    "@types/react": "^17.0.1",
+    "typescript": "^4.1.4"
+  }
+}
