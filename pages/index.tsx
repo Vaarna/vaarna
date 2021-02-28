@@ -1,11 +1,13 @@
-import Link from "next/link"
-import Button from "../components/Button"
+import Link from "next/link";
+import SpaceSelector from "component/SpaceSelector";
 
 export default function Index() {
-    return <>
-        <h1>gm-screen</h1>
-        <Button text="hello world" />
-        <Button text="bye world" />
-        <Link href="/about">About</Link>
+  return (
+    <>
+      <h1>gm-screen</h1>
+      <SpaceSelector />
+
+      <Link href="/item">Items</Link>
     </>
+  );
 }
