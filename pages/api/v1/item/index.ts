@@ -15,9 +15,7 @@ function create(body: NextApiRequest["body"]) {
 }
 
 function update(body: NextApiRequest["body"]) {
-  console.log(body);
   const params = ItemUpdate.parse(body);
-  console.log(params);
   return updateItem(params);
 }
 

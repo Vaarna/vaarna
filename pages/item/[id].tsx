@@ -1,60 +1,113 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useContext } from "react";
-import { Context } from "store";
+import { useEffect, useState } from "react";
 import * as t from "zod";
 import useSWR from "swr";
 
 import SpaceSelector from "component/SpaceSelector";
-import { Item, Items } from "type/item";
+import { Item, ItemNote, Items } from "type/item";
+import { useSpaceId } from "store";
+import { debounce } from "lodash";
 
 async function fetcher(
   url: string,
-  spaceId: string,
-  itemId: string
+  spaceId: unknown,
+  itemId: unknown
 ): Promise<Item> {
-  const { data } = await axios({ url, params: { spaceId, itemId } });
+  const params = t
+    .object({ spaceId: t.string(), itemId: t.string() })
+    .parse({ spaceId, itemId });
+
+  const { data } = await axios({ url, params });
+
   const parsed = Items.parse(data.data);
+  console.log(parsed);
+
   if (parsed.length !== 1) {
-    throw "item does not exist";
+    throw "API returned incorrect number of items";
   }
 
   return parsed[0];
 }
 
-const useItem = (
-  spaceId: string | undefined,
-  id: string | string[] | undefined
-) => {
-  const parsed = t
-    .object({ spaceId: t.string(), id: t.string() })
-    .parse({ spaceId, id });
-
-  return useSWR(["/api/v1/item", parsed.spaceId, parsed.id], fetcher);
-};
-
 export default function ItemC() {
-  const [state, _] = useContext(Context);
-
   const router = useRouter();
   const { id } = router.query;
 
-  const { data, error } = useItem(state.spaceId, id);
+  const [spaceId, _] = useSpaceId();
+  const [note, setNote] = useState<ItemNote | undefined>(undefined);
+  const [inflight, setInflight] = useState(false);
+  const { data, error, revalidate } = useSWR(
+    ["/api/v1/item", spaceId, id],
+    fetcher
+  );
 
-  if (error) return <h1>error</h1>;
-  if (!data) return <h1>loading...</h1>;
+  useEffect(() => {
+    const note = ItemNote.safeParse(data);
+    if (note.success) setNote(note.data);
+  }, [data]);
+
+  const save = () => {
+    setInflight(true);
+
+    return axios({ method: "PUT", url: "/api/v1/item", data: note })
+      .then(({ data }) => {
+        const item = ItemNote.safeParse(data.data);
+        if (item.success) setNote(item.data);
+        else throw item.error;
+      })
+      .then(revalidate)
+      .catch(console.error)
+      .finally(() => setInflight(false));
+  };
+
+  if (error) {
+    return <div>{JSON.stringify(error)}</div>;
+  }
+  if (!data) {
+    return <div>loading...</div>;
+  }
+
+  if (!note)
+    return (
+      <>
+        <SpaceSelector />
+        <h1>{data.path}</h1>
+        <ul>
+          <li>Space ID: {data.spaceId}</li>
+          <li>Item ID: {data.itemId}</li>
+          <li>Created: {data.created}</li>
+          <li>Updated: {data.updated}</li>
+          <li>Type: {data.type}</li>
+        </ul>
+      </>
+    );
 
   return (
     <>
       <SpaceSelector />
-      <h1>
-        {data.path} ({data.spaceId} - {id})
-      </h1>
-      <ul>
-        <li>Created: {data.created}</li>
-        <li>Updated: {data.updated}</li>
-        <li>Type: {data.type}</li>
-      </ul>
+      <hr />
+      <p>Path</p>
+      <input
+        defaultValue={note.path}
+        onChange={(ev) => setNote({ ...note, path: ev.target.value })}
+      />
+      <p>Public</p>
+      <textarea
+        style={{ minWidth: "100%", minHeight: "40ex" }}
+        onChange={(ev) => setNote({ ...note, public: ev.target.value })}
+        defaultValue={note.public}
+      />
+      <p>Private</p>
+      <textarea
+        style={{ minWidth: "100%", minHeight: "40ex" }}
+        onChange={(ev) => setNote({ ...note, private: ev.target.value })}
+        defaultValue={note.private}
+      />
+      <button disabled={inflight} onClick={(ev) => save()}>
+        Save
+      </button>
+      <br />
     </>
   );
 }

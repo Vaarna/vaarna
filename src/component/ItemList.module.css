@@ -4,6 +4,11 @@
   padding: 1rem;
 }
 
+.item:hover {
+  cursor: pointer;
+  background-color: lightgray;
+}
+
 .items {
   padding: 1rem;
 }
