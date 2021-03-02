@@ -6,7 +6,6 @@ import useSWR from "swr";
 
 import { Item, ItemNote, Items } from "type/item";
 import { useSpaceId } from "store";
-import { useForm } from "react-hook-form";
 
 async function fetcher(
   url: string,
