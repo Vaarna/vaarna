@@ -1,0 +1,20 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: lightgray;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: black 1px solid;
+}
+
+.title {
+  font-size: xx-large;
+  margin-left: 1rem;
+}
+
+.spaceSelector {
+  min-width: 18rem;
+}

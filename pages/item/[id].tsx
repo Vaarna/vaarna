@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import * as t from "zod";
 import useSWR from "swr";
 
-import SpaceSelector from "component/SpaceSelector";
 import { Item, ItemNote, Items } from "type/item";
 import { useSpaceId } from "store";
-import { debounce } from "lodash";
+import { useForm } from "react-hook-form";
 
 async function fetcher(
   url: string,
@@ -50,7 +49,11 @@ export default function ItemC() {
   const save = () => {
     setInflight(true);
 
-    return axios({ method: "PUT", url: "/api/v1/item", data: note })
+    return axios({
+      method: "PUT",
+      url: "/api/v1/item",
+      data: note,
+    })
       .then(({ data }) => {
         const item = ItemNote.safeParse(data.data);
         if (item.success) setNote(item.data);
@@ -71,7 +74,6 @@ export default function ItemC() {
   if (!note)
     return (
       <>
-        <SpaceSelector />
         <h1>{data.path}</h1>
         <ul>
           <li>Space ID: {data.spaceId}</li>
@@ -85,28 +87,53 @@ export default function ItemC() {
 
   return (
     <>
-      <SpaceSelector />
-      <hr />
-      <p>Path</p>
-      <input
-        defaultValue={note.path}
-        onChange={(ev) => setNote({ ...note, path: ev.target.value })}
-      />
-      <p>Public</p>
-      <textarea
-        style={{ minWidth: "100%", minHeight: "40ex" }}
-        onChange={(ev) => setNote({ ...note, public: ev.target.value })}
-        defaultValue={note.public}
-      />
-      <p>Private</p>
-      <textarea
-        style={{ minWidth: "100%", minHeight: "40ex" }}
-        onChange={(ev) => setNote({ ...note, private: ev.target.value })}
-        defaultValue={note.private}
-      />
-      <button disabled={inflight} onClick={(ev) => save()}>
-        Save
-      </button>
+      <form
+        onSubmit={(ev) => {
+          ev.preventDefault();
+          save();
+        }}
+      >
+        <label>
+          Path
+          <input
+            name="path"
+            value={note.path}
+            onChange={(ev) => setNote({ ...note, path: ev.target.value })}
+          />
+        </label>
+
+        <label>
+          Public
+          <textarea
+            name="public"
+            style={{
+              minWidth: "100%",
+              minHeight: "40ex",
+              boxSizing: "border-box",
+              fontFamily: "monospace",
+            }}
+            value={note.public}
+            onChange={(ev) => setNote({ ...note, public: ev.target.value })}
+          />
+        </label>
+
+        <label>
+          Private
+          <textarea
+            name="private"
+            style={{
+              minWidth: "100%",
+              minHeight: "40ex",
+              boxSizing: "border-box",
+              fontFamily: "monospace",
+            }}
+            value={note.private}
+            onChange={(ev) => setNote({ ...note, private: ev.target.value })}
+          />
+        </label>
+
+        <input type="submit" disabled={inflight} value="Save" />
+      </form>
       <br />
     </>
   );
