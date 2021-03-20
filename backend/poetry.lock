@@ -246,7 +246,7 @@ email = ["email-validator (>=1.0.3)"]
 
 [[package]]
 name = "pyflakes"
-version = "2.2.0"
+version = "2.3.0"
 description = "passive checker of Python programs"
 category = "dev"
 optional = false
@@ -446,7 +446,7 @@ python-versions = ">=3.6.1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "b9025858b2cbad995b8d9dc06f15b3f993cfce04da2b4c25b2a521fc873d097b"
+content-hash = "6cc6c5fbce58e234368d8d8c4e87184887c9e5c22421c2a6051c39340c53f068"
 
 [metadata.files]
 aiofiles = [
@@ -579,8 +579,8 @@ pydantic = [
     {file = "pydantic-1.8.1.tar.gz", hash = "sha256:26cf3cb2e68ec6c0cfcb6293e69fb3450c5fd1ace87f46b64f678b0d29eac4c3"},
 ]
 pyflakes = [
-    {file = "pyflakes-2.2.0-py2.py3-none-any.whl", hash = "sha256:0d94e0e05a19e57a99444b6ddcf9a6eb2e5c68d3ca1e98e90707af8152c90a92"},
-    {file = "pyflakes-2.2.0.tar.gz", hash = "sha256:35b2d75ee967ea93b55750aa9edbbf72813e06a66ba54438df2cfac9e3c27fc8"},
+    {file = "pyflakes-2.3.0-py2.py3-none-any.whl", hash = "sha256:910208209dcea632721cb58363d0f72913d9e8cf64dc6f8ae2e02a3609aba40d"},
+    {file = "pyflakes-2.3.0.tar.gz", hash = "sha256:e59fd8e750e588358f1b8885e5a4751203a0516e0ee6d34811089ac294c8806f"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
