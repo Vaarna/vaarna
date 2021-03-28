@@ -8,7 +8,8 @@ import {
 import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
-import { GetAssetHeaders, GetAssetQuery } from "type/api";
+import { GetAssetData, GetAssetHeaders, GetAssetQuery } from "type/api";
+import { AssetDatas } from "type/asset";
 
 function constructHeaders(
   res: HeadObjectCommandOutput | GetObjectCommandOutput
@@ -128,4 +129,8 @@ export async function getAsset(
     status: data.ContentRange == undefined ? 200 : 206,
     body: data.Body as Readable,
   });
+}
+
+export async function getAssetData(query: GetAssetData): Promise<AssetDatas> {
+  return [];
 }
