@@ -20,3 +20,5 @@ jobs:
 
       - name: Run tests
         run: yarn run test
+      - name: Build next app
+        run: yarn run build
