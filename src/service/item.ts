@@ -1,10 +1,7 @@
 import {
-  BatchGetItemCommand,
   DeleteItemCommand,
   DynamoDBClient,
-  GetItemCommand,
   PutItemCommand,
-  QueryCommand,
   UpdateItemCommand,
 } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
@@ -12,65 +9,20 @@ import { v4 as v4uuid } from "uuid";
 
 import { GetItemsQuery, RemoveItemQuery } from "type/api";
 import { Item, ItemCreate, Items, ItemUpdate } from "type/item";
+import { getItemsFromTable } from "util/dynamodb";
 
 const itemTable = "ItemsDev";
 
 export async function getItems(params: GetItemsQuery): Promise<Items> {
   const { spaceId, itemId } = params;
 
-  const db = new DynamoDBClient({});
+  const items = await getItemsFromTable({
+    tableName: itemTable,
+    partition: { key: "spaceId", value: spaceId },
+    sort: { key: "itemId", value: itemId },
+  });
 
-  if (typeof itemId === "undefined") {
-    // all items
-    const cmd = new QueryCommand({
-      TableName: itemTable,
-      KeyConditionExpression: "spaceId = :s",
-      ExpressionAttributeValues: {
-        ":s": { S: spaceId },
-      },
-    });
-
-    const res = await db.send(cmd);
-    const items = res.Items?.map((v) => unmarshall(v));
-    return Items.parse(items);
-  } else if (typeof itemId === "string") {
-    // single item
-    const cmd = new GetItemCommand({
-      TableName: itemTable,
-      Key: marshall({ spaceId, itemId }),
-    });
-
-    const res = await db.send(cmd);
-    if (!res.Item) {
-      return [];
-    }
-
-    const item = unmarshall(res.Item);
-    return [Item.parse(item)];
-  } else {
-    // multiple items
-
-    // TODO when requesting more than 100 items, batch the requests
-    // TODO when the response returns UnprocessedKeys also get those
-    const cmd = new BatchGetItemCommand({
-      RequestItems: {
-        [itemTable]: {
-          Keys: itemId.map((v) => marshall({ spaceId, itemId })),
-        },
-      },
-    });
-
-    const res = await db.send(cmd);
-    const out = [];
-    if (res.Responses && itemTable in res.Responses) {
-      for (const k in Object.keys(res.Responses[itemTable])) {
-        const v = res.Responses[itemTable][k];
-        if (v) out.push(unmarshall(v));
-      }
-    }
-
-    return Items.parse(out);
-  }
+  return Items.parse(items);
 }
 
 export async function createItem(item: ItemCreate): Promise<Item> {
