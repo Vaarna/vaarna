@@ -11,3 +11,12 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "14"
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Check formatting
+        run: yarn run check:prettier
+
+      - name: Run tests
+        run: yarn run test
