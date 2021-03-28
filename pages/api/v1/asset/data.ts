@@ -10,7 +10,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         return res.status(204).end();
 
       case "GET":
-        return res.json({ data: await get(req.query) });
+      // return res.json({ data: await get(req.query) });
 
       default:
         res.setHeader("Allow", allow);

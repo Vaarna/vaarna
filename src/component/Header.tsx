@@ -3,7 +3,7 @@ import { useSpaceId } from "store";
 import Link from "next/link";
 
 export default function Header() {
-  const [spaceId, setSpaceId] = useSpaceId();
+  const [spaceId, setSpaceId] = useSpaceId<string>();
 
   return (
     <div className={styles.header}>

@@ -16,7 +16,7 @@ async function fetcher(url: string, spaceId: string): Promise<Items> {
 }
 
 export default function ItemsC() {
-  const [spaceId, _] = useSpaceId();
+  const [spaceId, _] = useSpaceId<string>();
   const { data, error, revalidate } = useSWR(
     ["/api/v1/item", spaceId],
     fetcher

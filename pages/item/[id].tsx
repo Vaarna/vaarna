@@ -32,7 +32,7 @@ export default function ItemC() {
   const router = useRouter();
   const { id } = router.query;
 
-  const [spaceId, _] = useSpaceId();
+  const [spaceId, _] = useSpaceId<string>();
   const [note, setNote] = useState<ItemNote | undefined>(undefined);
   const [inflight, setInflight] = useState(false);
   const { data, error, revalidate } = useSWR(
