@@ -17,6 +17,16 @@ export const GetAssetHeaders = t.object({
 });
 export type GetAssetHeaders = t.infer<typeof GetAssetHeaders>;
 
+export const GetAssetData = t.object({
+  spaceId: t.string().uuid(),
+  assetId: t.union([
+    t.undefined(),
+    t.string().uuid(),
+    t.array(t.string().uuid()),
+  ]),
+});
+export type GetAssetData = t.infer<typeof GetAssetData>;
+
 // ITEM
 
 export const GetItemsQuery = t.object({
