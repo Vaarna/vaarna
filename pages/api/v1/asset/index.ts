@@ -1,6 +1,8 @@
+import { createReadStream } from "fs";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getAsset, headAsset } from "service/asset";
-import { GetAssetHeaders, GetAssetQuery } from "type/api";
+import { getAsset, headAsset, postAsset } from "service/asset";
+import { GetAssetHeaders, GetAssetQuery, PostAssetQuery } from "type/api";
+import { ParsedMultipartBody, parseMultipartBody } from "util/multipart";
 
 function head(
   query: NextApiRequest["query"],
@@ -24,8 +26,26 @@ function get(
   return getAsset(parsedQuery, parsedHeaders, res);
 }
 
+async function post(body: ParsedMultipartBody) {
+  const out = await Promise.all(
+    Object.entries(body.files).map(async ([field, file]) => {
+      console.log("uploading file", file);
+      const s = createReadStream(file.path);
+      const key = await postAsset(s, {
+        filename: file.originalFilename,
+        size: file.size,
+        contentType: file.headers["content-type"],
+      });
+
+      return [field, key];
+    })
+  );
+
+  return Object.fromEntries(out);
+}
+
 export default async function Asset(req: NextApiRequest, res: NextApiResponse) {
-  const allow = "OPTIONS, HEAD, GET";
+  const allow = "OPTIONS, HEAD, GET, POST";
 
   try {
     switch (req.method) {
@@ -39,6 +59,10 @@ export default async function Asset(req: NextApiRequest, res: NextApiResponse) {
       case "GET":
         return await get(req.query, req.headers, res);
 
+      case "POST":
+        const body = await parseMultipartBody(req);
+        return res.status(201).json({ assetIds: await post(body) });
+
       default:
         res.setHeader("Allow", allow);
         return res.status(405).end();
@@ -47,3 +71,9 @@ export default async function Asset(req: NextApiRequest, res: NextApiResponse) {
     res.status(500).end();
   }
 }
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};

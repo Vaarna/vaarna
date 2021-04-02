@@ -3,13 +3,21 @@ import {
   GetObjectCommandOutput,
   HeadObjectCommand,
   HeadObjectCommandOutput,
+  PutObjectCommand,
+  PutObjectCommandInput,
   S3Client,
 } from "@aws-sdk/client-s3";
 import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
-import { GetAssetData, GetAssetHeaders, GetAssetQuery } from "type/api";
+import {
+  GetAssetData,
+  GetAssetHeaders,
+  GetAssetQuery,
+  PostAssetQuery,
+} from "type/api";
 import { AssetDatas } from "type/asset";
+import { v4 as v4uuid } from "uuid";
 
 function constructHeaders(
   res: HeadObjectCommandOutput | GetObjectCommandOutput
@@ -129,6 +137,35 @@ export async function getAsset(
     status: data.ContentRange == undefined ? 200 : 206,
     body: data.Body as Readable,
   });
+}
+
+type PostAssetParams = {
+  filename: string;
+  size: number;
+  contentType: string;
+};
+
+export async function postAsset(
+  body: Exclude<PutObjectCommandInput["Body"], undefined>,
+  params: PostAssetParams
+): Promise<string> {
+  const key = v4uuid();
+  console.log("uploading file with key=%s", key);
+
+  const s3 = new S3Client({});
+  const cmd = new PutObjectCommand({
+    Bucket: assetBucket,
+    Key: key,
+    Body: body,
+    ContentType: params.contentType,
+    ContentLength: params.size,
+    Metadata: {
+      name: params.filename,
+    },
+  });
+
+  const res = await s3.send(cmd);
+  return key;
 }
 
 export async function getAssetData(query: GetAssetData): Promise<AssetDatas> {
