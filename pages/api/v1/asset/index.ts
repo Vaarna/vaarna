@@ -1,7 +1,9 @@
 import { createReadStream } from "fs";
+import { unlink } from "fs/promises";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAsset, headAsset, postAsset } from "service/asset";
 import { GetAssetHeaders, GetAssetQuery, PostAssetQuery } from "type/api";
+import { pathToFileURL } from "url";
 import { ParsedMultipartBody, parseMultipartBody } from "util/multipart";
 
 function head(
@@ -61,7 +63,12 @@ export default async function Asset(req: NextApiRequest, res: NextApiResponse) {
 
       case "POST":
         const body = await parseMultipartBody(req);
-        return res.status(201).json({ assetIds: await post(body) });
+        res.status(201).json({ assetIds: await post(body) });
+        return await Promise.all(
+          Object.values(body.files).map(({ path }) =>
+            unlink(pathToFileURL(path))
+          )
+        );
 
       default:
         res.setHeader("Allow", allow);
