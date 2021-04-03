@@ -1,32 +1,5 @@
 import * as t from "zod";
 
-const partialPartial = <
-  T extends t.ZodRawShape,
-  Mask extends { [k in keyof T]?: true },
-  UnknownKeys extends "strip" | "strict" | "passthrough" = "strip",
-  Catchall extends t.ZodTypeAny = t.ZodTypeAny
->(
-  schema: t.ZodObject<T, UnknownKeys, Catchall>,
-  mask: Mask
-): t.ZodObject<
-  {
-    [k in keyof T]: k extends keyof Mask ? ReturnType<T[k]["optional"]> : T[k];
-  },
-  UnknownKeys,
-  Catchall
-> => {
-  const newShape: any = {};
-  for (const key in schema.shape) {
-    const fieldSchema = schema.shape[key];
-    newShape[key] = mask[key] ? fieldSchema.optional() : fieldSchema;
-  }
-
-  return new t.ZodObject({
-    ...schema._def,
-    shape: () => newShape,
-  });
-};
-
 export const ItemBase = t.object({
   spaceId: t.string().uuid(),
   itemId: t.string().uuid(),
@@ -109,3 +82,22 @@ export type ItemCreate = t.infer<typeof ItemCreate>;
 
 export const ItemUpdate = t.union([ItemNoteUpdate, ItemLinkUpdate]);
 export type ItemUpdate = t.infer<typeof ItemUpdate>;
+
+// API
+
+export const GetItemsQuery = t.object({
+  spaceId: t.string().uuid(),
+  itemId: t.union([
+    t.undefined(),
+    t.string().uuid(),
+    t.array(t.string().uuid()),
+  ]),
+});
+export type GetItemsQuery = t.infer<typeof GetItemsQuery>;
+
+export const RemoveItemQuery = t.object({
+  spaceId: t.string().uuid(),
+  itemId: t.string().uuid(),
+  version: t.string().regex(/^\d+$/),
+});
+export type RemoveItemQuery = t.infer<typeof RemoveItemQuery>;

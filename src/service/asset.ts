@@ -10,13 +10,8 @@ import {
 import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
-import {
-  GetAssetData,
-  GetAssetHeaders,
-  GetAssetQuery,
-  PostAssetQuery,
-} from "type/api";
-import { AssetDatas } from "type/asset";
+import { GetAssetHeaders, GetAssetQuery } from "type/asset";
+import { AssetDatas, GetAssetData } from "type/assetData";
 import { v4 as v4uuid } from "uuid";
 
 function constructHeaders(

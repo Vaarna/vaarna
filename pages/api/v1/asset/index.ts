@@ -3,7 +3,7 @@ import { unlink } from "fs/promises";
 import { requestLogger } from "logger";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAsset, headAsset, postAsset } from "service/asset";
-import { GetAssetHeaders, GetAssetQuery, PostAssetQuery } from "type/api";
+import { GetAssetHeaders, GetAssetQuery } from "type/asset";
 import { ApiParseError, parseRequest } from "type/error";
 import { pathToFileURL } from "url";
 import { ParsedMultipartBody, parseMultipartBody } from "util/multipart";

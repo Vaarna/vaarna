@@ -7,8 +7,14 @@ import {
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { v4 as v4uuid } from "uuid";
 
-import { GetItemsQuery, RemoveItemQuery } from "type/api";
-import { Item, ItemCreate, Items, ItemUpdate } from "type/item";
+import {
+  Item,
+  ItemCreate,
+  Items,
+  ItemUpdate,
+  GetItemsQuery,
+  RemoveItemQuery,
+} from "type/item";
 import { getItemsFromTable } from "util/dynamodb";
 
 const itemTable = "ItemsDev";
