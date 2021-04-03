@@ -1,3 +1,4 @@
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import {
   GetObjectCommand,
   GetObjectCommandOutput,
@@ -7,12 +8,13 @@ import {
   PutObjectCommandInput,
   S3Client,
 } from "@aws-sdk/client-s3";
+import { marshall } from "@aws-sdk/util-dynamodb";
 import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
 import { GetAssetHeaders, GetAssetQuery } from "type/asset";
-import { AssetDatas, GetAssetData } from "type/assetData";
-import { v4 as v4uuid } from "uuid";
+import { AssetData, AssetDatas, GetAssetDataQuery } from "type/assetData";
+import { getItemsFromTable } from "util/dynamodb";
 
 function constructHeaders(
   res: HeadObjectCommandOutput | GetObjectCommandOutput
@@ -27,6 +29,10 @@ function constructHeaders(
     {
       name: "Content-Range",
       value: "ContentRange" in res ? res.ContentRange : undefined,
+    },
+    {
+      name: "Cache-Control",
+      value: "immutable, private, max-age=3600 stale-while-revalidate=3600",
     },
   ];
 
@@ -77,10 +83,10 @@ async function handleResponse(
 }
 
 const assetBucket = "gm-screen";
+const assetTable = "AssetData";
 
 export async function headAsset(
   query: GetAssetQuery,
-  headers: GetAssetHeaders,
   res: NextApiResponse,
   override?: { status?: number }
 ): Promise<void> {
@@ -88,9 +94,6 @@ export async function headAsset(
   const cmd = new HeadObjectCommand({
     Bucket: assetBucket,
     Key: query.assetId,
-    Range: headers["range"],
-    IfModifiedSince: headers["if-modified-since"],
-    IfNoneMatch: headers["if-none-match"],
   });
 
   const data = await s3.send(cmd);
@@ -121,7 +124,7 @@ export async function getAsset(
     data = await s3.send(cmd);
   } catch (error) {
     if (error?.$metadata?.httpStatusCode === 304) {
-      return headAsset(query, headers, res, { status: 304 });
+      return headAsset(query, res, { status: 304 });
     }
 
     throw error;
@@ -138,23 +141,21 @@ export async function getAsset(
   });
 }
 
-type PostAssetParams = {
+type UploadAssetParams = {
+  assetId: string;
   filename: string;
   size: number;
   contentType: string;
 };
 
-export async function postAsset(
+export async function uploadAsset(
   body: Exclude<PutObjectCommandInput["Body"], undefined>,
-  params: PostAssetParams
-): Promise<string> {
-  const key = v4uuid();
-  console.log("uploading file with key=%s", key);
-
+  params: UploadAssetParams
+): Promise<void> {
   const s3 = new S3Client({});
   const cmd = new PutObjectCommand({
     Bucket: assetBucket,
-    Key: key,
+    Key: params.assetId,
     Body: body,
     ContentType: params.contentType,
     ContentLength: params.size,
@@ -164,9 +165,51 @@ export async function postAsset(
   });
 
   const res = await s3.send(cmd);
-  return key;
 }
 
-export async function getAssetData(query: GetAssetData): Promise<AssetDatas> {
-  return [];
+export function getKind(contentType: string): AssetData["kind"] {
+  const split = contentType.split("/");
+
+  if (split.length !== 2) return "other";
+
+  const lhs = split[0];
+  switch (lhs) {
+    case "audio":
+    case "video":
+    case "image":
+      return lhs;
+  }
+
+  if (contentType === "application/pdf") return "pdf";
+
+  return "other";
+}
+
+export async function createAssetData(asset: AssetData): Promise<void> {
+  const dynamodb = new DynamoDBClient({});
+  const cmd = new PutItemCommand({
+    TableName: assetTable,
+    Item: marshall({
+      ...asset,
+    }),
+  });
+
+  const res = await dynamodb.send(cmd);
+}
+
+export async function getAssetData(
+  query: GetAssetDataQuery
+): Promise<AssetDatas> {
+  const data = await getItemsFromTable({
+    tableName: assetTable,
+    partition: { key: "spaceId", value: query.spaceId },
+    sort: { key: "assetId", value: query.assetId },
+  });
+
+  const parsedData = AssetDatas.safeParse(data);
+  if (!parsedData.success) {
+    throw "500";
+  }
+
+  return parsedData.data;
 }

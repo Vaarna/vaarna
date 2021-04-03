@@ -115,8 +115,6 @@ export async function getItemsFromTable(
 
   const sortValue = params.sort.value;
 
-  // const log = rootLogger.child({ params });
-
   let items;
   if (typeof sortValue === "undefined") {
     logger.info("get all items from table %s", params.tableName);

@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { requestLogger } from "logger";
 import { createItem, getItems, removeItem, updateItem } from "service/item";
-import { ApiParseError, parseRequest } from "type/error";
+import { ApiError, parseRequest } from "type/error";
 import {
   ItemCreate,
   ItemUpdate,
@@ -62,9 +62,10 @@ export default async function Item(req: NextApiRequest, res: NextApiResponse) {
         return res.status(405).end();
     }
   } catch (error) {
-    if (error instanceof ApiParseError) {
+    if (error instanceof ApiError) {
       res.status(error.code).json(error.json());
     } else {
+      logger.error(error, "internal server error");
       res.status(500).end();
     }
   }
