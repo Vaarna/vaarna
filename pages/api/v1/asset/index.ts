@@ -52,11 +52,10 @@ export default async function Asset(req: NextApiRequest, res: NextApiResponse) {
       }
 
       case "HEAD": {
-        const { query, headers } = parseRequest({
+        const { query } = parseRequest({
           query: GetAssetQuery,
-          headers: GetAssetHeaders,
         })(req, requestId);
-        return await headAsset(query, headers, res);
+        return await headAsset(query, res);
       }
 
       case "GET": {

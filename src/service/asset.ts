@@ -87,7 +87,6 @@ const assetTable = "AssetData";
 
 export async function headAsset(
   query: GetAssetQuery,
-  headers: GetAssetHeaders,
   res: NextApiResponse,
   override?: { status?: number }
 ): Promise<void> {
@@ -95,9 +94,6 @@ export async function headAsset(
   const cmd = new HeadObjectCommand({
     Bucket: assetBucket,
     Key: query.assetId,
-    // Range: headers["range"],
-    // IfModifiedSince: headers["if-modified-since"],
-    // IfNoneMatch: headers["if-none-match"],
   });
 
   const data = await s3.send(cmd);
@@ -128,7 +124,7 @@ export async function getAsset(
     data = await s3.send(cmd);
   } catch (error) {
     if (error?.$metadata?.httpStatusCode === 304) {
-      return headAsset(query, headers, res, { status: 304 });
+      return headAsset(query, res, { status: 304 });
     }
 
     throw error;
