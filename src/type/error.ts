@@ -81,38 +81,6 @@ export class ApiParseBodyError extends ApiParseError {
   }
 }
 
-type ZodParsed<T> =
-  | {
-      success: true;
-      data: T;
-    }
-  | {
-      success: false;
-      error: ZodError<T>;
-    };
-
-export function checkParsed<T>(
-  parsed: ZodParsed<T>,
-  loc: Location,
-  requestId: string
-): T {
-  if (!parsed.success) {
-    switch (loc) {
-      case "query":
-        throw new ApiParseQueryError(parsed.error, requestId);
-      case "headers":
-        throw new ApiParseHeadersError(parsed.error, requestId);
-      case "body":
-        throw new ApiParseBodyError(parsed.error, requestId);
-
-      default:
-        throw new Error("unreachable");
-    }
-  }
-
-  return parsed.data;
-}
-
 export const parseRequest = <
   Q,
   H,
