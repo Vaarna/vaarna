@@ -1,5 +1,5 @@
 import { NextApiRequest } from "next";
-import { ZodError, ZodTypeAny, z, ZodObject } from "zod";
+import { ZodError, z } from "zod";
 
 type Location = "query" | "headers" | "body";
 type ApiErrorResponse = {

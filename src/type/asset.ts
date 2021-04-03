@@ -1,22 +1,22 @@
-import * as t from "zod";
+import { z } from "zod";
 
 // ASSET
 
-export const GetAssetQuery = t.object({
-  assetId: t.string().uuid(),
+export const GetAssetQuery = z.object({
+  assetId: z.string().uuid(),
 });
-export type GetAssetQuery = t.infer<typeof GetAssetQuery>;
+export type GetAssetQuery = z.infer<typeof GetAssetQuery>;
 
-export const GetAssetHeaders = t
+export const GetAssetHeaders = z
   .object({
-    range: t.string(),
-    "if-modified-since": t.string().transform((v) => new Date(v)),
-    "if-none-match": t.string(),
+    range: z.string(),
+    "if-modified-since": z.string().transform((v) => new Date(v)),
+    "if-none-match": z.string(),
   })
   .partial();
-export type GetAssetHeaders = t.infer<typeof GetAssetHeaders>;
+export type GetAssetHeaders = z.infer<typeof GetAssetHeaders>;
 
-export const PostAssetQuery = t.object({
-  spaceId: t.string().uuid(),
+export const PostAssetQuery = z.object({
+  spaceId: z.string().uuid(),
 });
-export type PostAssetQuery = t.infer<typeof PostAssetQuery>;
+export type PostAssetQuery = z.infer<typeof PostAssetQuery>;

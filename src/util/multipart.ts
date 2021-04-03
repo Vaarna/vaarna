@@ -1,17 +1,17 @@
 import { IncomingMessage } from "http";
 import { Form } from "multiparty";
-import * as t from "zod";
+import { z } from "zod";
 
-const File = t
+const File = z
   .array(
-    t.object({
-      fieldName: t.string(),
-      originalFilename: t.string(),
-      path: t.string(),
-      size: t.number().int(),
-      headers: t.object({
-        "content-disposition": t.string(),
-        "content-type": t.string(),
+    z.object({
+      fieldName: z.string(),
+      originalFilename: z.string(),
+      path: z.string(),
+      size: z.number().int(),
+      headers: z.object({
+        "content-disposition": z.string(),
+        "content-type": z.string(),
       }),
     })
   )
@@ -21,11 +21,11 @@ const File = t
   )
   .transform((v) => v[0]);
 
-export const ParsedMultipartBody = t.object({
-  fields: t.record(t.any()),
-  files: t.record(File),
+export const ParsedMultipartBody = z.object({
+  fields: z.record(z.any()),
+  files: z.record(File),
 });
-export type ParsedMultipartBody = t.infer<typeof ParsedMultipartBody>;
+export type ParsedMultipartBody = z.infer<typeof ParsedMultipartBody>;
 
 export function parseMultipartBody(
   body: IncomingMessage

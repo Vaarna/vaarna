@@ -1,27 +1,27 @@
-import * as t from "zod";
+import { z } from "zod";
 
-export const Kind = t.enum(["image", "video", "audio", "pdf", "other"]);
-export type Kind = t.infer<typeof Kind>;
+export const Kind = z.enum(["image", "video", "audio", "pdf", "other"]);
+export type Kind = z.infer<typeof Kind>;
 
-export const AssetData = t.object({
-  spaceId: t.string().uuid(),
-  assetId: t.string().uuid(),
-  size: t.number().int(),
-  contentType: t.string(),
-  filename: t.string(),
+export const AssetData = z.object({
+  spaceId: z.string().uuid(),
+  assetId: z.string().uuid(),
+  size: z.number().int(),
+  contentType: z.string(),
+  filename: z.string(),
   kind: Kind,
 });
-export type AssetData = t.infer<typeof AssetData>;
+export type AssetData = z.infer<typeof AssetData>;
 
-export const AssetDatas = t.array(AssetData);
-export type AssetDatas = t.infer<typeof AssetDatas>;
+export const AssetDatas = z.array(AssetData);
+export type AssetDatas = z.infer<typeof AssetDatas>;
 
-export const GetAssetDataQuery = t.object({
-  spaceId: t.string().uuid(),
-  assetId: t.union([
-    t.undefined(),
-    t.string().uuid(),
-    t.array(t.string().uuid()),
+export const GetAssetDataQuery = z.object({
+  spaceId: z.string().uuid(),
+  assetId: z.union([
+    z.undefined(),
+    z.string().uuid(),
+    z.array(z.string().uuid()),
   ]),
 });
-export type GetAssetDataQuery = t.infer<typeof GetAssetDataQuery>;
+export type GetAssetDataQuery = z.infer<typeof GetAssetDataQuery>;

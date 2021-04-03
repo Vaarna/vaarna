@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import * as t from "zod";
+import { z } from "zod";
 import useSWR from "swr";
 
 import { Item, ItemNote, Items } from "type/item";
@@ -12,8 +12,8 @@ async function fetcher(
   spaceId: unknown,
   itemId: unknown
 ): Promise<Item> {
-  const params = t
-    .object({ spaceId: t.string(), itemId: t.string() })
+  const params = z
+    .object({ spaceId: z.string(), itemId: z.string() })
     .parse({ spaceId, itemId });
 
   const { data } = await axios({ url, params });

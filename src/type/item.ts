@@ -1,14 +1,14 @@
-import * as t from "zod";
+import { z } from "zod";
 
-export const ItemBase = t.object({
-  spaceId: t.string().uuid(),
-  itemId: t.string().uuid(),
-  created: t.string(),
-  updated: t.string(),
-  version: t.number().int(),
-  path: t.string(),
+export const ItemBase = z.object({
+  spaceId: z.string().uuid(),
+  itemId: z.string().uuid(),
+  created: z.string(),
+  updated: z.string(),
+  version: z.number().int(),
+  path: z.string(),
 });
-export type ItemBase = t.infer<typeof ItemBase>;
+export type ItemBase = z.infer<typeof ItemBase>;
 
 const createOmit: {
   itemId: true;
@@ -33,71 +33,71 @@ const updateOmit: {
 // NOTE
 
 export const ItemNote = ItemBase.merge(
-  t.object({
-    type: t.literal("note"),
-    public: t.string(),
-    private: t.string(),
+  z.object({
+    type: z.literal("note"),
+    public: z.string(),
+    private: z.string(),
   })
 );
-export type ItemNote = t.infer<typeof ItemNote>;
+export type ItemNote = z.infer<typeof ItemNote>;
 
-export const ItemNotes = t.array(ItemNote);
-export type ItemNotes = t.infer<typeof ItemNotes>;
+export const ItemNotes = z.array(ItemNote);
+export type ItemNotes = z.infer<typeof ItemNotes>;
 
 export const ItemNoteCreate = ItemNote.omit(createOmit);
-export type ItemNoteCreate = t.infer<typeof ItemNoteCreate>;
+export type ItemNoteCreate = z.infer<typeof ItemNoteCreate>;
 
 export const ItemNoteUpdate = ItemNote.omit(updateOmit);
-export type ItemNoteUpdate = t.infer<typeof ItemNoteUpdate>;
+export type ItemNoteUpdate = z.infer<typeof ItemNoteUpdate>;
 
 // LINK
 
 export const ItemLink = ItemBase.merge(
-  t.object({
-    type: t.literal("link"),
-    href: t.string().uuid(),
+  z.object({
+    type: z.literal("link"),
+    href: z.string().uuid(),
   })
 );
-export type ItemLink = t.infer<typeof ItemLink>;
+export type ItemLink = z.infer<typeof ItemLink>;
 
-export const ItemLinks = t.array(ItemLink);
-export type ItemLinks = t.infer<typeof ItemLinks>;
+export const ItemLinks = z.array(ItemLink);
+export type ItemLinks = z.infer<typeof ItemLinks>;
 
 export const ItemLinkCreate = ItemLink.omit(createOmit);
-export type ItemLinkCreate = t.infer<typeof ItemLinkCreate>;
+export type ItemLinkCreate = z.infer<typeof ItemLinkCreate>;
 
 export const ItemLinkUpdate = ItemLink.omit(updateOmit);
-export type ItemLinkUpdate = t.infer<typeof ItemLinkUpdate>;
+export type ItemLinkUpdate = z.infer<typeof ItemLinkUpdate>;
 
 // ITEM
 
-export const Item = t.union([ItemNote, ItemLink]);
-export type Item = t.infer<typeof Item>;
+export const Item = z.union([ItemNote, ItemLink]);
+export type Item = z.infer<typeof Item>;
 
-export const Items = t.array(Item);
-export type Items = t.infer<typeof Items>;
+export const Items = z.array(Item);
+export type Items = z.infer<typeof Items>;
 
-export const ItemCreate = t.union([ItemNoteCreate, ItemLinkCreate]);
-export type ItemCreate = t.infer<typeof ItemCreate>;
+export const ItemCreate = z.union([ItemNoteCreate, ItemLinkCreate]);
+export type ItemCreate = z.infer<typeof ItemCreate>;
 
-export const ItemUpdate = t.union([ItemNoteUpdate, ItemLinkUpdate]);
-export type ItemUpdate = t.infer<typeof ItemUpdate>;
+export const ItemUpdate = z.union([ItemNoteUpdate, ItemLinkUpdate]);
+export type ItemUpdate = z.infer<typeof ItemUpdate>;
 
 // API
 
-export const GetItemsQuery = t.object({
-  spaceId: t.string().uuid(),
-  itemId: t.union([
-    t.undefined(),
-    t.string().uuid(),
-    t.array(t.string().uuid()),
+export const GetItemsQuery = z.object({
+  spaceId: z.string().uuid(),
+  itemId: z.union([
+    z.undefined(),
+    z.string().uuid(),
+    z.array(z.string().uuid()),
   ]),
 });
-export type GetItemsQuery = t.infer<typeof GetItemsQuery>;
+export type GetItemsQuery = z.infer<typeof GetItemsQuery>;
 
-export const RemoveItemQuery = t.object({
-  spaceId: t.string().uuid(),
-  itemId: t.string().uuid(),
-  version: t.string().regex(/^\d+$/),
+export const RemoveItemQuery = z.object({
+  spaceId: z.string().uuid(),
+  itemId: z.string().uuid(),
+  version: z.string().regex(/^\d+$/),
 });
-export type RemoveItemQuery = t.infer<typeof RemoveItemQuery>;
+export type RemoveItemQuery = z.infer<typeof RemoveItemQuery>;
