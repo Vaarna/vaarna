@@ -19,7 +19,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         const { query } = parseRequest({
           query: GetAssetDataQuery,
         })(req, requestId);
-        return res.json({ data: await getAssetData(req.query) });
+        return res.json({ data: await getAssetData(query) });
 
       default:
         res.setHeader("Allow", allow);

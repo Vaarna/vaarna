@@ -13,7 +13,7 @@ import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
 import { GetAssetHeaders, GetAssetQuery } from "type/asset";
-import { AssetData, AssetDatas, GetAssetData } from "type/assetData";
+import { AssetData, AssetDatas, GetAssetDataQuery } from "type/assetData";
 import { getItemsFromTable } from "util/dynamodb";
 
 function constructHeaders(
@@ -197,7 +197,9 @@ export async function createAssetData(asset: AssetData): Promise<void> {
   const res = await dynamodb.send(cmd);
 }
 
-export async function getAssetData(query: GetAssetData): Promise<AssetDatas> {
+export async function getAssetData(
+  query: GetAssetDataQuery
+): Promise<AssetDatas> {
   const data = await getItemsFromTable({
     tableName: assetTable,
     partition: { key: "spaceId", value: query.spaceId },
