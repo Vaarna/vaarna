@@ -1,3 +1,62 @@
-.content {
-  padding: 1rem;
+:root {
+  --font-sans-serif: "Roboto", sans-serif;
+  --font-sans-serif-compact: "Roboto Condensed", sans-serif;
+  --font-serif: "Roboto Slab", serif;
+  --font-monospace: "Roboto Mono", monospace;
+
+  --color-black: #2f2d2e;
+  --color-white: #fff;
+  --color-orange: #ff7900;
+  --color-blue: #08b2e3;
+  --color-pink: #f5b0cb;
+}
+
+body {
+  font-family: var(--font-sans-serif);
+}
+
+a {
+  color: var(--color-blue);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:visited {
+    text-decoration: dashed;
+  }
+}
+
+input,
+textarea {
+  font-family: var(--font-monospace);
+}
+
+table {
+  font-family: var(--font-monospace);
+
+  border-collapse: collapse;
+
+  tr:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  td {
+    border: rgba(0, 0, 0, 0.1) 1px solid;
+    padding: 0.2rem;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-serif);
+}
+
+* {
+  box-sizing: border-box;
 }

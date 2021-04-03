@@ -2,7 +2,7 @@ import axios from "axios";
 import { useSpaceId } from "store";
 import useSWR from "swr";
 
-import { ItemList } from "component/ItemList";
+import { ItemTable } from "component/ItemTable";
 import { Items } from "type/item";
 import { useRouter } from "next/router";
 
@@ -42,7 +42,7 @@ export default function ItemsC() {
       >
         New Note
       </button>
-      {data ? <ItemList items={data} /> : <div>loading...</div>}
+      {data ? <ItemTable items={data} /> : <div>loading...</div>}
     </>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AssetData, AssetDatas } from "type/assetData";
+import bytes from "bytes";
 
 const Row: React.FC<{ asset: AssetData }> = ({ asset }) => (
   <tr>
@@ -9,7 +10,7 @@ const Row: React.FC<{ asset: AssetData }> = ({ asset }) => (
     </td>
     <td>{asset.filename}</td>
     <td>{asset.kind}</td>
-    <td>{asset.size}</td>
+    <td style={{ textAlign: "right" }}>{bytes(asset.size)}</td>
     <td>{asset.contentType}</td>
   </tr>
 );
@@ -29,7 +30,7 @@ export const AssetTable: React.FC<{ assets: AssetDatas }> = ({ assets }) => {
       </thead>
       <tbody>
         {assets.map((asset) => (
-          <Row asset={asset} />
+          <Row key={asset.assetId} asset={asset} />
         ))}
       </tbody>
     </table>

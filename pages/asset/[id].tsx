@@ -28,7 +28,7 @@ async function fetcher(
   return parsed[0];
 }
 
-export default function ItemC() {
+export default function Asset() {
   const router = useRouter();
   const { id } = router.query;
 

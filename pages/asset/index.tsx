@@ -17,7 +17,7 @@ async function fetcher(url: string, spaceId: string): Promise<AssetDatas> {
   }
 }
 
-export default function ItemsC() {
+export default function Asset() {
   const [spaceId, _] = useSpaceId<string>();
   const { data, error, revalidate } = useSWR(
     ["/api/v1/asset/data", spaceId],
