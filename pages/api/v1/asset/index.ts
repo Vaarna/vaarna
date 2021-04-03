@@ -1,28 +1,41 @@
 import { createReadStream } from "fs";
 import { unlink } from "fs/promises";
+import { v4 as v4uuid } from "uuid";
 import { requestLogger } from "logger";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getAsset, headAsset, postAsset } from "service/asset";
-import { GetAssetHeaders, GetAssetQuery } from "type/asset";
-import { ApiParseError, parseRequest } from "type/error";
+import {
+  createAssetData,
+  getAsset,
+  getKind,
+  headAsset,
+  uploadAsset,
+} from "service/asset";
+import { GetAssetHeaders, GetAssetQuery, PostAssetQuery } from "type/asset";
+import { ApiError, parseRequest } from "type/error";
 import { pathToFileURL } from "url";
 import { ParsedMultipartBody, parseMultipartBody } from "util/multipart";
 
 export default async function Asset(req: NextApiRequest, res: NextApiResponse) {
   const [logger, requestId] = requestLogger(req, res);
 
-  async function post(body: ParsedMultipartBody) {
+  async function post(query: PostAssetQuery, body: ParsedMultipartBody) {
     const out = await Promise.all(
       Object.entries(body.files).map(async ([field, file]) => {
-        logger.info(file, "uploading file");
+        const assetId = v4uuid();
+        const kind = getKind(file.headers["content-type"]);
+        logger.info({ ...file, assetId, kind }, "uploading file");
         const s = createReadStream(file.path);
-        const key = await postAsset(s, {
+        const data = {
+          assetId,
+          spaceId: query.spaceId,
           filename: file.originalFilename,
           size: file.size,
           contentType: file.headers["content-type"],
-        });
+        };
+        await uploadAsset(s, data);
+        await createAssetData({ ...data, kind });
 
-        return [field, key];
+        return [field, assetId];
       })
     );
 
@@ -54,24 +67,29 @@ export default async function Asset(req: NextApiRequest, res: NextApiResponse) {
         return await getAsset(query, headers, res);
       }
 
-      case "POST":
+      case "POST": {
+        const { query } = parseRequest({
+          query: PostAssetQuery,
+        })(req, requestId);
         const body = await parseMultipartBody(req);
-        const assetIds = await post(body);
+        const assetIds = await post(query, body);
         res.status(201).json({ assetIds });
         return await Promise.all(
           Object.values(body.files).map(({ path }) =>
             unlink(pathToFileURL(path))
           )
         );
+      }
 
       default:
         res.setHeader("Allow", allow);
         return res.status(405).end();
     }
   } catch (error) {
-    if (error instanceof ApiParseError) {
+    if (error instanceof ApiError) {
       res.status(error.code).json(error.json());
     } else {
+      logger.error(error, "internal server error");
       res.status(500).end();
     }
   }

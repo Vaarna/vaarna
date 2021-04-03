@@ -17,9 +17,6 @@ export const GetAssetHeaders = t
 export type GetAssetHeaders = t.infer<typeof GetAssetHeaders>;
 
 export const PostAssetQuery = t.object({
-  name: t.string(),
-  size: t.string().transform(parseInt),
-  type: t.string(),
-  lastModified: t.string().transform((v) => new Date(parseInt(v))),
+  spaceId: t.string().uuid(),
 });
 export type PostAssetQuery = t.infer<typeof PostAssetQuery>;

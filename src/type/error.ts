@@ -11,26 +11,13 @@ type ApiErrorResponse = {
 };
 
 export abstract class ApiError extends Error {
-  abstract json(): ApiErrorResponse;
-
-  constructor(readonly requestId: string, message: string) {
-    super(message);
-    this.name = "ApiError";
-  }
-}
-
-export class ApiParseError extends ApiError {
-  name = "ApiParseError";
-
   constructor(
-    readonly zodError: ZodError,
     readonly code: number,
-    readonly loc: Location,
-    requestId: string,
+    readonly requestId: string,
     message: string
   ) {
-    super(requestId, message);
-    this.name = "ApiParseError";
+    super(message);
+    this.name = "ApiError";
   }
 
   json(): ApiErrorResponse {
@@ -39,6 +26,32 @@ export class ApiParseError extends ApiError {
       name: this.name,
       msg: this.message,
       requestId: this.requestId,
+    };
+  }
+}
+
+export class ApiNotFoundError extends ApiError {
+  constructor(requestId: string, message: string) {
+    super(404, requestId, message);
+  }
+}
+
+export class ApiParseError extends ApiError {
+  name = "ApiParseError";
+
+  constructor(
+    readonly zodError: ZodError,
+    readonly loc: Location,
+    requestId: string,
+    message: string
+  ) {
+    super(400, requestId, message);
+    this.name = "ApiParseError";
+  }
+
+  json(): ApiErrorResponse {
+    return {
+      ...super.json(),
       loc: this.loc,
       issues: this.zodError.issues,
     };
@@ -51,7 +64,6 @@ export class ApiParseQueryError extends ApiParseError {
   constructor(zodError: ZodError, requestId: string) {
     super(
       zodError,
-      400,
       "query",
       requestId,
       "failed to parse request query parameters"
@@ -63,13 +75,7 @@ export class ApiParseHeadersError extends ApiParseError {
   name = "ApiParseHeadersError";
 
   constructor(zodError: ZodError, requestId: string) {
-    super(
-      zodError,
-      400,
-      "headers",
-      requestId,
-      "failed to parse request headers"
-    );
+    super(zodError, "headers", requestId, "failed to parse request headers");
   }
 }
 
@@ -77,7 +83,7 @@ export class ApiParseBodyError extends ApiParseError {
   name = "ApiParseBodyError";
 
   constructor(zodError: ZodError, requestId: string) {
-    super(zodError, 400, "body", requestId, "failed to parse request body");
+    super(zodError, "body", requestId, "failed to parse request body");
   }
 }
 

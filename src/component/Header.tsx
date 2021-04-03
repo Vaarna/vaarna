@@ -11,6 +11,7 @@ export default function Header() {
         <a className={styles.title}>GM Screen</a>
       </Link>
       <Link href="/item">Items</Link>
+      <Link href="/asset">Assets</Link>
       <label>
         Space ID:{" "}
         <input

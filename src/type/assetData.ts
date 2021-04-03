@@ -16,7 +16,7 @@ export type AssetData = t.infer<typeof AssetData>;
 export const AssetDatas = t.array(AssetData);
 export type AssetDatas = t.infer<typeof AssetDatas>;
 
-export const AssetDataQuery = t.object({
+export const GetAssetDataQuery = t.object({
   spaceId: t.string().uuid(),
   assetId: t.union([
     t.undefined(),
@@ -24,4 +24,4 @@ export const AssetDataQuery = t.object({
     t.array(t.string().uuid()),
   ]),
 });
-export type GetAssetData = t.infer<typeof AssetDataQuery>;
+export type GetAssetDataQuery = t.infer<typeof GetAssetDataQuery>;
