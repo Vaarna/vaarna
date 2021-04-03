@@ -6,7 +6,7 @@ import { GetItemsQuery, RemoveItemQuery } from "type/api";
 import { ItemCreate, ItemUpdate, Items } from "type/item";
 
 export default async function Item(req: NextApiRequest, res: NextApiResponse) {
-  const logger = requestLogger(req, res);
+  const [logger, requestId] = requestLogger(req, res);
 
   async function get(query: NextApiRequest["query"]) {
     const params = GetItemsQuery.safeParse(query);

@@ -64,7 +64,10 @@ export type ApiResponse = {
   body: Readable | undefined;
 };
 
-async function handleResponse(res: NextApiResponse, data: ApiResponse) {
+async function handleResponse(
+  res: NextApiResponse,
+  data: ApiResponse
+): Promise<void> {
   const { status, headers, body } = data;
 
   headers.forEach(({ name, value }) => res.setHeader(name, value));
@@ -72,9 +75,10 @@ async function handleResponse(res: NextApiResponse, data: ApiResponse) {
   res.status(status);
 
   if (body instanceof Readable) {
-    return body.pipe(res);
+    body.pipe(res);
+  } else {
+    return res.end();
   }
-  return res.end();
 }
 
 const assetBucket = "gm-screen";
@@ -84,14 +88,14 @@ export async function headAsset(
   headers: GetAssetHeaders,
   res: NextApiResponse,
   override?: { status?: number }
-) {
+): Promise<void> {
   const s3 = new S3Client({});
   const cmd = new HeadObjectCommand({
     Bucket: assetBucket,
     Key: query.assetId,
-    // Range: headers.Range,
-    // IfModifiedSince: headers["If-Modified-Since"],
-    // IfNoneMatch: headers["If-None-Match"],
+    Range: headers["range"],
+    IfModifiedSince: headers["if-modified-since"],
+    IfNoneMatch: headers["if-none-match"],
   });
 
   const data = await s3.send(cmd);
@@ -107,7 +111,7 @@ export async function getAsset(
   query: GetAssetQuery,
   headers: GetAssetHeaders,
   res: NextApiResponse
-) {
+): Promise<void> {
   const s3 = new S3Client({});
   const cmd = new GetObjectCommand({
     Bucket: assetBucket,

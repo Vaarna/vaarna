@@ -1,5 +1,5 @@
 import { v4 as v4uuid } from "uuid";
-import pino from "pino";
+import pino, { Logger } from "pino";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export type { Logger } from "pino";
@@ -12,7 +12,10 @@ export const rootLogger = pino({
   ],
 });
 
-export function requestLogger(req: NextApiRequest, res: NextApiResponse) {
+export function requestLogger(
+  req: NextApiRequest,
+  res: NextApiResponse
+): [Logger, string] {
   const t0 = process.hrtime.bigint();
 
   const requestId = v4uuid();
@@ -47,5 +50,5 @@ export function requestLogger(req: NextApiRequest, res: NextApiResponse) {
       .info("response has been sent");
   });
 
-  return out;
+  return [out, requestId];
 }
