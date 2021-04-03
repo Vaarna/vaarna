@@ -16,7 +16,7 @@ jobs:
         run: yarn
 
       - name: Check formatting
-        run: yarn run check:prettier
+        run: yarn run check
 
       - name: Run tests
         run: yarn run test

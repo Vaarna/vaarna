@@ -11,8 +11,10 @@
     "start": "next start",
     "test": "jest",
     "test:watch": "jest --watch",
-    "fix:prettier": "prettier --write './**/*.{js,jsx,ts,tsx,json}'",
-    "check:prettier": "prettier --check './**/*.{js,jsx,ts,tsx,json}'"
+    "fix:prettier": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'",
+    "check": "yarn check:prettier && yarn check:tsc",
+    "check:prettier": "prettier --check --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'",
+    "check:tsc": "tsc"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.6.0",
