@@ -2,7 +2,7 @@ import styles from "./Header.module.css";
 import { useSpaceId } from "store";
 import Link from "next/link";
 
-export default function Header() {
+export const Header: React.FC = () => {
   const [spaceId, setSpaceId] = useSpaceId<string>();
 
   return (
@@ -22,4 +22,4 @@ export default function Header() {
       </label>
     </div>
   );
-}
+};

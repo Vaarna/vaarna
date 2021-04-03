@@ -2,11 +2,7 @@ import styles from "./ItemList.module.css";
 import { Item, Items } from "type/item";
 import Link from "next/link";
 
-type Props = {
-  items: Items;
-};
-
-function ItemComponent({ item }: { item: Item }) {
+const ItemComponent: React.FC<{ item: Item }> = ({ item }) => {
   return (
     <Link href={`/item/${item.itemId}`}>
       <div className={styles.item}>
@@ -19,9 +15,9 @@ function ItemComponent({ item }: { item: Item }) {
       </div>
     </Link>
   );
-}
+};
 
-export default function ItemList({ items }: Props) {
+export const ItemList: React.FC<{ items: Items }> = ({ items }) => {
   return (
     <div className={styles.items}>
       {items
@@ -31,4 +27,4 @@ export default function ItemList({ items }: Props) {
         ))}
     </div>
   );
-}
+};

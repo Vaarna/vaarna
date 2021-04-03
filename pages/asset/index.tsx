@@ -2,9 +2,6 @@ import axios from "axios";
 import { useSpaceId } from "store";
 import useSWR from "swr";
 
-import ItemList from "component/ItemList";
-import { Items } from "type/item";
-import { useRouter } from "next/router";
 import { AssetDatas } from "type/assetData";
 
 async function fetcher(url: string, spaceId: string): Promise<AssetDatas> {
@@ -24,7 +21,6 @@ export default function ItemsC() {
     ["/api/v1/asset/data", spaceId],
     fetcher
   );
-  const router = useRouter();
 
   if (error) {
     return <div>{JSON.stringify(error)}</div>;

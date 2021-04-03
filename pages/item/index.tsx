@@ -2,7 +2,7 @@ import axios from "axios";
 import { useSpaceId } from "store";
 import useSWR from "swr";
 
-import ItemList from "component/ItemList";
+import { ItemList } from "component/ItemList";
 import { Items } from "type/item";
 import { useRouter } from "next/router";
 

@@ -3,7 +3,7 @@ import "../styles/index.scss";
 
 import type { AppProps } from "next/app";
 
-import Header from "component/Header";
+import { Header } from "component/Header";
 import { useFileUpload } from "hook/useFileUpload";
 import axios from "axios";
 import { useSpaceId } from "store";
