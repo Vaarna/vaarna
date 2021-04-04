@@ -12,7 +12,6 @@ async function fetcher(
   const { data } = await axios({ url, params: { spaceId, itemId } });
 
   const parsed = Items.parse(data.data);
-  console.log(parsed);
 
   if (parsed.length !== 1) {
     throw "API returned incorrect number of items";
@@ -22,30 +21,16 @@ async function fetcher(
 }
 
 export const useItem = (spaceId: string, itemId: string) => {
-  const [item, setItem] = useState<Item | undefined>(undefined);
-  const [parseError, setParseError] = useState<z.ZodError | undefined>(
-    undefined
-  );
   const [inflight, setInflight] = useState(false);
-  const { data, error, revalidate, mutate } = useSWR(
+  const [dirty, setDirty] = useState(false);
+  const [item, setItem] = useState<Item | undefined>(undefined);
+  const { data, error, mutate } = useSWR(
     ["/api/v1/item", spaceId, itemId],
     fetcher
   );
 
   useEffect(() => {
-    if (error) {
-      setItem(undefined);
-      return;
-    }
-
-    const parsed = Item.safeParse(data);
-    if (parsed.success) {
-      setItem(parsed.data);
-      setParseError(undefined);
-    } else {
-      setItem(undefined);
-      setParseError(parsed.error);
-    }
+    if (!error && !dirty) setItem(data);
   }, [data, error]);
 
   const save = () => {
@@ -58,10 +43,12 @@ export const useItem = (spaceId: string, itemId: string) => {
     })
       .then(({ data }) => {
         const item = Item.safeParse(data.data);
-        if (item.success) setItem(item.data);
-        else throw item.error;
+        if (!item.success) throw item.error;
+
+        setItem(item.data);
+        setDirty(false);
+        return mutate(item.data, false);
       })
-      .then(revalidate)
       .then(() => {})
       .catch(console.error)
       .finally(() => setInflight(false));
@@ -69,9 +56,13 @@ export const useItem = (spaceId: string, itemId: string) => {
 
   return {
     loading: !error && !item,
-    error: error ?? parseError,
+    error: error,
     item: item,
-    setItem,
+    setItem: (item: Item) => {
+      setItem(item);
+      setDirty(true);
+    },
+    dirty,
     inflight,
     save,
   };
