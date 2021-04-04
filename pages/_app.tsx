@@ -3,34 +3,111 @@ import "../styles/index.scss";
 import s from "./_app.module.css";
 
 import type { AppProps } from "next/app";
+import { v4 as v4uuid } from "uuid";
 
 import Head from "next/head";
 import { Header } from "component/Header";
 import { useFileUpload } from "hook/useFileUpload";
 import axios from "axios";
 import { useSpaceId } from "store";
+import { z } from "zod";
+import { UploadProgress, UploadProgressProps } from "component/UploadProgress";
+import { useEffect, useState } from "react";
+
+const ProgressEvent = z.object({
+  type: z.literal("progress"),
+  timeStamp: z.number(),
+  loaded: z.number(),
+  total: z.number(),
+});
 
 export default function App({ Component, pageProps }: AppProps) {
   const [spaceId, _] = useSpaceId();
 
+  const [showUploads, setShowUploads] = useState(false);
+  const [uploads, setUploads] = useState<
+    (Omit<UploadProgressProps, "parentId"> & { id: string })[]
+  >([]);
+
+  useEffect(() => {
+    console.log(uploads);
+  }, [uploads]);
+
+  const onUploadProgress = (id: string) => (ev: unknown) => {
+    const evParsed = ProgressEvent.safeParse(ev);
+    if (!evParsed.success) return console.error(evParsed.error);
+    const progress = evParsed.data;
+    const { loaded, total } = progress;
+
+    setUploads((prev) =>
+      prev.map((v) => (v.id !== id ? v : { ...v, loaded, total }))
+    );
+  };
+
+  const onUploadDone = (id: string) => {
+    console.log("upload with id %s is done", id, uploads);
+    setUploads((prev) =>
+      prev.map((v) => (v.id !== id ? v : { ...v, done: true }))
+    );
+
+    setTimeout(() => {
+      setUploads((prev) => prev.filter((v) => v.id !== id));
+      if (uploads.length === 0) setShowUploads(false);
+    }, 5_000);
+  };
+
   useFileUpload((files) => {
+    const id = v4uuid();
+
+    const fs: UploadProgressProps["files"] = [];
+    let total = 0;
     const fd = new FormData();
     files.forEach((file, idx) => {
-      fd.append("asset" + idx, file, file.name);
+      fs.push({
+        key: file.name + file.size + file.lastModified + file.type + idx,
+        filename: file.name,
+        size: file.size,
+      });
+      total += file.size;
+      fd.append(`${idx}-${id}`, file, file.name);
     });
+
+    setUploads((prev) => [
+      ...prev,
+      { id, files: fs, loaded: 0, total, done: false },
+    ]);
+    setShowUploads(true);
 
     return axios
       .post("/api/v1/asset", fd, {
         headers: { "Content-Type": "multipart/form-data" },
         params: { spaceId },
+        onUploadProgress: onUploadProgress(id),
       })
-      .then((res) => {
-        console.log("files uploaded", res);
+      .then(() => {
+        onUploadDone(id);
       })
       .catch((err) => {
         console.error(err);
       });
   });
+
+  const uploadProgress = (
+    <div
+      className={s.uploadProgressContainer}
+      onClick={() => {
+        setShowUploads(false);
+      }}
+      style={{ visibility: !showUploads ? "hidden" : undefined }}
+    >
+      <div
+        id={s.uploadProgressRoot}
+        onClick={(ev) => {
+          ev.stopPropagation();
+        }}
+      />
+    </div>
+  );
 
   return (
     <>
@@ -42,10 +119,20 @@ export default function App({ Component, pageProps }: AppProps) {
         />
       </Head>
       <div className={s.root}>
-        <Header />
+        <Header
+          showUploads={() => {
+            setShowUploads(true);
+          }}
+        />
+
         <div className={s.content}>
           <Component {...pageProps} />
         </div>
+
+        {uploadProgress}
+        {Object.values(uploads).map((props) => (
+          <UploadProgress parentId={s.uploadProgressRoot} {...props} />
+        ))}
       </div>
     </>
   );

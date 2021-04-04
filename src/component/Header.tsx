@@ -1,8 +1,11 @@
 import styles from "./Header.module.css";
 import { useSpaceId } from "store";
 import Link from "next/link";
+import React from "react";
 
-export const Header: React.FC = () => {
+export const Header: React.FC<{ showUploads: () => void }> = ({
+  showUploads,
+}) => {
   const [spaceId, setSpaceId] = useSpaceId<string>();
 
   return (
@@ -12,6 +15,9 @@ export const Header: React.FC = () => {
       </Link>
       <Link href="/item">Items</Link>
       <Link href="/asset">Assets</Link>
+      <a href="#" onClick={showUploads}>
+        Uploads
+      </a>
       <label>
         Space ID:{" "}
         <input
