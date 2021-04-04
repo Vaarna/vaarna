@@ -52,6 +52,14 @@ test.each([
   [5000, -4, 0],
   [5000.001, -4, 10_000],
   [5001, -4, 10_000],
+
+  [99_999, -5, 100_000],
+  [100_000, -5, 100_000],
+  [100_001, -5, 100_000],
+
+  [999_999, -6, 1_000_000],
+  [1_000_000, -6, 1_000_000],
+  [1_000_001, -6, 1_000_000],
 ])("rounding %p with accuracy %p equals %p", (v, acc, res) => {
   expect(round(v, acc)).toBe(res);
 });
@@ -78,9 +86,8 @@ test("rounding 10^x with accuracy 1-x equals 10^x", () => {
       fc.integer(0, Math.floor(Math.log10(Number.MAX_SAFE_INTEGER))),
       (x) => {
         const pow = Math.pow(10, x);
-        expect(round(pow, 1 - x)).toBeCloseTo(pow, 9);
+        expect(round(pow, 1 - x)).toEqual(pow);
       }
-    ),
-    { verbose: 1 }
+    )
   );
 });
