@@ -33,17 +33,21 @@ textarea {
   font-family: var(--font-monospace);
 }
 
+div.simple-table {
+  overflow-x: scroll;
+}
+
 table {
   font-family: var(--font-monospace);
 
   border-collapse: collapse;
 
   tr:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.05);
   }
 
   td {
-    border: rgba(0, 0, 0, 0.1) 1px solid;
+    border-top: rgba(0, 0, 0, 0.1) 1px solid;
     padding: 0.2rem;
   }
 }

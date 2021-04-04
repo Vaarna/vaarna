@@ -41,9 +41,11 @@ export default function App({ Component, pageProps }: AppProps) {
           rel="stylesheet"
         />
       </Head>
-      <Header />
-      <div className={s.content}>
-        <Component {...pageProps} />
+      <div className={s.root}>
+        <Header />
+        <div className={s.content}>
+          <Component {...pageProps} />
+        </div>
       </div>
     </>
   );

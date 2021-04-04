@@ -18,24 +18,26 @@ const Row: React.FC<{ item: Item }> = ({ item }) => {
 
 export const ItemTable: React.FC<{ items: Items }> = ({ items }) => {
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>SpaceID</th>
-          <th>ItemID</th>
-          <th>Path</th>
-          <th>Created</th>
-          <th>Updated</th>
-          <th>Version</th>
-        </tr>
-      </thead>
-      <tbody>
-        {items
-          .sort((lhs, rhs) => lhs.path.localeCompare(rhs.path))
-          .map((v) => (
-            <Row key={v.itemId} item={v} />
-          ))}
-      </tbody>
-    </table>
+    <div className="simple-table">
+      <table>
+        <thead>
+          <tr>
+            <th>SpaceID</th>
+            <th>ItemID</th>
+            <th>Path</th>
+            <th>Created</th>
+            <th>Updated</th>
+            <th>Version</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items
+            .sort((lhs, rhs) => lhs.path.localeCompare(rhs.path))
+            .map((v) => (
+              <Row key={v.itemId} item={v} />
+            ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
