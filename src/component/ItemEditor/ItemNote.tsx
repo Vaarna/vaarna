@@ -1,3 +1,4 @@
+import { Loading } from "component/atom/Loading";
 import { ItemNoteProps } from "./internal";
 
 export const ItemNoteEditor: React.FC<ItemNoteProps> = ({
@@ -17,6 +18,7 @@ export const ItemNoteEditor: React.FC<ItemNoteProps> = ({
       <input
         name="path"
         value={item.path}
+        disabled={inflight}
         onChange={(ev) => setItem({ ...item, path: ev.target.value })}
       />
     </label>
@@ -31,6 +33,7 @@ export const ItemNoteEditor: React.FC<ItemNoteProps> = ({
           boxSizing: "border-box",
         }}
         value={item.public}
+        disabled={inflight}
         onChange={(ev) => setItem({ ...item, public: ev.target.value })}
       />
     </label>
@@ -45,10 +48,13 @@ export const ItemNoteEditor: React.FC<ItemNoteProps> = ({
           boxSizing: "border-box",
         }}
         value={item.private}
+        disabled={inflight}
         onChange={(ev) => setItem({ ...item, private: ev.target.value })}
       />
     </label>
 
-    <input type="submit" disabled={inflight} value="Save" />
+    <button disabled={inflight} onClick={save}>
+      Save <Loading hidden={!inflight} small fast />
+    </button>
   </form>
 );

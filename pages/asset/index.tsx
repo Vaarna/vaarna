@@ -1,6 +1,6 @@
 import axios from "axios";
-import { AssetDetailed } from "component/AssetDetailed";
 import { AssetTable } from "component/AssetTable";
+import { Loading } from "component/atom/Loading";
 import { useSpaceId } from "store";
 import useSWR from "swr";
 
@@ -27,6 +27,9 @@ export default function Asset() {
   if (error) {
     return <div>{JSON.stringify(error)}</div>;
   }
+  if (!data) {
+    return <Loading large />;
+  }
 
-  return data ? <AssetTable assets={data} /> : <div>loading...</div>;
+  return <AssetTable assets={data} />;
 }

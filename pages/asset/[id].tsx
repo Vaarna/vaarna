@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AssetDetailed } from "component/AssetDetailed";
+import { Loading } from "component/atom/Loading";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import { useSpaceId } from "store";
 import useSWR from "swr";
 import { AssetData, AssetDatas } from "type/assetData";
@@ -33,21 +33,14 @@ export default function Asset() {
   const { id } = router.query;
 
   const [spaceId, _] = useSpaceId<string>();
-  const [asset, setAsset] = useState<AssetData | undefined>(undefined);
   const { data, error } = useSWR(["/api/v1/asset/data", spaceId, id], fetcher);
-
-  useEffect(() => {
-    const note = AssetData.safeParse(data);
-    if (note.success) setAsset(note.data);
-  }, [data]);
 
   if (error) {
     return <div>{JSON.stringify(error)}</div>;
   }
+  if (!data) {
+    return <Loading large />;
+  }
 
-  return asset === undefined ? (
-    <div>loading...</div>
-  ) : (
-    <AssetDetailed asset={asset} />
-  );
+  return <AssetDetailed asset={data} />;
 }

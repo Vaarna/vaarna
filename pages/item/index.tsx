@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { ItemTable } from "component/ItemTable";
 import { Items } from "type/item";
 import { useRouter } from "next/router";
+import { Loading } from "component/atom/Loading";
 
 async function fetcher(url: string, spaceId: string): Promise<Items> {
   try {
@@ -26,6 +27,9 @@ export default function ItemsC() {
   if (error) {
     return <div>{JSON.stringify(error)}</div>;
   }
+  if (data === undefined) {
+    return <Loading large />;
+  }
 
   return (
     <>
@@ -42,7 +46,7 @@ export default function ItemsC() {
       >
         New Note
       </button>
-      {data ? <ItemTable items={data} /> : <div>loading...</div>}
+      <ItemTable items={data} />
     </>
   );
 }
