@@ -1,12 +1,11 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import { z } from "zod";
-import useSWR from "swr";
 
-import { Item, ItemNote, Items } from "type/item";
+import { Item, Items } from "type/item";
 import { useSpaceId } from "store";
 import { useItem } from "hook/useItem";
+import { ItemEditor } from "component/ItemEditor";
 
 async function fetcher(
   url: string,
@@ -35,7 +34,7 @@ export default function ItemC() {
 
   const [spaceId, _] = useSpaceId<string>();
 
-  const { item, setItem, error, inflight, loading, save } = useItem(
+  const { item, setItem, error, inflight, loading, save, dirty } = useItem(
     spaceId ?? "",
     id as string
   );
@@ -46,69 +45,18 @@ export default function ItemC() {
   if (loading) {
     return <div>loading...</div>;
   }
-
-  if (item?.type !== "note")
-    return (
-      <>
-        <h1>{item?.path}</h1>
-        <ul>
-          <li>Space ID: {item?.spaceId}</li>
-          <li>Item ID: {item?.itemId}</li>
-          <li>Created: {item?.created}</li>
-          <li>Updated: {item?.updated}</li>
-          <li>Type: {item?.type}</li>
-        </ul>
-      </>
-    );
+  if (item === undefined) {
+    return <div>no item was returned when one was expected</div>;
+  }
 
   return (
-    <>
-      <form
-        onSubmit={(ev) => {
-          ev.preventDefault();
-          save();
-        }}
-      >
-        <label>
-          Path
-          <input
-            name="path"
-            value={item.path}
-            onChange={(ev) => setItem({ ...item, path: ev.target.value })}
-          />
-        </label>
-
-        <label>
-          Public
-          <textarea
-            name="public"
-            style={{
-              minWidth: "100%",
-              minHeight: "40ex",
-              boxSizing: "border-box",
-            }}
-            value={item.public}
-            onChange={(ev) => setItem({ ...item, public: ev.target.value })}
-          />
-        </label>
-
-        <label>
-          Private
-          <textarea
-            name="private"
-            style={{
-              minWidth: "100%",
-              minHeight: "40ex",
-              boxSizing: "border-box",
-            }}
-            value={item.private}
-            onChange={(ev) => setItem({ ...item, private: ev.target.value })}
-          />
-        </label>
-
-        <input type="submit" disabled={inflight} value="Save" />
-      </form>
-      <br />
-    </>
+    <ItemEditor
+      item={item}
+      setItem={setItem}
+      inflight={inflight}
+      save={save}
+      loading={loading}
+      dirty={dirty}
+    />
   );
 }
