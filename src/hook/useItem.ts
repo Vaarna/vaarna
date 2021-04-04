@@ -7,24 +7,27 @@ async function fetcher(
   url: string,
   spaceId: string,
   itemId: string
-): Promise<Item> {
+): Promise<Item | null> {
   const { data } = await axios({ url, params: { spaceId, itemId } });
 
   const parsed = Items.parse(data.data);
 
   if (parsed.length !== 1) {
-    throw "API returned incorrect number of items";
+    return null;
   }
 
   return parsed[0];
 }
 
-export const useItem = (spaceId: string, itemId: string) => {
+export const useItem = (
+  spaceId: string | undefined,
+  itemId: string | undefined
+) => {
   const [inflight, setInflight] = useState(false);
   const [dirty, setDirty] = useState(false);
-  const [item, setItem] = useState<Item | undefined>(undefined);
+  const [item, setItem] = useState<Item | null | undefined>(undefined);
   const { data, error, mutate } = useSWR(
-    ["/api/v1/item", spaceId, itemId],
+    () => (spaceId && itemId ? ["/api/v1/item", spaceId, itemId] : null),
     fetcher
   );
 
@@ -56,9 +59,10 @@ export const useItem = (spaceId: string, itemId: string) => {
   };
 
   return {
-    loading: !error && !item,
+    loading: !error && item === undefined,
+    notFound: item === null,
     error: error,
-    item: item,
+    item: item as Item,
     setItem: (item: Item) => {
       setItem(item);
       setDirty(true);

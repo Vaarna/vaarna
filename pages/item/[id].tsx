@@ -11,7 +11,7 @@ export default function ItemC() {
 
   const [spaceId, _] = useSpaceId<string>();
 
-  const itemProps = useItem(spaceId ?? "", id as string);
+  const itemProps = useItem(spaceId, id as string | undefined);
 
   if (itemProps.error) {
     return <div>{JSON.stringify(itemProps.error)}</div>;
@@ -19,8 +19,8 @@ export default function ItemC() {
   if (itemProps.loading) {
     return <Loading large />;
   }
-  if (itemProps.item === undefined) {
-    return <div>no item was returned when one was expected</div>;
+  if (itemProps.notFound) {
+    return <div>Not Found</div>;
   }
 
   return <ItemEditor {...itemProps} item={itemProps.item} />;
