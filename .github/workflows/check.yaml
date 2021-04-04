@@ -15,7 +15,7 @@ jobs:
       - name: Install dependencies
         run: yarn
 
-      - name: Check formatting
+      - name: Check formatting and types
         run: yarn run check
 
       - name: Run tests
