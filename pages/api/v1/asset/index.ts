@@ -11,7 +11,7 @@ import {
   uploadAsset,
 } from "service/asset";
 import { GetAssetHeaders, GetAssetQuery, PostAssetQuery } from "type/asset";
-import { ApiError, parseRequest } from "type/error";
+import { ApiError, parseRequest } from "util/parseRequest";
 import { pathToFileURL } from "url";
 import { ParsedMultipartBody, parseMultipartBody } from "util/multipart";
 

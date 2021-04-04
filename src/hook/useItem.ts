@@ -1,8 +1,7 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useDebugValue, useEffect, useState } from "react";
 import useSWR from "swr";
 import { Item, Items } from "type/item";
-import { z } from "zod";
 
 async function fetcher(
   url: string,
@@ -28,6 +27,8 @@ export const useItem = (spaceId: string, itemId: string) => {
     ["/api/v1/item", spaceId, itemId],
     fetcher
   );
+
+  useDebugValue(`dirty: ${dirty}`);
 
   useEffect(() => {
     if (!error && !dirty) setItem(data);

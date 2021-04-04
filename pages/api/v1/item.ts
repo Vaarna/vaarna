@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import { requestLogger } from "logger";
 import { createItem, getItems, removeItem, updateItem } from "service/item";
-import { ApiError, parseRequest } from "type/error";
+import { ApiError, parseRequest } from "util/parseRequest";
 import {
   ItemCreate,
   ItemUpdate,

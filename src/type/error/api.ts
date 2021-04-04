@@ -1,7 +1,6 @@
-import { NextApiRequest } from "next";
-import { ZodError, z } from "zod";
+import { ZodError } from "zod";
+import { CustomError } from "./common";
 
-type Location = "query" | "headers" | "body";
 type ApiErrorResponse = {
   code: number;
   name: string;
@@ -10,7 +9,7 @@ type ApiErrorResponse = {
   [k: string]: any;
 };
 
-export abstract class ApiError extends Error {
+export abstract class ApiError extends CustomError {
   constructor(
     readonly code: number,
     readonly requestId: string,
@@ -35,6 +34,12 @@ export class ApiNotFoundError extends ApiError {
     super(404, requestId, message);
   }
 }
+
+// ==============
+// 400 ParseError
+// ==============
+
+type Location = "query" | "headers" | "body";
 
 export class ApiParseError extends ApiError {
   name = "ApiParseError";
@@ -86,55 +91,3 @@ export class ApiParseBodyError extends ApiParseError {
     super(zodError, "body", requestId, "failed to parse request body");
   }
 }
-
-export const parseRequest = <
-  Q,
-  H,
-  B,
-  Parser extends Partial<{
-    query: z.ZodType<Q>;
-    headers: z.ZodType<H>;
-    body: z.ZodType<B>;
-  }>
->(
-  parser: Parser
-) => (
-  req: NextApiRequest,
-  requestId: string
-): {
-  [k in keyof Parser]: Parser[k] extends z.ZodType<
-    infer Output,
-    infer _Def,
-    infer _Input
-  >
-    ? Output
-    : never;
-} => {
-  const out: any = {};
-
-  if (parser.query !== undefined) {
-    const parsedQuery = parser.query.safeParse(req.query);
-    if (!parsedQuery.success) {
-      throw new ApiParseQueryError(parsedQuery.error, requestId);
-    }
-    out.query = parsedQuery.data;
-  }
-
-  if (parser.headers !== undefined) {
-    const parsedHeaders = parser.headers.safeParse(req.headers);
-    if (!parsedHeaders.success) {
-      throw new ApiParseHeadersError(parsedHeaders.error, requestId);
-    }
-    out.headers = parsedHeaders.data;
-  }
-
-  if (parser.body !== undefined) {
-    const parsedBody = parser.body.safeParse(req.body);
-    if (!parsedBody.success) {
-      throw new ApiParseHeadersError(parsedBody.error, requestId);
-    }
-    out.body = parsedBody.data;
-  }
-
-  return out;
-};

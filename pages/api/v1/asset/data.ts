@@ -2,7 +2,7 @@ import { requestLogger } from "logger";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAssetData } from "service/asset";
 import { GetAssetDataQuery } from "type/assetData";
-import { ApiError, parseRequest } from "type/error";
+import { ApiError, parseRequest } from "util/parseRequest";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   const [logger, requestId] = requestLogger(req, res);
