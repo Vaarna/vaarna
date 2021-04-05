@@ -15,6 +15,7 @@ export const Header: React.FC<{ showUploads: () => void }> = ({
       </Link>
       <Link href="/item">Items</Link>
       <Link href="/asset">Assets</Link>
+      <Link href="/table">Table</Link>
       <a href="#" onClick={showUploads}>
         Uploads
       </a>

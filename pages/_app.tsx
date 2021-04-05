@@ -22,7 +22,7 @@ const ProgressEvent = z.object({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [spaceId, _] = useSpaceId();
+  const [spaceId, _] = useSpaceId<string>();
 
   const [showUploads, setShowUploads] = useState(false);
   const [uploads, setUploads] = useState<

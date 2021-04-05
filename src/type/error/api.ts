@@ -30,8 +30,16 @@ export abstract class ApiError extends CustomError {
 }
 
 export class ApiNotFoundError extends ApiError {
-  constructor(requestId: string, message: string) {
-    super(404, requestId, message);
+  constructor(requestId: string, message?: string) {
+    super(404, requestId, message ?? "Not Found");
+    this.name = "ApiNotFoundError";
+  }
+}
+
+export class ApiInternalServerError extends ApiError {
+  constructor(requestId: string, message?: string) {
+    super(500, requestId, message ?? "Internal Server Error");
+    this.name = "ApiInternalServerError";
   }
 }
 
@@ -48,9 +56,9 @@ export class ApiParseError extends ApiError {
     readonly zodError: ZodError,
     readonly loc: Location,
     requestId: string,
-    message: string
+    message?: string
   ) {
-    super(400, requestId, message);
+    super(400, requestId, message ?? "Bad Request");
     this.name = "ApiParseError";
   }
 
