@@ -98,19 +98,34 @@ async function getItemsAll(
   db: DynamoDBClient,
   params: GetItemsAllParameters
 ): Promise<unknown[]> {
-  const cmd = new QueryCommand({
+  const cmdArgs = {
     TableName: params.tableName,
     KeyConditionExpression: `${params.partition.key} = :v`,
     ExpressionAttributeValues: {
       ":v": { S: params.partition.value },
     },
-  });
+  };
+
+  const cmd = new QueryCommand(cmdArgs);
 
   const res = await db.send(cmd);
-  const items = res.Items?.map((v) => unmarshall(v));
-  if (items === undefined) {
+  const items = res.Items?.map((v) => unmarshall(v)) ?? [];
+  let lastEvaluatedKey = res.LastEvaluatedKey;
+  if (items.length === 0 && lastEvaluatedKey === undefined) {
     logger.error(params, "no items were returned when getting all items");
     return [];
+  }
+
+  while (lastEvaluatedKey !== undefined) {
+    const cmd = new QueryCommand({
+      ...cmdArgs,
+      ExclusiveStartKey: lastEvaluatedKey,
+    });
+
+    const res = await db.send(cmd);
+
+    items.push(...(res.Items?.map((v) => unmarshall(v)) ?? []));
+    lastEvaluatedKey = res.LastEvaluatedKey;
   }
 
   return items;
