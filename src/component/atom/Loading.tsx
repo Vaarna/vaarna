@@ -1,13 +1,21 @@
 import classnames from "classnames";
 import s from "./Loading.module.css";
 
-export const Loading: React.FC<{
+export type LoadingProps = {
   small?: boolean;
   large?: boolean;
   fast?: boolean;
   slow?: boolean;
   hidden?: boolean;
-}> = ({ small, large, fast, slow, hidden }) => (
+};
+
+export const Loading: React.FC<LoadingProps> = ({
+  small,
+  large,
+  fast,
+  slow,
+  hidden,
+}: LoadingProps) => (
   <div
     className={classnames(s.center, {
       [s.small]: small,

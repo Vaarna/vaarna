@@ -49,12 +49,12 @@ export async function createItem(item: ItemCreate): Promise<Item> {
     Item: marshall(fullItem),
   });
 
-  const res = await db.send(cmd);
+  const _res = await db.send(cmd);
 
   return fullItem;
 }
 
-export async function updateItem(item: ItemUpdate) {
+export async function updateItem(item: ItemUpdate): Promise<unknown | null> {
   const now = new Date().toISOString();
 
   const noTouchy = new Set(["spaceId", "itemId", "type", "created", "version"]);
@@ -76,6 +76,7 @@ export async function updateItem(item: ItemUpdate) {
     ":version_increment": 1,
     ":updated": now,
     ...Object.fromEntries(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       fieldsToUpdate.map((v) => [":" + v, (item as any)[v]])
     ),
   });
@@ -104,7 +105,9 @@ export async function updateItem(item: ItemUpdate) {
   return null;
 }
 
-export async function removeItem(item: RemoveItemQuery) {
+export async function removeItem(
+  item: RemoveItemQuery
+): Promise<unknown | null> {
   const { spaceId, itemId, version } = item;
 
   const db = new DynamoDBClient({});

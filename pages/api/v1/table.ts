@@ -13,7 +13,7 @@ import { ApiError, parseRequest } from "util/parseRequest";
 export default async function handle_table(
   req: NextApiRequest,
   res: NextApiResponse
-) {
+): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
 
   async function getTable(spaceId: string): Promise<Table> {

@@ -3,9 +3,9 @@ import { useSpaceId } from "store";
 import Link from "next/link";
 import React from "react";
 
-export const Header: React.FC<{ showUploads: () => void }> = ({
-  showUploads,
-}) => {
+export type HeaderProps = { showUploads: () => void };
+
+export const Header: React.FC<HeaderProps> = ({ showUploads }: HeaderProps) => {
   const [spaceId, setSpaceId] = useSpaceId<string>();
 
   return (

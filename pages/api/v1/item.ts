@@ -10,7 +10,10 @@ import {
   RemoveItemQuery,
 } from "type/item";
 
-export default async function Item(req: NextApiRequest, res: NextApiResponse) {
+export default async function Item(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
 
   const allow = "OPTIONS, GET, POST, PUT, DELETE";

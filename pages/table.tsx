@@ -23,7 +23,7 @@ async function assetFetcher(
   return datas[0];
 }
 
-export default function TablePage() {
+export default function TablePage(): React.ReactNode {
   const [spaceId, _] = useSpaceId<string>();
   const table = useSWR(
     () => (!spaceId ? null : ["/api/v1/table", spaceId]),
@@ -86,7 +86,7 @@ export default function TablePage() {
     default:
       el = (
         <div style={innerStyle}>
-          other files can't really be displayed at the moment
+          other files can not really be displayed at the moment
         </div>
       );
       break;

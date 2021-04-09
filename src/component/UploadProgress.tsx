@@ -24,7 +24,7 @@ export const UploadProgress: React.FC<UploadProgressProps> = ({
   total,
   files,
   done,
-}) => {
+}: UploadProgressProps) => {
   const [container, setContainer] = useState<Element | undefined>(undefined);
 
   useEffect(() => {

@@ -16,7 +16,7 @@ async function fetcher(url: string, spaceId: string): Promise<Items> {
   }
 }
 
-export default function ItemsC() {
+export default function ItemsC(): React.ReactNode {
   const [spaceId, _] = useSpaceId<string>();
   const { data, error, revalidate } = useSWR(
     ["/api/v1/item", spaceId],
@@ -34,7 +34,7 @@ export default function ItemsC() {
   return (
     <>
       <button
-        onClick={(ev) => {
+        onClick={() => {
           axios({
             url: "/api/v1/item",
             method: "POST",

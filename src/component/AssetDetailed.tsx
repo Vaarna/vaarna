@@ -1,6 +1,10 @@
 import { AssetData } from "type/assetData";
 
-export const AssetDetailed: React.FC<{ asset: AssetData }> = ({ asset }) => {
+export type AssetDetailedProps = { asset: AssetData };
+
+export const AssetDetailed: React.FC<AssetDetailedProps> = ({
+  asset,
+}: AssetDetailedProps) => {
   const src = `/api/v1/asset?spaceId=${asset.spaceId}&assetId=${asset.assetId}`;
 
   return (

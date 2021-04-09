@@ -6,7 +6,7 @@ type ApiErrorResponse = {
   name: string;
   msg: string;
   requestId: string;
-  [k: string]: any;
+  [k: string]: unknown;
 };
 
 export abstract class ApiError extends CustomError {

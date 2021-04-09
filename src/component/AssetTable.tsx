@@ -4,10 +4,9 @@ import bytes from "bytes";
 import axios from "axios";
 import { useSpaceId } from "store";
 
-const Row: React.FC<{ spaceId: string | undefined; asset: AssetData }> = ({
-  spaceId,
-  asset,
-}) => (
+type RowProps = { spaceId: string | undefined; asset: AssetData };
+
+const Row: React.FC<RowProps> = ({ spaceId, asset }: RowProps) => (
   <tr>
     <td>
       <button
@@ -39,7 +38,11 @@ const Row: React.FC<{ spaceId: string | undefined; asset: AssetData }> = ({
   </tr>
 );
 
-export const AssetTable: React.FC<{ assets: AssetDatas }> = ({ assets }) => {
+export type AssetTableProps = { assets: AssetDatas };
+
+export const AssetTable: React.FC<AssetTableProps> = ({
+  assets,
+}: AssetTableProps) => {
   const [spaceId, _] = useSpaceId<string>();
 
   return (

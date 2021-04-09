@@ -19,10 +19,21 @@ async function fetcher(
   return parsed[0];
 }
 
+type Out = {
+  loading: boolean;
+  notFound: boolean;
+  error: unknown;
+  item: Item;
+  setItem: (item: Item) => void;
+  dirty: boolean;
+  inflight: boolean;
+  save: () => void;
+};
+
 export const useItem = (
   spaceId: string | undefined,
   itemId: string | undefined
-) => {
+): Out => {
   const [inflight, setInflight] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [item, setItem] = useState<Item | null | undefined>(undefined);
@@ -53,7 +64,9 @@ export const useItem = (
         setDirty(false);
         return mutate(item.data, false);
       })
-      .then(() => {})
+      .then(() => {
+        return;
+      })
       .catch(console.error)
       .finally(() => setInflight(false));
   };

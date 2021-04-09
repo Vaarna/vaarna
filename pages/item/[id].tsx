@@ -5,7 +5,7 @@ import { useItem } from "hook/useItem";
 import { ItemEditor } from "component/ItemEditor";
 import { Loading } from "component/atom/Loading";
 
-export default function ItemC() {
+export default function ItemC(): React.ReactNode {
   const router = useRouter();
   const { id } = router.query;
 

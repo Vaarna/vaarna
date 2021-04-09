@@ -6,7 +6,7 @@ export const ItemNoteEditor: React.FC<ItemNoteProps> = ({
   setItem,
   save,
   inflight,
-}) => (
+}: ItemNoteProps) => (
   <form
     onSubmit={(ev) => {
       ev.preventDefault();

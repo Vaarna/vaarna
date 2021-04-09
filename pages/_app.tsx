@@ -21,7 +21,10 @@ const ProgressEvent = z.object({
   total: z.number(),
 });
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps,
+}: AppProps): React.ReactNode {
   const [spaceId, _] = useSpaceId<string>();
 
   const [showUploads, setShowUploads] = useState(false);
@@ -131,7 +134,11 @@ export default function App({ Component, pageProps }: AppProps) {
 
         {uploadProgress}
         {Object.values(uploads).map((props) => (
-          <UploadProgress parentId={s.uploadProgressRoot} {...props} />
+          <UploadProgress
+            key={props.id}
+            parentId={s.uploadProgressRoot}
+            {...props}
+          />
         ))}
       </div>
     </>

@@ -164,7 +164,7 @@ export async function uploadAsset(
     },
   });
 
-  const res = await s3.send(cmd);
+  const _res = await s3.send(cmd);
 }
 
 export function getKind(contentType: string): AssetData["kind"] {
@@ -194,7 +194,7 @@ export async function createAssetData(asset: AssetData): Promise<void> {
     }),
   });
 
-  const res = await dynamodb.send(cmd);
+  const _res = await dynamodb.send(cmd);
 }
 
 export async function getAssetData(

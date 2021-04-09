@@ -28,7 +28,7 @@ async function fetcher(
   return parsed[0];
 }
 
-export default function Asset() {
+export default function Asset(): React.ReactNode {
   const router = useRouter();
   const { id } = router.query;
 

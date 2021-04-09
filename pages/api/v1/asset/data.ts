@@ -4,7 +4,10 @@ import { getAssetData } from "service/asset";
 import { GetAssetDataQuery } from "type/assetData";
 import { ApiError, parseRequest } from "util/parseRequest";
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
+export default async function (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
 
   const allow = "OPTIONS, GET";
@@ -15,11 +18,12 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         res.setHeader("Allow", allow);
         return res.status(204).end();
 
-      case "GET":
+      case "GET": {
         const { query } = parseRequest({
           query: GetAssetDataQuery,
         })(req, requestId);
         return res.json({ data: await getAssetData(query) });
+      }
 
       default:
         res.setHeader("Allow", allow);

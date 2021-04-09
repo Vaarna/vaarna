@@ -35,7 +35,7 @@ const _drop = (upload: Upload) => (ev: DragEvent) => {
   ev.preventDefault();
 };
 
-export const useFileUpload = (upload: Upload) => {
+export const useFileUpload = (upload: Upload): void => {
   useEffect(() => {
     const paste = _paste(upload);
     const drop = _drop(upload);

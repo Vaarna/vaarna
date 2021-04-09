@@ -1,6 +1,6 @@
 import { ItemProps, ItemNoteEditor } from "./internal";
 
-export const ItemEditor: React.FC<ItemProps> = (props) => {
+export const ItemEditor: React.FC<ItemProps> = (props: ItemProps) => {
   const { item } = props;
 
   if (item.type === "note") return <ItemNoteEditor {...props} item={item} />;

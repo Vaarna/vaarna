@@ -1,7 +1,9 @@
 import { Item, Items } from "type/item";
 import Link from "next/link";
 
-const Row: React.FC<{ item: Item }> = ({ item }) => {
+type RowProps = { item: Item };
+
+const Row: React.FC<RowProps> = ({ item }: RowProps) => {
   return (
     <tr>
       <td>{item.spaceId}</td>
@@ -16,7 +18,11 @@ const Row: React.FC<{ item: Item }> = ({ item }) => {
   );
 };
 
-export const ItemTable: React.FC<{ items: Items }> = ({ items }) => {
+export type ItemTableProps = { items: Items };
+
+export const ItemTable: React.FC<ItemTableProps> = ({
+  items,
+}: ItemTableProps) => {
   return (
     <div className="simple-table">
       <table>

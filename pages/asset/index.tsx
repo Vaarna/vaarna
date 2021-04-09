@@ -17,12 +17,9 @@ async function fetcher(url: string, spaceId: string): Promise<AssetDatas> {
   }
 }
 
-export default function Asset() {
+export default function Asset(): React.ReactNode {
   const [spaceId, _] = useSpaceId<string>();
-  const { data, error, revalidate } = useSWR(
-    ["/api/v1/asset/data", spaceId],
-    fetcher
-  );
+  const { data, error } = useSWR(["/api/v1/asset/data", spaceId], fetcher);
 
   if (error) {
     return <div>{JSON.stringify(error)}</div>;

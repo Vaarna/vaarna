@@ -17,21 +17,20 @@ export const parseRequest = <
     query: z.ZodType<Query>;
     headers: z.ZodType<Headers>;
     body: z.ZodType<Body>;
-  }>
+  }>,
+  Out extends {
+    [k in keyof Parser]: Parser[k] extends z.ZodType<
+      infer Output,
+      infer _Def,
+      infer _Input
+    >
+      ? Output
+      : never;
+  }
 >(
   parser: Parser
-) => (
-  req: NextApiRequest,
-  requestId: string
-): {
-  [k in keyof Parser]: Parser[k] extends z.ZodType<
-    infer Output,
-    infer _Def,
-    infer _Input
-  >
-    ? Output
-    : never;
-} => {
+) => (req: NextApiRequest, requestId: string): Out => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const out: any = {};
 
   if (parser.query !== undefined) {

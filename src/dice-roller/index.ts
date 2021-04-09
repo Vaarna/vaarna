@@ -1,3 +1,3 @@
-export function roll(v: string) {
+export function roll(_v: string): string[] {
   return [];
 }
