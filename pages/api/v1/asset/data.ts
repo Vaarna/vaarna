@@ -1,6 +1,6 @@
 import { requestLogger } from "logger";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getAssetData } from "service/asset";
+import { AssetService } from "service/asset";
 import { GetAssetDataQuery } from "type/assetData";
 import { ApiError, parseRequest } from "util/parseRequest";
 
@@ -9,6 +9,11 @@ export default async function (
   res: NextApiResponse
 ): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
+  const svc = new AssetService({
+    bucket: "gm-screen",
+    tableName: "AssetData",
+    logger,
+  });
 
   const allow = "OPTIONS, GET";
 
@@ -22,7 +27,7 @@ export default async function (
         const { query } = parseRequest({
           query: GetAssetDataQuery,
         })(req, requestId);
-        return res.json({ data: await getAssetData(query) });
+        return res.json({ data: await svc.getAssetData(query) });
       }
 
       default:

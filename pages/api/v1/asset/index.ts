@@ -3,30 +3,27 @@ import { unlink } from "fs/promises";
 import { v4 as v4uuid } from "uuid";
 import { requestLogger } from "logger";
 import { NextApiRequest, NextApiResponse } from "next";
-import {
-  createAssetData,
-  getAsset,
-  getKind,
-  headAsset,
-  uploadAsset,
-} from "service/asset";
 import { GetAssetHeaders, GetAssetQuery, PostAssetQuery } from "type/asset";
 import { ApiError, parseRequest } from "util/parseRequest";
 import { pathToFileURL } from "url";
 import { ParsedMultipartBody, parseMultipartBody } from "util/multipart";
+import { AssetService } from "service/asset";
 
 export default async function Asset(
   req: NextApiRequest,
   res: NextApiResponse
-): Promise<void | void[]> {
+): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
+  const svc = new AssetService({
+    bucket: "gm-screen",
+    tableName: "AssetData",
+    logger,
+  });
 
   async function post(query: PostAssetQuery, body: ParsedMultipartBody) {
     const out = await Promise.all(
       Object.entries(body.files).map(async ([field, file]) => {
         const assetId = v4uuid();
-        const kind = getKind(file.headers["content-type"]);
-        logger.info({ ...file, assetId, kind }, "uploading file");
         const s = createReadStream(file.path);
         const data = {
           assetId,
@@ -35,8 +32,7 @@ export default async function Asset(
           size: file.size,
           contentType: file.headers["content-type"],
         };
-        await uploadAsset(s, data);
-        await createAssetData({ ...data, kind });
+        await svc.uploadAsset(s, data);
 
         return [field, assetId];
       })
@@ -51,14 +47,19 @@ export default async function Asset(
     switch (req.method) {
       case "OPTIONS": {
         res.setHeader("Allow", allow);
-        return res.status(204).end();
+        res.status(204).end();
+
+        return;
       }
 
       case "HEAD": {
         const { query } = parseRequest({
           query: GetAssetQuery,
         })(req, requestId);
-        return await headAsset(query, res);
+        const r = await svc.headAsset(query);
+        r.write(res);
+
+        return;
       }
 
       case "GET": {
@@ -66,7 +67,10 @@ export default async function Asset(
           query: GetAssetQuery,
           headers: GetAssetHeaders,
         })(req, requestId);
-        return await getAsset(query, headers, res);
+        const r = await svc.getAsset(query, headers);
+        r.write(res);
+
+        return;
       }
 
       case "POST": {
@@ -76,11 +80,13 @@ export default async function Asset(
         const body = await parseMultipartBody(req);
         const assetIds = await post(query, body);
         res.status(201).json({ assetIds });
-        return await Promise.all(
+        await Promise.all(
           Object.values(body.files).map(({ path }) =>
             unlink(pathToFileURL(path))
           )
         );
+
+        return;
       }
 
       default:

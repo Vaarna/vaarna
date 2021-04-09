@@ -1,9 +1,8 @@
 import { v4 as v4uuid } from "uuid";
-import pino, { Logger } from "pino";
 import { NextApiRequest, NextApiResponse } from "next";
+import P from "pino";
 
-export type { Logger } from "pino";
-export const rootLogger = pino({
+export const rootLogger = P({
   nestedKey: "data",
   redact: [
     "request.headers.authorization",
@@ -12,10 +11,26 @@ export const rootLogger = pino({
   ],
 });
 
+type AWSLogger = {
+  debug: (_: never) => void;
+  info: (_: never) => void;
+  warn: (_: never) => void;
+  error: (_: never) => void;
+};
+
+export function asAWSLogger(logger: P.Logger): AWSLogger {
+  return {
+    debug: logger.trace,
+    info: logger.debug,
+    warn: logger.warn,
+    error: logger.error,
+  };
+}
+
 export function requestLogger(
   req: NextApiRequest,
   res: NextApiResponse
-): [Logger, string] {
+): [P.Logger, string] {
   const t0 = process.hrtime.bigint();
 
   const requestId = v4uuid();
