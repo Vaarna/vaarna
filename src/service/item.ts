@@ -63,13 +63,11 @@ export async function updateItem(item: ItemUpdate): Promise<unknown | null> {
     ...item,
   }).filter((v) => !noTouchy.has(v));
 
-  const updateExpr =
-    "SET " +
-    [
-      "updated = :updated",
-      "version = version + :version_increment",
-      ...fieldsToUpdate.map((v) => `#${v} = :${v}`),
-    ].join(", ");
+  const updateExpr = `SET ${[
+    "updated = :updated",
+    "version = version + :version_increment",
+    ...fieldsToUpdate.map((v) => `#${v} = :${v}`),
+  ].join(", ")}`;
 
   const attributeValues = marshall({
     ":version": item.version,
@@ -77,12 +75,12 @@ export async function updateItem(item: ItemUpdate): Promise<unknown | null> {
     ":updated": now,
     ...Object.fromEntries(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      fieldsToUpdate.map((v) => [":" + v, (item as any)[v]])
+      fieldsToUpdate.map((v) => [`:${v}`, (item as any)[v]])
     ),
   });
 
   const attributeNames = Object.fromEntries(
-    fieldsToUpdate.map((v) => ["#" + v, v])
+    fieldsToUpdate.map((v) => [`#${v}`, v])
   );
 
   const { spaceId, itemId } = item;
@@ -129,17 +127,8 @@ export async function removeItem(
     return null;
   } catch (e) {
     if (e?.name === "ConditionalCheckFailedException") {
-      const items = await getItems({ spaceId, itemId });
-      if (items.length === 0) {
-        // failed to delete item because the item does not exist
-        return null;
-      }
-
       // failed to delete the item because its version was different from the given version
-      throw {
-        msg: "failed to delete item because of version mismatch",
-        item: items[0],
-      };
+      return null;
     }
 
     throw e;

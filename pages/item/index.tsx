@@ -9,7 +9,7 @@ import { Loading } from "component/atom/Loading";
 
 async function fetcher(url: string, spaceId: string): Promise<Items> {
   try {
-    const { data } = await axios({ url: url, params: { spaceId } });
+    const { data } = await axios({ url, params: { spaceId } });
     return Items.parse(data.data).sort((a, b) => a.path.localeCompare(b.path));
   } catch {
     return [];

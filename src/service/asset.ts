@@ -16,6 +16,7 @@ import P from "pino";
 import { Readable } from "stream";
 import { GetAssetHeaders, GetAssetQuery } from "type/asset";
 import { AssetData, AssetDatas, GetAssetDataQuery } from "type/assetData";
+import { ApiInternalServerError } from "type/error";
 import { getItemsFromTable } from "util/dynamodb";
 
 type ApiHeaders = {
@@ -48,6 +49,7 @@ type AssetServiceConfig = {
   tableName: string;
   maxAge?: number;
   logger: P.Logger;
+  requestId: string;
 };
 
 const MINUTE = 60;
@@ -60,6 +62,7 @@ export class AssetService {
   readonly maxAge: number = 28 * DAY;
 
   private readonly logger: P.Logger;
+  private readonly requestId: string;
 
   private readonly s3: S3Client;
   private readonly db: DynamoDBClient;
@@ -73,6 +76,7 @@ export class AssetService {
       bucket: this.bucket,
       tableName: this.tableName,
     });
+    this.requestId = config.requestId;
 
     this.s3 = new S3Client({
       logger: asAWSLogger(this.logger.child({ client: "S3" })),
@@ -162,7 +166,10 @@ export class AssetService {
     }
 
     if (!data.Body) {
-      throw "s3 did not return any data??";
+      throw new ApiInternalServerError(
+        this.requestId,
+        "S3 did not return any data when it should have"
+      );
     }
 
     return new AssetResponse(
@@ -172,7 +179,7 @@ export class AssetService {
     );
   }
 
-  getKind(contentType: string): AssetData["kind"] {
+  static getKind(contentType: string): AssetData["kind"] {
     // eslint-disable-next-line default-case
     switch (contentType) {
       case "application/pdf":
@@ -214,7 +221,7 @@ export class AssetService {
 
     await this.s3.send(cmd);
 
-    const kind = this.getKind(params.contentType);
+    const kind = AssetService.getKind(params.contentType);
     const item: AssetData = { ...params, kind };
     const dbCmd = new PutItemCommand({
       TableName: this.tableName,

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { rootLogger } from "logger";
 import { useDebugValue, useEffect, useState } from "react";
 import useSWR from "swr";
 import { Item, Items } from "type/item";
@@ -46,7 +47,7 @@ export const useItem = (
 
   useEffect(() => {
     if (!error && !dirty) setItem(data);
-  }, [data, error]);
+  }, [data, error, dirty]);
 
   const save = () => {
     setInflight(true);
@@ -67,14 +68,14 @@ export const useItem = (
       .then(() => {
         return;
       })
-      .catch(console.error)
+      .catch(rootLogger.error)
       .finally(() => setInflight(false));
   };
 
   return {
     loading: !error && item === undefined,
     notFound: item === null,
-    error: error,
+    error,
     item: item as Item,
     setItem: (item: Item) => {
       setItem(item);

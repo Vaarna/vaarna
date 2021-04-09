@@ -57,9 +57,8 @@ export const UploadProgress: React.FC<UploadProgressProps> = ({
           <p>File(s) Uploaded!</p>
         ) : loaded >= total ? (
           <>
-            <p>
-              Server is processing file(s). <Loading slow small />
-            </p>
+            <p>Server is processing file(s).</p>
+            <Loading slow small />
           </>
         ) : (
           <progress style={{ width: "100%" }} value={loaded} max={total} />

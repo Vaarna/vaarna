@@ -51,5 +51,5 @@ export const useFileUpload = (upload: Upload): void => {
       window.removeEventListener("dragover", prevent);
       window.removeEventListener("drop", drop);
     };
-  }, []);
+  }, [upload]);
 };

@@ -19,10 +19,9 @@ async function fetcher(
   const { data } = await axios({ url, params });
 
   const parsed = AssetDatas.parse(data.data);
-  console.log(parsed);
 
   if (parsed.length !== 1) {
-    throw "API returned incorrect number of items";
+    throw new Error("API returned incorrect number of items");
   }
 
   return parsed[0];
@@ -33,7 +32,13 @@ export default function Asset(): React.ReactNode {
   const { id } = router.query;
 
   const [spaceId, _] = useSpaceId<string>();
-  const { data, error } = useSWR(["/api/v1/asset/data", spaceId, id], fetcher);
+  const { data, error } = useSWR(
+    () =>
+      spaceId === undefined || id === undefined || Array.isArray(id)
+        ? null
+        : ["/api/v1/asset/data", spaceId, id],
+    fetcher
+  );
 
   if (error) {
     return <div>{JSON.stringify(error)}</div>;

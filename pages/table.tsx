@@ -16,7 +16,6 @@ async function assetFetcher(
   assetId: string
 ): Promise<AssetData> {
   const res = await axios(url, { params: { spaceId, assetId } });
-  console.log(res.data);
   const datas = AssetDatas.parse(res.data?.data);
   if (datas.length !== 1) throw new Error("wrong number of assets returned");
 

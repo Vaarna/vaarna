@@ -3,6 +3,7 @@ import { AssetData, AssetDatas } from "type/assetData";
 import bytes from "bytes";
 import axios from "axios";
 import { useSpaceId } from "store";
+import { rootLogger } from "logger";
 
 type RowProps = { spaceId: string | undefined; asset: AssetData };
 
@@ -17,10 +18,13 @@ const Row: React.FC<RowProps> = ({ spaceId, asset }: RowProps) => (
           axios
             .post("/api/v1/table", { spaceId, assetId: asset.assetId })
             .then(() => {
-              console.log(`succesfully changed table to ${asset.assetId}`);
+              rootLogger.info(
+                asset,
+                `succesfully changed table to ${asset.assetId}`
+              );
             })
             .catch((err) => {
-              console.error(err);
+              rootLogger.error(err, "failed to modify table");
             });
         }}
       >

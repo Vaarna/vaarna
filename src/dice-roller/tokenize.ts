@@ -23,7 +23,7 @@ export function tokenize(v: string): Token[] {
   const f = () => {
     if (numBuf.length === 0) return;
 
-    out.push(Num(parseInt(numBuf.join(""))));
+    out.push(Num(parseInt(numBuf.join(""), 10)));
     numBuf = [];
   };
 

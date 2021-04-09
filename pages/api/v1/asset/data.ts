@@ -13,6 +13,7 @@ export default async function (
     bucket: "gm-screen",
     tableName: "AssetData",
     logger,
+    requestId,
   });
 
   const allow = "OPTIONS, GET";

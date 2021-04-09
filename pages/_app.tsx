@@ -12,7 +12,8 @@ import axios from "axios";
 import { useSpaceId } from "store";
 import { z } from "zod";
 import { UploadProgress, UploadProgressProps } from "component/UploadProgress";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { rootLogger } from "logger";
 
 const ProgressEvent = z.object({
   type: z.literal("progress"),
@@ -32,23 +33,20 @@ export default function App({
     (Omit<UploadProgressProps, "parentId"> & { id: string })[]
   >([]);
 
-  useEffect(() => {
-    console.log(uploads);
-  }, [uploads]);
-
-  const onUploadProgress = (id: string) => (ev: unknown) => {
+  const onUploadProgress = (id: string) => (ev: unknown): void => {
     const evParsed = ProgressEvent.safeParse(ev);
-    if (!evParsed.success) return console.error(evParsed.error);
+    if (!evParsed.success) throw evParsed.error;
     const progress = evParsed.data;
     const { loaded, total } = progress;
 
     setUploads((prev) =>
       prev.map((v) => (v.id !== id ? v : { ...v, loaded, total }))
     );
+
+    return;
   };
 
   const onUploadDone = (id: string) => {
-    console.log("upload with id %s is done", id, uploads);
     setUploads((prev) =>
       prev.map((v) => (v.id !== id ? v : { ...v, done: true }))
     );
@@ -91,7 +89,7 @@ export default function App({
         onUploadDone(id);
       })
       .catch((err) => {
-        console.error(err);
+        rootLogger.error(err, "failed to upload file");
       });
   });
 

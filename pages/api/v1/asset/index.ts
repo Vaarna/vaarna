@@ -18,6 +18,7 @@ export default async function Asset(
     bucket: "gm-screen",
     tableName: "AssetData",
     logger,
+    requestId,
   });
 
   async function post(query: PostAssetQuery, body: ParsedMultipartBody) {

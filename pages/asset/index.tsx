@@ -8,7 +8,7 @@ import { AssetDatas } from "type/assetData";
 
 async function fetcher(url: string, spaceId: string): Promise<AssetDatas> {
   try {
-    const { data } = await axios({ url: url, params: { spaceId } });
+    const { data } = await axios({ url, params: { spaceId } });
     return AssetDatas.parse(data.data).sort((a, b) =>
       a.filename.localeCompare(b.filename)
     );
