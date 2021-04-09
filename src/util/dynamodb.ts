@@ -138,10 +138,9 @@ type GetItemsParameters = {
 };
 
 export async function getItemsFromTable(
+  db: DynamoDBClient,
   params: GetItemsParameters
 ): Promise<unknown[]> {
-  const db = new DynamoDBClient({});
-
   const sortValue = params.sort.value;
 
   let items;

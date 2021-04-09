@@ -16,121 +16,147 @@ import {
   RemoveItemQuery,
 } from "type/item";
 import { getItemsFromTable } from "util/dynamodb";
+import P from "pino";
+import { asAWSLogger } from "logger";
 
-const itemTable = "ItemsDev";
+type ItemServiceConfig = {
+  tableName: string;
+  logger: P.Logger;
+  requestId: string;
+};
 
-export async function getItems(params: GetItemsQuery): Promise<Items> {
-  const { spaceId, itemId } = params;
+export class ItemService {
+  readonly tableName: string;
 
-  const items = await getItemsFromTable({
-    tableName: itemTable,
-    partition: { key: "spaceId", value: spaceId },
-    sort: { key: "itemId", value: itemId },
-  });
+  private readonly logger: P.Logger;
+  private readonly requestId: string;
 
-  return Items.parse(items);
-}
+  private readonly db: DynamoDBClient;
 
-export async function createItem(item: ItemCreate): Promise<Item> {
-  const itemId = v4uuid();
-  const now = new Date().toISOString();
-  const fullItem = Item.parse({
-    ...item,
-    itemId,
-    created: now,
-    updated: now,
-    version: 0,
-  });
+  constructor(config: ItemServiceConfig) {
+    this.tableName = config.tableName;
 
-  const db = new DynamoDBClient({});
+    this.logger = config.logger.child({ tableName: this.tableName });
+    this.requestId = config.requestId;
 
-  const cmd = new PutItemCommand({
-    TableName: itemTable,
-    Item: marshall(fullItem),
-  });
+    this.db = new DynamoDBClient({
+      logger: asAWSLogger("DynamoDB", this.logger),
+    });
+  }
 
-  const _res = await db.send(cmd);
+  async getItems({ spaceId, itemId }: GetItemsQuery): Promise<Items> {
+    const items = await getItemsFromTable(this.db, {
+      tableName: this.tableName,
+      partition: { key: "spaceId", value: spaceId },
+      sort: { key: "itemId", value: itemId },
+    });
 
-  return fullItem;
-}
+    return Items.parse(items);
+  }
 
-export async function updateItem(item: ItemUpdate): Promise<unknown | null> {
-  const now = new Date().toISOString();
+  async createItem(item: ItemCreate): Promise<Item> {
+    const itemId = v4uuid();
+    const now = new Date().toISOString();
+    const fullItem = Item.parse({
+      ...item,
+      itemId,
+      created: now,
+      updated: now,
+      version: 0,
+    });
 
-  const noTouchy = new Set(["spaceId", "itemId", "type", "created", "version"]);
+    const cmd = new PutItemCommand({
+      TableName: this.tableName,
+      Item: marshall(fullItem),
+    });
 
-  const fieldsToUpdate = Object.keys({
-    ...item,
-  }).filter((v) => !noTouchy.has(v));
+    await this.db.send(cmd);
 
-  const updateExpr = `SET ${[
-    "updated = :updated",
-    "version = version + :version_increment",
-    ...fieldsToUpdate.map((v) => `#${v} = :${v}`),
-  ].join(", ")}`;
+    return fullItem;
+  }
 
-  const attributeValues = marshall({
-    ":version": item.version,
-    ":version_increment": 1,
-    ":updated": now,
-    ...Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      fieldsToUpdate.map((v) => [`:${v}`, (item as any)[v]])
-    ),
-  });
+  async updateItem(item: ItemUpdate): Promise<Item | null> {
+    const now = new Date().toISOString();
 
-  const attributeNames = Object.fromEntries(
-    fieldsToUpdate.map((v) => [`#${v}`, v])
-  );
+    const noTouchy = new Set([
+      "spaceId",
+      "itemId",
+      "type",
+      "created",
+      "version",
+    ]);
 
-  const { spaceId, itemId } = item;
+    const fieldsToUpdate = Object.keys({
+      ...item,
+    }).filter((v) => !noTouchy.has(v));
 
-  const db = new DynamoDBClient({});
+    const updateExpr = `SET ${[
+      "updated = :updated",
+      "version = version + :version_increment",
+      ...fieldsToUpdate.map((v) => `#${v} = :${v}`),
+    ].join(", ")}`;
 
-  const cmd = new UpdateItemCommand({
-    TableName: itemTable,
-    Key: marshall({ spaceId, itemId }),
-    UpdateExpression: updateExpr,
-    ConditionExpression: "version = :version",
-    ExpressionAttributeValues: attributeValues,
-    ExpressionAttributeNames: attributeNames,
-    ReturnValues: "ALL_NEW",
-  });
+    const attributeValues = marshall({
+      ":version": item.version,
+      ":version_increment": 1,
+      ":updated": now,
+      ...Object.fromEntries(
+        fieldsToUpdate.map((v) => [`:${v}`, (item as never)[v]])
+      ),
+    });
 
-  const res = await db.send(cmd);
+    const attributeNames = Object.fromEntries(
+      fieldsToUpdate.map((v) => [`#${v}`, v])
+    );
 
-  if (res.Attributes) return unmarshall(res.Attributes);
-  return null;
-}
+    const { spaceId, itemId } = item;
 
-export async function removeItem(
-  item: RemoveItemQuery
-): Promise<unknown | null> {
-  const { spaceId, itemId, version } = item;
+    const cmd = new UpdateItemCommand({
+      TableName: this.tableName,
+      Key: marshall({ spaceId, itemId }),
+      UpdateExpression: updateExpr,
+      ConditionExpression: "version = :version",
+      ExpressionAttributeValues: attributeValues,
+      ExpressionAttributeNames: attributeNames,
+      ReturnValues: "ALL_NEW",
+    });
 
-  const db = new DynamoDBClient({});
+    const res = await this.db.send(cmd);
 
-  const cmd = new DeleteItemCommand({
-    TableName: itemTable,
-    Key: marshall({ spaceId, itemId }),
-    ConditionExpression: "version = :v",
-    ExpressionAttributeValues: {
-      ":v": { N: version },
-    },
-    ReturnValues: "ALL_OLD",
-  });
-
-  try {
-    const res = await db.send(cmd);
-
-    if (res.Attributes) return unmarshall(res.Attributes);
+    if (res.Attributes) return Item.parse(unmarshall(res.Attributes));
     return null;
-  } catch (e) {
-    if (e?.name === "ConditionalCheckFailedException") {
-      // failed to delete the item because its version was different from the given version
-      return null;
-    }
+  }
 
-    throw e;
+  async removeItem({
+    spaceId,
+    itemId,
+    version,
+  }: RemoveItemQuery): Promise<Item | null> {
+    const cmd = new DeleteItemCommand({
+      TableName: this.tableName,
+      Key: marshall({ spaceId, itemId }),
+      ConditionExpression: "version = :v",
+      ExpressionAttributeValues: {
+        ":v": { N: version },
+      },
+      ReturnValues: "ALL_OLD",
+    });
+
+    try {
+      const res = await this.db.send(cmd);
+
+      if (res.Attributes) return Item.parse(unmarshall(res.Attributes));
+      return null;
+    } catch (error) {
+      if (error?.name === "ConditionalCheckFailedException") {
+        this.logger.warn(
+          error,
+          "failed to delete item because either it does not exist, or it had the wrong version"
+        );
+        return null;
+      }
+
+      throw error;
+    }
   }
 }

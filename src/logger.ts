@@ -18,12 +18,14 @@ type AWSLogger = {
   error: (_: never) => void;
 };
 
-export function asAWSLogger(logger: P.Logger): AWSLogger {
+type AWSClient = "DynamoDB" | "S3";
+export function asAWSLogger(client: AWSClient, logger: P.Logger): AWSLogger {
+  const l = logger.child({ client });
   return {
-    debug: logger.trace,
-    info: logger.debug,
-    warn: logger.warn,
-    error: logger.error,
+    debug: l.trace,
+    info: l.debug,
+    warn: l.warn,
+    error: l.error,
   };
 }
 

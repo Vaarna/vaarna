@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { requestLogger } from "logger";
-import { createItem, getItems, removeItem, updateItem } from "service/item";
+import { ItemService } from "service/item";
 import { ApiError, parseRequest } from "util/parseRequest";
 import {
   ItemCreate,
@@ -15,6 +15,11 @@ export default async function Item(
   res: NextApiResponse
 ): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
+  const svc = new ItemService({
+    tableName: "ItemsDev",
+    logger,
+    requestId,
+  });
 
   const allow = "OPTIONS, GET, POST, PUT, DELETE";
 
@@ -33,13 +38,13 @@ export default async function Item(
           { spaceId: query.spaceId, itemId: query.itemId },
           "getting items"
         );
-        return res.json({ data: await getItems(query) });
+        return res.json({ data: await svc.getItems(query) });
       }
 
       case "POST": {
         const { body } = parseRequest({ body: ItemCreate })(req, requestId);
         logger.info({ spaceId: body.spaceId }, "creating item");
-        return res.json({ data: await createItem(body) });
+        return res.json({ data: await svc.createItem(body) });
       }
 
       case "PUT": {
@@ -48,7 +53,7 @@ export default async function Item(
           { spaceId: body.spaceId, itemId: body.itemId },
           "updating item"
         );
-        return res.json({ data: await updateItem(body) });
+        return res.json({ data: await svc.updateItem(body) });
       }
 
       case "DELETE": {
@@ -57,7 +62,7 @@ export default async function Item(
           requestId
         );
         logger.info(query, "removing item");
-        return res.json({ data: await removeItem(query) });
+        return res.json({ data: await svc.removeItem(query) });
       }
 
       default:

@@ -79,10 +79,10 @@ export class AssetService {
     this.requestId = config.requestId;
 
     this.s3 = new S3Client({
-      logger: asAWSLogger(this.logger.child({ client: "S3" })),
+      logger: asAWSLogger("S3", this.logger),
     });
     this.db = new DynamoDBClient({
-      logger: asAWSLogger(this.logger.child({ client: "DynamoDB" })),
+      logger: asAWSLogger("DynamoDB", this.logger),
     });
   }
 
@@ -232,7 +232,7 @@ export class AssetService {
   }
 
   async getAssetData(query: GetAssetDataQuery): Promise<AssetDatas> {
-    const data = await getItemsFromTable({
+    const data = await getItemsFromTable(this.db, {
       tableName: this.tableName,
       partition: { key: "spaceId", value: query.spaceId },
       sort: { key: "assetId", value: query.assetId },
