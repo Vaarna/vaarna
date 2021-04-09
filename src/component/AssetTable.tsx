@@ -18,10 +18,7 @@ const Row: React.FC<RowProps> = ({ spaceId, asset }: RowProps) => (
           axios
             .post("/api/v1/table", { spaceId, assetId: asset.assetId })
             .then(() => {
-              rootLogger.info(
-                asset,
-                `succesfully changed table to ${asset.assetId}`
-              );
+              rootLogger.info(asset, `succesfully changed table to ${asset.assetId}`);
             })
             .catch((err) => {
               rootLogger.error(err, "failed to modify table");
@@ -44,9 +41,7 @@ const Row: React.FC<RowProps> = ({ spaceId, asset }: RowProps) => (
 
 export type AssetTableProps = { assets: AssetDatas };
 
-export const AssetTable: React.FC<AssetTableProps> = ({
-  assets,
-}: AssetTableProps) => {
+export const AssetTable: React.FC<AssetTableProps> = ({ assets }: AssetTableProps) => {
   const [spaceId, _] = useSpaceId<string>();
 
   return (

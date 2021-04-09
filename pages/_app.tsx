@@ -22,10 +22,7 @@ const ProgressEvent = z.object({
   total: z.number(),
 });
 
-export default function App({
-  Component,
-  pageProps,
-}: AppProps): React.ReactNode {
+export default function App({ Component, pageProps }: AppProps): React.ReactNode {
   const [spaceId, _] = useSpaceId<string>();
 
   const [showUploads, setShowUploads] = useState(false);
@@ -39,17 +36,13 @@ export default function App({
     const progress = evParsed.data;
     const { loaded, total } = progress;
 
-    setUploads((prev) =>
-      prev.map((v) => (v.id !== id ? v : { ...v, loaded, total }))
-    );
+    setUploads((prev) => prev.map((v) => (v.id !== id ? v : { ...v, loaded, total })));
 
     return;
   };
 
   const onUploadDone = (id: string) => {
-    setUploads((prev) =>
-      prev.map((v) => (v.id !== id ? v : { ...v, done: true }))
-    );
+    setUploads((prev) => prev.map((v) => (v.id !== id ? v : { ...v, done: true })));
 
     setTimeout(() => {
       setUploads((prev) => prev.filter((v) => v.id !== id));
@@ -73,10 +66,7 @@ export default function App({
       fd.append(`${idx}-${id}`, file, file.name);
     });
 
-    setUploads((prev) => [
-      ...prev,
-      { id, files: fs, loaded: 0, total, done: false },
-    ]);
+    setUploads((prev) => [...prev, { id, files: fs, loaded: 0, total, done: false }]);
     setShowUploads(true);
 
     return axios
@@ -132,11 +122,7 @@ export default function App({
 
         {uploadProgress}
         {Object.values(uploads).map((props) => (
-          <UploadProgress
-            key={props.id}
-            parentId={s.uploadProgressRoot}
-            {...props}
-          />
+          <UploadProgress key={props.id} parentId={s.uploadProgressRoot} {...props} />
         ))}
       </div>
     </>

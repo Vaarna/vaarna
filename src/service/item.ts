@@ -78,13 +78,7 @@ export class ItemService {
   async updateItem(item: ItemUpdate): Promise<Item | null> {
     const now = new Date().toISOString();
 
-    const noTouchy = new Set([
-      "spaceId",
-      "itemId",
-      "type",
-      "created",
-      "version",
-    ]);
+    const noTouchy = new Set(["spaceId", "itemId", "type", "created", "version"]);
 
     const fieldsToUpdate = Object.keys({
       ...item,
@@ -100,14 +94,10 @@ export class ItemService {
       ":version": item.version,
       ":version_increment": 1,
       ":updated": now,
-      ...Object.fromEntries(
-        fieldsToUpdate.map((v) => [`:${v}`, (item as never)[v]])
-      ),
+      ...Object.fromEntries(fieldsToUpdate.map((v) => [`:${v}`, (item as never)[v]])),
     });
 
-    const attributeNames = Object.fromEntries(
-      fieldsToUpdate.map((v) => [`#${v}`, v])
-    );
+    const attributeNames = Object.fromEntries(fieldsToUpdate.map((v) => [`#${v}`, v]));
 
     const { spaceId, itemId } = item;
 

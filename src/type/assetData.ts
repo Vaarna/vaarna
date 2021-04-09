@@ -18,10 +18,6 @@ export type AssetDatas = z.infer<typeof AssetDatas>;
 
 export const GetAssetDataQuery = z.object({
   spaceId: z.string().uuid(),
-  assetId: z.union([
-    z.undefined(),
-    z.string().uuid(),
-    z.array(z.string().uuid()),
-  ]),
+  assetId: z.union([z.undefined(), z.string().uuid(), z.array(z.string().uuid())]),
 });
 export type GetAssetDataQuery = z.infer<typeof GetAssetDataQuery>;

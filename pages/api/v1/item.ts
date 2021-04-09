@@ -3,12 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { requestLogger } from "logger";
 import { ItemService } from "service/item";
 import { ApiError, parseRequest } from "util/parseRequest";
-import {
-  ItemCreate,
-  ItemUpdate,
-  GetItemsQuery,
-  RemoveItemQuery,
-} from "type/item";
+import { ItemCreate, ItemUpdate, GetItemsQuery, RemoveItemQuery } from "type/item";
 
 export default async function Item(
   req: NextApiRequest,
@@ -30,14 +25,8 @@ export default async function Item(
         return res.status(204).end();
 
       case "GET": {
-        const { query } = parseRequest({ query: GetItemsQuery })(
-          req,
-          requestId
-        );
-        logger.info(
-          { spaceId: query.spaceId, itemId: query.itemId },
-          "getting items"
-        );
+        const { query } = parseRequest({ query: GetItemsQuery })(req, requestId);
+        logger.info({ spaceId: query.spaceId, itemId: query.itemId }, "getting items");
         return res.json({ data: await svc.getItems(query) });
       }
 
@@ -49,18 +38,12 @@ export default async function Item(
 
       case "PUT": {
         const { body } = parseRequest({ body: ItemUpdate })(req, requestId);
-        logger.info(
-          { spaceId: body.spaceId, itemId: body.itemId },
-          "updating item"
-        );
+        logger.info({ spaceId: body.spaceId, itemId: body.itemId }, "updating item");
         return res.json({ data: await svc.updateItem(body) });
       }
 
       case "DELETE": {
-        const { query } = parseRequest({ query: RemoveItemQuery })(
-          req,
-          requestId
-        );
+        const { query } = parseRequest({ query: RemoveItemQuery })(req, requestId);
         logger.info(query, "removing item");
         return res.json({ data: await svc.removeItem(query) });
       }

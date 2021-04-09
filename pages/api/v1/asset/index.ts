@@ -82,9 +82,7 @@ export default async function Asset(
         const assetIds = await post(query, body);
         res.status(201).json({ assetIds });
         await Promise.all(
-          Object.values(body.files).map(({ path }) =>
-            unlink(pathToFileURL(path))
-          )
+          Object.values(body.files).map(({ path }) => unlink(pathToFileURL(path)))
         );
 
         return;

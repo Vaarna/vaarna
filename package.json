@@ -5,6 +5,9 @@
   "repository": "git@github.com:PolarPayne/gm-screen.git",
   "author": "Maximilian Remming <maximilian@remming.fi>",
   "license": "AGPL-3.0-or-later",
+  "prettier": {
+    "printWidth": 88
+  },
   "scripts": {
     "dev": "next dev | pino-pretty",
     "build": "next build",

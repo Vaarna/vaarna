@@ -10,11 +10,7 @@ type ApiErrorResponse = {
 };
 
 export abstract class ApiError extends CustomError {
-  constructor(
-    readonly code: number,
-    readonly requestId: string,
-    message: string
-  ) {
+  constructor(readonly code: number, readonly requestId: string, message: string) {
     super(message);
     this.name = "ApiError";
   }
@@ -75,12 +71,7 @@ export class ApiParseQueryError extends ApiParseError {
   name = "ApiParseQueryError";
 
   constructor(zodError: ZodError, requestId: string) {
-    super(
-      zodError,
-      "query",
-      requestId,
-      "failed to parse request query parameters"
-    );
+    super(zodError, "query", requestId, "failed to parse request query parameters");
   }
 }
 

@@ -51,10 +51,7 @@ async function getItemsMultiple(
   // TODO when the response returns UnprocessedKeys also get those
 
   if (params.sort.value.length > 100)
-    logger.error(
-      params,
-      "requesting more than 100 items, request should be batched"
-    );
+    logger.error(params, "requesting more than 100 items, request should be batched");
 
   const cmd = new BatchGetItemCommand({
     RequestItems: {
@@ -72,10 +69,7 @@ async function getItemsMultiple(
   const res = await db.send(cmd);
 
   if (res.UnprocessedKeys)
-    logger.error(
-      res,
-      "response returned UnprocessedKeys but we did not get those"
-    );
+    logger.error(res, "response returned UnprocessedKeys but we did not get those");
 
   const items = [];
   if (res.Responses && params.tableName in res.Responses) {

@@ -1,12 +1,4 @@
-import {
-  tokenize,
-  Num,
-  OpPlus,
-  OpMinus,
-  OpDice,
-  ParenL,
-  ParenR,
-} from "./tokenize";
+import { tokenize, Num, OpPlus, OpMinus, OpDice, ParenL, ParenR } from "./tokenize";
 
 test.each([
   ["(", ParenL],

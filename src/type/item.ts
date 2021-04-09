@@ -87,11 +87,7 @@ export type ItemUpdate = z.infer<typeof ItemUpdate>;
 
 export const GetItemsQuery = z.object({
   spaceId: z.string().uuid(),
-  itemId: z.union([
-    z.undefined(),
-    z.string().uuid(),
-    z.array(z.string().uuid()),
-  ]),
+  itemId: z.union([z.undefined(), z.string().uuid(), z.array(z.string().uuid())]),
 });
 export type GetItemsQuery = z.infer<typeof GetItemsQuery>;
 

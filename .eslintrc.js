@@ -1,6 +1,4 @@
-const warns = Object.fromEntries(
-  ["no-console", "complexity"].map((v) => [v, "warn"])
-);
+const warns = Object.fromEntries(["no-console", "complexity"].map((v) => [v, "warn"]));
 
 const errors = Object.fromEntries(
   [
