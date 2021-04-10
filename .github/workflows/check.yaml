@@ -4,8 +4,8 @@ on: [push]
 
 jobs:
   e2e:
-    name: Run TestCafe tests
-    runs-on: windows-latest
+    name: Run end-to-end tests
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
@@ -15,10 +15,16 @@ jobs:
       - name: Install dependencies
         run: yarn
 
+      - name: Start background services
+        run: docker-compose up -d
+      - name: Start application
+        run: yarn build && yarn start &
+
       - name: Run tests
         run: yarn test:e2e
 
   check:
+    name: Run basic checks and unit tests
     runs-on: ubuntu-latest
 
     steps:
