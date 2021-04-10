@@ -54,7 +54,7 @@ export const UploadProgress: React.FC<UploadProgressProps> = ({
         {round((loaded / total) * 100, 2)}% ({bytes(loaded)} / {bytes(total)})
         <br />
         {done ? (
-          <p>File(s) Uploaded!</p>
+          <p>File(s) uploaded!</p>
         ) : loaded >= total ? (
           <>
             <p>Server is processing file(s).</p>

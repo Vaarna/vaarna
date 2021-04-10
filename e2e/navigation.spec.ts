@@ -1,0 +1,20 @@
+import { Selector } from "testcafe";
+import { windowPathname } from "./util";
+
+fixture`Navigation`.page`http://localhost:3000`;
+
+test("dropping a file to the page uploads it", async (t) => {
+  await t.expect(windowPathname()).eql("/");
+
+  await t.click(Selector("a").withText("Items"));
+  await t.expect(windowPathname()).eql("/item");
+
+  await t.click(Selector("a").withText("Assets"));
+  await t.expect(windowPathname()).eql("/asset");
+
+  await t.click(Selector("a").withText("Table"));
+  await t.expect(windowPathname()).eql("/table");
+
+  await t.click(Selector("a").withText("GM Screen"));
+  await t.expect(windowPathname()).eql("/");
+});
