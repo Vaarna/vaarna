@@ -19,13 +19,11 @@ jobs:
         run: docker-compose up -d
       - name: Create bucket and tables
         run: scripts/create-dev.sh
-      - name: Build application
-        run: yarn build
       - name: Start application
-        run: PORT=3000 yarn start &
+        run: yarn dev &
 
       - name: Run tests
-        run: xvfb-run --server-args="-screen 0 1280x720x24" yarn testcafe chrome e2e/ --speed 0.5
+        run: xvfb-run --server-args="-screen 0 1280x720x24" yarn testcafe all e2e/
 
   check:
     name: Run basic checks and unit tests
