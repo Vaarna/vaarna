@@ -25,7 +25,7 @@ jobs:
         run: PORT=3000 yarn start &
 
       - name: Run tests
-        run: xvfb-run --server-args="-screen 0 1280x720x24" yarn testcafe chrome
+        run: xvfb-run --server-args="-screen 0 1280x720x24" yarn testcafe chrome e2e/
 
   check:
     name: Run basic checks and unit tests
