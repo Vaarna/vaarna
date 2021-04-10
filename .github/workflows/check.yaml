@@ -17,8 +17,10 @@ jobs:
 
       - name: Start background services
         run: docker-compose up -d
+      - name: Build application
+        run: yarn build
       - name: Start application
-        run: yarn build && PORT=3000 yarn start &
+        run: PORT=3000 yarn start &
 
       - name: Run tests
         run: yarn test:e2e
