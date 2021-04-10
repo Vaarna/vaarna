@@ -19,11 +19,13 @@ jobs:
         run: docker-compose up -d
       - name: Create bucket and tables
         run: scripts/create-dev.sh
-      - name: Start application
-        run: yarn dev &
 
       - name: Run tests
-        run: xvfb-run --server-args="-screen 0 1280x720x24" yarn testcafe all e2e/
+        run: >
+          xvfb-run --server-args="-screen 0 1280x720x24"
+          yarn testcafe all
+          --app "next dev"
+          --concurrency 4
 
   check:
     name: Run basic checks and unit tests
