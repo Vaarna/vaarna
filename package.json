@@ -14,7 +14,7 @@
     "start": "next start --port $PORT",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:e2e": "testcafe firefox:headless,chrome:headless e2e/",
+    "test:e2e": "testcafe firefox:headless,chrome:headless e2e/ --selector-timeout 10000 --assertion-timeout 10000",
     "check": "yarn check:tsc && yarn check:eslint && yarn check:prettier",
     "check:eslint": "eslint 'pages/**/*.{ts,tsx}' 'src/**/*.{ts,tsx}'",
     "fix:eslint": "eslint --fix 'pages/**/*.{ts,tsx}' 'src/**/*.{ts,tsx}'",
