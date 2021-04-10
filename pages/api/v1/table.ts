@@ -9,7 +9,7 @@ import { requestLogger, asAWSLogger } from "logger";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ApiInternalServerError, ApiNotFoundError } from "type/error";
 import { GetTableQuery, Table, UpdateTableBody } from "type/table";
-import { envGet, envGetBool } from "util/env";
+import { envGet } from "util/env";
 import { ApiError, parseRequest } from "util/parseRequest";
 
 export default async function handle_table(
