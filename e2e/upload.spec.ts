@@ -29,16 +29,30 @@ test("dropping a file to the page uploads it", async (t) => {
 
 test("pasting a file to the page uploads it", async (t) => {
   await t.typeText(Selector("label").withText("Space ID"), spaceId);
-
+  const { name } = t.browser;
   await t.eval(
     () => {
-      const pasteEvent = new ClipboardEvent("paste");
-      pasteEvent.clipboardData.items.add(
-        new File([blob], "lena-paste.png", { type: "image/png", lastModified: now })
-      );
+      let pasteEvent: ClipboardEvent;
+
+      if (name === "Firefox") {
+        // on (at least) firefox, you can't set the clipboardData when creating
+        // the event, but you must instead add the data to the created event
+        pasteEvent = new ClipboardEvent("paste");
+        pasteEvent.clipboardData.items.add(
+          new File([blob], "lena-paste.png", { type: "image/png", lastModified: now })
+        );
+      } else {
+        const clipboardData = new DataTransfer();
+        clipboardData.items.add(
+          new File([blob], "lena-paste.png", { type: "image/png", lastModified: now })
+        );
+
+        pasteEvent = new ClipboardEvent("paste", { clipboardData });
+      }
+
       document.body.dispatchEvent(pasteEvent);
     },
-    { dependencies: { blob, now } }
+    { dependencies: { blob, now, name } }
   );
 
   await t.expect(Selector("div").withText("lena-paste.png").exists).ok();
