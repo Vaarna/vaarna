@@ -17,6 +17,8 @@ jobs:
 
       - name: Start background services
         run: docker-compose up -d
+      - name: Create bucket and tables
+        run: scripts/create-dev.sh
       - name: Build application
         run: yarn build
       - name: Start application
