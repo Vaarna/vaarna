@@ -14,6 +14,7 @@
     "start": "next start --port $PORT",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:e2e": "testcafe firefox,chrome e2e/",
     "check": "yarn check:tsc && yarn check:eslint && yarn check:prettier",
     "check:eslint": "eslint 'pages/**/*.{ts,tsx}' 'src/**/*.{ts,tsx}'",
     "fix:eslint": "eslint --fix 'pages/**/*.{ts,tsx}' 'src/**/*.{ts,tsx}'",
