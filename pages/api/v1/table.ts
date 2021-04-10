@@ -1,13 +1,15 @@
 import {
   DynamoDBClient,
   GetItemCommand,
+  PutItemCommand,
   UpdateItemCommand,
 } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-import { requestLogger } from "logger";
+import { requestLogger, asAWSLogger } from "logger";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ApiInternalServerError, ApiNotFoundError } from "type/error";
 import { GetTableQuery, Table, UpdateTableBody } from "type/table";
+import { envGet, envGetBool } from "util/env";
 import { ApiError, parseRequest } from "util/parseRequest";
 
 export default async function handle_table(
@@ -15,11 +17,14 @@ export default async function handle_table(
   res: NextApiResponse
 ): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
+  const db = new DynamoDBClient({
+    endpoint: process.env.DYNAMODB_ENDPOINT,
+    logger: asAWSLogger("DynamoDB", logger),
+  });
 
   async function getTable(spaceId: string): Promise<Table> {
-    const db = new DynamoDBClient({});
     const cmd = new GetItemCommand({
-      TableName: "TableDev",
+      TableName: envGet("TABLE_TABLE"),
       Key: marshall({ spaceId }),
     });
 
@@ -36,9 +41,8 @@ export default async function handle_table(
   async function updateTable(table: UpdateTableBody): Promise<Table | null> {
     const now = new Date().toISOString();
 
-    const db = new DynamoDBClient({});
     const cmd = new UpdateItemCommand({
-      TableName: "TableDev",
+      TableName: envGet("TABLE_TABLE"),
       Key: marshall({ spaceId: table.spaceId }),
       UpdateExpression: "SET updated = :updated, assetId = :assetId",
       ExpressionAttributeValues: marshall({
@@ -48,15 +52,32 @@ export default async function handle_table(
       ReturnValues: "ALL_NEW",
     });
 
-    const res = await db.send(cmd);
-    if (res.Attributes === undefined) {
-      throw new ApiInternalServerError(requestId);
+    try {
+      const res = await db.send(cmd);
+
+      if (res.Attributes === undefined) {
+        throw new ApiInternalServerError(requestId);
+      }
+
+      const parsed = Table.safeParse(res.Attributes);
+      if (!parsed.success) return null;
+
+      return parsed.data;
+    } catch (error) {
+      if (error?.name === "ResourceNotFoundException") {
+        const out = { ...table, updated: now };
+        const cmd = new PutItemCommand({
+          TableName: envGet("TABLE_TABLE"),
+          Item: marshall(out),
+        });
+
+        await db.send(cmd);
+
+        return out;
+      }
+
+      throw error;
     }
-
-    const parsed = Table.safeParse(res.Attributes);
-    if (!parsed.success) return null;
-
-    return parsed.data;
   }
 
   const allow = "OPTIONS, GET, POST, PUT, DELETE";

@@ -40,6 +40,7 @@ export class ItemService {
     this.requestId = config.requestId;
 
     this.db = new DynamoDBClient({
+      endpoint: process.env.DYNAMODB_ENDPOINT,
       logger: asAWSLogger("DynamoDB", this.logger),
     });
   }

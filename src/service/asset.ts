@@ -18,6 +18,7 @@ import { GetAssetHeaders, GetAssetQuery } from "type/asset";
 import { AssetData, AssetDatas, GetAssetDataQuery } from "type/assetData";
 import { ApiInternalServerError } from "type/error";
 import { getItemsFromTable } from "util/dynamodb";
+import { envGetBool } from "util/env";
 
 type ApiHeaders = {
   name: string;
@@ -79,9 +80,12 @@ export class AssetService {
     this.requestId = config.requestId;
 
     this.s3 = new S3Client({
+      endpoint: process.env.S3_ENDPOINT,
+      forcePathStyle: envGetBool("S3_FORCE_PATH_STYLE", false),
       logger: asAWSLogger("S3", this.logger),
     });
     this.db = new DynamoDBClient({
+      endpoint: process.env.DYNAMODB_ENDPOINT,
       logger: asAWSLogger("DynamoDB", this.logger),
     });
   }

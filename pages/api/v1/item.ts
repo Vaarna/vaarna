@@ -4,6 +4,7 @@ import { requestLogger } from "logger";
 import { ItemService } from "service/item";
 import { ApiError, parseRequest } from "util/parseRequest";
 import { ItemCreate, ItemUpdate, GetItemsQuery, RemoveItemQuery } from "type/item";
+import { envGet } from "util/env";
 
 export default async function Item(
   req: NextApiRequest,
@@ -11,7 +12,7 @@ export default async function Item(
 ): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
   const svc = new ItemService({
-    tableName: "ItemsDev",
+    tableName: envGet("ITEM_TABLE"),
     logger,
     requestId,
   });

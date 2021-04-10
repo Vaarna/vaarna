@@ -8,6 +8,7 @@ import { ApiError, parseRequest } from "util/parseRequest";
 import { pathToFileURL } from "url";
 import { ParsedMultipartBody, parseMultipartBody } from "util/multipart";
 import { AssetService } from "service/asset";
+import { envGet } from "util/env";
 
 export default async function Asset(
   req: NextApiRequest,
@@ -15,8 +16,8 @@ export default async function Asset(
 ): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
   const svc = new AssetService({
-    bucket: "gm-screen",
-    tableName: "AssetData",
+    bucket: envGet("ASSET_BUCKET"),
+    tableName: envGet("ASSET_DATA_TABLE"),
     logger,
     requestId,
   });
