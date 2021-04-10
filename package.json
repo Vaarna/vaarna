@@ -13,10 +13,10 @@
     "build": "next build",
     "start": "next start --port $PORT",
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:e2e": "testcafe -a 'next dev'",
     "check": "yarn check:tsc && yarn check:eslint && yarn check:prettier",
-    "check:eslint": "eslint 'pages/**/*.{ts,tsx}' 'src/**/*.{ts,tsx}'",
-    "fix:eslint": "eslint --fix 'pages/**/*.{ts,tsx}' 'src/**/*.{ts,tsx}'",
+    "check:eslint": "eslint '**/*.{ts,tsx}'",
+    "fix:eslint": "eslint --fix '**/*.{ts,tsx}'",
     "check:prettier": "prettier --check --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'",
     "fix:prettier": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'",
     "check:tsc": "tsc"

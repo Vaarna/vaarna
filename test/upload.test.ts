@@ -6,7 +6,7 @@ fixture`Upload`.page`http://localhost:3000`;
 
 const spaceId = v4uuid();
 const now = new Date().getTime() / 1000;
-const blob = Uint8Array.from(readFileSync("./e2e/lena.png"));
+const blob = Uint8Array.from(readFileSync("./test/lena.png"));
 
 test("dropping a file to the page uploads it", async (t) => {
   await t.typeText(Selector("label").withText("Space ID"), spaceId);
