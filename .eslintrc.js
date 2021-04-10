@@ -5,6 +5,7 @@ const errors = Object.fromEntries(
     "class-methods-use-this",
     "default-case-last",
     "default-case",
+    "default-param-last",
     "eqeqeq",
     "no-alert",
     "no-duplicate-imports",
@@ -23,6 +24,8 @@ const errors = Object.fromEntries(
     "prefer-spread",
     "prefer-template",
     "radix",
+    "require-atomic-updates",
+    "yoda",
   ].map((v) => [v, "error"])
 );
 
