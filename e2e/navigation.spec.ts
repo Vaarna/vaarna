@@ -3,7 +3,7 @@ import { windowPathname } from "./util";
 
 fixture`Navigation`.page`http://localhost:3000`;
 
-test("dropping a file to the page uploads it", async (t) => {
+test("header can be used to navigate between pages", async (t) => {
   await t.expect(windowPathname()).eql("/");
 
   await t.click(Selector("a").withText("Items"));
