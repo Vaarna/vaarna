@@ -42,7 +42,10 @@ clean:
 
 .PHONY: dev
 dev: dev-services init
-	${TS_NODE} --project tsconfig.server.json server/index.ts | ${PINO_PRETTY}
+	${TS_NODE} \
+	--project tsconfig.server.json \
+	--require source-map-support/register \
+	server/index.ts | ${PINO_PRETTY}
 
 .PHONY: dev-services
 dev-services:
