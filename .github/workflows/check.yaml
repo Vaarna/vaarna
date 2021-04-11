@@ -22,7 +22,10 @@ jobs:
       - name: Run all checks and tests
         run: >
           xvfb-run --server-args="-screen 0 1280x720x24"
-          make -j check test TESTCAFE_BROWSERS=all TESTCAFE_APP_INIT_DELAY=30000
+          make -j check test
+          TESTCAFE_BROWSERS=all
+          TESTCAFE_APP_INIT_DELAY=30000
+          TESTCAFE_PARAMS=--quarantine-mode
 
       - name: Build next app
         run: yarn run build
