@@ -1,7 +1,6 @@
-node_modules/
-.vscode/
 .next/
-
-screenshots/
-
+.vscode/
 cdk.out/
+dist/
+node_modules/
+screenshots/

@@ -5,6 +5,7 @@ BIN := ${shell ${YARN} bin}
 
 DOCKER_COMPOSE := docker-compose
 
+TS_NODE := ${BIN}/ts-node
 NEXT := ${BIN}/next
 PINO_PRETTY := ${BIN}/pino-pretty
 
@@ -30,13 +31,18 @@ init:
 
 .PHONY: clean
 clean:
-	rm -rf .next cdk.out screenshots/ node_modules/
+	rm -rf \
+		.next \
+		cdk.out \
+		dist/ \
+		node_modules/ \
+		screenshots/
 
 # --- DEV ---
 
 .PHONY: dev
-dev: dev-services
-	${NEXT} dev | ${PINO_PRETTY}
+dev: dev-services init
+	${TS_NODE} --project tsconfig.server.json server/index.ts | ${PINO_PRETTY}
 
 .PHONY: dev-services
 dev-services:
