@@ -15,6 +15,7 @@ PRETTIER := ${BIN}/prettier
 JEST := ${BIN}/jest
 TESTCAFE := ${BIN}/testcafe
 
+TESTCAFE_APP_INIT_DELAY := 1000
 TESTCAFE_BROWSERS := firefox
 
 .PHONY: help
@@ -70,5 +71,5 @@ test-jest:
 test-testcafe:
 	${TESTCAFE} \
 		-a "${NEXT} dev" \
-		--app-init-delay 5000 \
+		--app-init-delay ${TESTCAFE_APP_INIT_DELAY} \
 		${TESTCAFE_BROWSERS}
