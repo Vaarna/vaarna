@@ -1,0 +1,8 @@
+{
+  "app": "yarn ts-node -P cdk/tsconfig.json -r source-map-support/register cdk/index.ts",
+  "context": {
+    "@aws-cdk/core:enableStackNameDuplicates": "true",
+    "aws-cdk:enableDiffNoFail": "true",
+    "@aws-cdk/core:stackRelativeExports": "true"
+  }
+}
