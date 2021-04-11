@@ -106,7 +106,7 @@ export class AssetService {
       },
       {
         name: "Cache-Control",
-        value: `immutable, private, max-age=${this.maxAge} stale-while-revalidate=${this.maxAge}`,
+        value: `immutable, max-age=${this.maxAge}, stale-while-revalidate=${this.maxAge}`,
       },
     ];
 
