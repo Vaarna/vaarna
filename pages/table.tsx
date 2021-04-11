@@ -51,20 +51,15 @@ export default function TablePage(): React.ReactNode {
   const assetData = asset.data;
   const src = `/api/v1/asset?spaceId=${spaceId}&assetId=${assetData.assetId}`;
 
-  const innerStyle = {
-    maxWidth: "100%",
-    height: "calc(100vh - 10rem)",
-  };
-
   let el: React.ReactElement;
   switch (assetData.kind) {
     case "image":
-      el = <img style={innerStyle} src={src} />;
+      el = <img src={src} />;
       break;
 
     case "video":
       el = (
-        <video style={innerStyle} controls autoPlay>
+        <video controls autoPlay>
           <source src={src} />
         </video>
       );
@@ -72,22 +67,18 @@ export default function TablePage(): React.ReactNode {
 
     case "audio":
       el = (
-        <audio style={innerStyle} controls autoPlay>
+        <audio controls autoPlay>
           <source src={src} />
         </audio>
       );
       break;
 
     case "pdf":
-      el = <div style={innerStyle}>PDFs are not yet supported :)</div>;
+      el = <div>PDFs are not yet supported.</div>;
       break;
 
     default:
-      el = (
-        <div style={innerStyle}>
-          other files can not really be displayed at the moment
-        </div>
-      );
+      el = <div>Other files can not be displayed at the moment.</div>;
       break;
   }
 
@@ -97,6 +88,7 @@ export default function TablePage(): React.ReactNode {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        objectFit: "scale-down",
       }}
     >
       {el}
