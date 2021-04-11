@@ -3,8 +3,8 @@ name: check
 on: [push]
 
 jobs:
-  check:
-    name: Run checks and tests
+  e2e:
+    name: Run E2E tests
     runs-on: ubuntu-latest
 
     steps:
@@ -19,13 +19,39 @@ jobs:
       - name: Start background services
         run: make dev-services
 
-      - name: Run all checks and tests
+      - name: Run end-to-end tests
+        id: test
+        continue-on-error: true
         run: >
           xvfb-run --server-args="-screen 0 1280x720x24"
-          make -j check test
-          TESTCAFE_BROWSERS=all
+          make test-testcafe
+          TESTCAFE_BROWSERS=chrome,firefox
+          TESTCAFE_APP_INIT_DELAY=30000
+
+      - name: Run end-to-end tests in quarantine mode
+        if: steps.test.outcome != 'success'
+        run: >
+          xvfb-run --server-args="-screen 0 1280x720x24"
+          make test-testcafe
+          TESTCAFE_BROWSERS=chrome,firefox
           TESTCAFE_APP_INIT_DELAY=30000
           TESTCAFE_PARAMS=--quarantine-mode
+
+  check:
+    name: Run checks and tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "14"
+
+      - name: Install dependencies
+        run: make init
+
+      - name: Run all checks and tests
+        run: make -j check test-jest
 
       - name: Build next app
         run: yarn run build
