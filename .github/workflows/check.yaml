@@ -3,46 +3,24 @@ name: check
 on: [push]
 
 jobs:
-  e2e:
-    name: Run end-to-end tests
+  check:
+    name: Run checks and tests
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
-
       - uses: actions/setup-node@v1
         with:
           node-version: "14"
+
       - name: Install dependencies
-        run: yarn
+        run: make init
 
       - name: Start background services
-        run: docker-compose up -d
-      - name: Create bucket and tables
-        run: scripts/create-dev.sh
+        run: make dev-services
 
-      - name: Run tests
-        run: >
-          xvfb-run --server-args="-screen 0 1280x720x24"
-          yarn testcafe all
-          --app "next dev"
+      - name: Run all checks and tests
+        run: make -j check test TESTCAFE_BROWSERS=all
 
-  check:
-    name: Run basic checks and unit tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "14"
-
-      - name: Install dependencies
-        run: yarn
-
-      - name: Check formatting and types
-        run: yarn run check
-
-      - name: Run tests
-        run: yarn run test
       - name: Build next app
         run: yarn run build

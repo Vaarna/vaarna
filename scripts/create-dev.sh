@@ -38,3 +38,5 @@ aws --endpoint-url http://localhost:8000 \
     --key-schema \
         AttributeName=spaceId,KeyType=HASH \
     --billing-mode PAY_PER_REQUEST
+
+exit 0
