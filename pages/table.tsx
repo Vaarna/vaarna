@@ -51,15 +51,19 @@ export default function TablePage(): React.ReactNode {
   const assetData = asset.data;
   const src = `/api/v1/asset?spaceId=${spaceId}&assetId=${assetData.assetId}`;
 
+  const innerStyle = {
+    maxWidth: "100%",
+  };
+
   let el: React.ReactElement;
   switch (assetData.kind) {
     case "image":
-      el = <img src={src} />;
+      el = <img style={innerStyle} src={src} />;
       break;
 
     case "video":
       el = (
-        <video controls autoPlay>
+        <video style={innerStyle} autoPlay loop>
           <source src={src} />
         </video>
       );
@@ -67,7 +71,7 @@ export default function TablePage(): React.ReactNode {
 
     case "audio":
       el = (
-        <audio controls autoPlay>
+        <audio style={innerStyle} autoPlay loop>
           <source src={src} />
         </audio>
       );
@@ -88,7 +92,6 @@ export default function TablePage(): React.ReactNode {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        objectFit: "scale-down",
       }}
     >
       {el}
