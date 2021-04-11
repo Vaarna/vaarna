@@ -18,7 +18,6 @@ const errors = Object.fromEntries(
     "object-shorthand",
     "prefer-arrow-callback",
     "prefer-const",
-    "prefer-destructuring",
     "prefer-numeric-literals",
     "prefer-rest-params",
     "prefer-spread",
