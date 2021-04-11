@@ -17,6 +17,8 @@ TESTCAFE := ${BIN}/testcafe
 
 TESTCAFE_APP_INIT_DELAY := 1000
 TESTCAFE_BROWSERS := firefox
+DOMAIN = http://localhost:3000
+export DOMAIN
 
 .PHONY: help
 help:
@@ -81,4 +83,20 @@ test-testcafe:
 
 .PHONY: test-testcafe-watch
 test-testcafe-watch: TESTCAFE_PARAMS += --live
-test-testcafe-watch: test-jest
+test-testcafe-watch: test-testcafe
+
+.PHONY: test-testcafe-staging
+test-testcafe-staging: DOMAIN = http://staging.gm-screen.net
+test-testcafe-staging:
+	${TESTCAFE} \
+		--app-init-delay 0 \
+		${TESTCAFE_PARAMS} \
+		${TESTCAFE_BROWSERS}
+
+.PHONY: test-testcafe-production
+test-testcafe-production: DOMAIN = http://gm-screen.net
+test-testcafe-production:
+	${TESTCAFE} \
+		--app-init-delay 0 \
+		${TESTCAFE_PARAMS} \
+		${TESTCAFE_BROWSERS}

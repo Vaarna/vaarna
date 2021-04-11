@@ -1,8 +1,9 @@
 import { readFileSync } from "fs";
 import { Selector } from "testcafe";
 import { v4 as v4uuid } from "uuid";
+import { getPage } from "./util";
 
-fixture`Upload`.page`http://localhost:3000`;
+fixture`Upload`.page(getPage());
 
 const spaceId = v4uuid();
 const now = new Date().getTime() / 1000;

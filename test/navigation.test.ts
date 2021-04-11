@@ -1,7 +1,7 @@
 import { Selector } from "testcafe";
-import { windowPathname } from "./util";
+import { getPage, windowPathname } from "./util";
 
-fixture`Navigation`.page`http://localhost:3000`;
+fixture`Navigation`.page(getPage());
 
 test("header can be used to navigate between pages", async (t) => {
   await t.expect(windowPathname()).eql("/");
