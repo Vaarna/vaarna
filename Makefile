@@ -68,5 +68,7 @@ test-jest:
 
 .PHONY: test-testcafe
 test-testcafe:
-	${TESTCAFE} -a "${NEXT} dev" ${TESTCAFE_BROWSERS}
-
+	${TESTCAFE} \
+		-a "${NEXT} dev" \
+		--app-init-delay 5000 \
+		${TESTCAFE_BROWSERS}
