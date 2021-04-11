@@ -10,15 +10,13 @@ import {
 } from "@aws-sdk/client-s3";
 import { marshall } from "@aws-sdk/util-dynamodb";
 import { formatRFC7231 } from "date-fns";
-import { asAWSLogger } from "logger";
 import { NextApiResponse } from "next";
-import P from "pino";
 import { Readable } from "stream";
 import { GetAssetHeaders, GetAssetQuery } from "type/asset";
 import { AssetData, AssetDatas, GetAssetDataQuery } from "type/assetData";
 import { ApiInternalServerError } from "type/error";
 import { getItemsFromTable } from "util/dynamodb";
-import { envGetBool } from "util/env";
+import { dynamoDbConfig, s3Config, Service, ServiceConfig } from "./common";
 
 type ApiHeaders = {
   name: string;
@@ -49,45 +47,32 @@ type AssetServiceConfig = {
   bucket: string;
   tableName: string;
   maxAge?: number;
-  logger: P.Logger;
-  requestId: string;
-};
+} & ServiceConfig;
 
 const MINUTE = 60;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
-export class AssetService {
+export class AssetService extends Service {
   readonly bucket: string;
   readonly tableName: string;
   readonly maxAge: number = 28 * DAY;
-
-  private readonly logger: P.Logger;
-  private readonly requestId: string;
 
   private readonly s3: S3Client;
   private readonly db: DynamoDBClient;
 
   constructor(config: AssetServiceConfig) {
+    super(config, {
+      bucket: config.bucket,
+      tableName: config.tableName,
+    });
+
     this.bucket = config.bucket;
     this.tableName = config.tableName;
     if (config.maxAge) this.maxAge = config.maxAge;
 
-    this.logger = config.logger.child({
-      bucket: this.bucket,
-      tableName: this.tableName,
-    });
-    this.requestId = config.requestId;
-
-    this.s3 = new S3Client({
-      endpoint: process.env.S3_ENDPOINT,
-      forcePathStyle: envGetBool("S3_FORCE_PATH_STYLE", false),
-      logger: asAWSLogger("S3", this.logger),
-    });
-    this.db = new DynamoDBClient({
-      endpoint: process.env.DYNAMODB_ENDPOINT,
-      logger: asAWSLogger("DynamoDB", this.logger),
-    });
+    this.s3 = new S3Client(s3Config(this.logger));
+    this.db = new DynamoDBClient(dynamoDbConfig(this.logger));
   }
 
   private constructHeaders(

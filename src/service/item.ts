@@ -16,33 +16,22 @@ import {
   RemoveItemQuery,
 } from "type/item";
 import { getItemsFromTable } from "util/dynamodb";
-import P from "pino";
-import { asAWSLogger } from "logger";
+import { dynamoDbConfig, Service, ServiceConfig } from "./common";
 
 type ItemServiceConfig = {
   tableName: string;
-  logger: P.Logger;
-  requestId: string;
-};
+} & ServiceConfig;
 
-export class ItemService {
+export class ItemService extends Service {
   readonly tableName: string;
-
-  private readonly logger: P.Logger;
-  private readonly requestId: string;
 
   private readonly db: DynamoDBClient;
 
   constructor(config: ItemServiceConfig) {
+    super(config, { tableName: config.tableName });
+
     this.tableName = config.tableName;
-
-    this.logger = config.logger.child({ tableName: this.tableName });
-    this.requestId = config.requestId;
-
-    this.db = new DynamoDBClient({
-      endpoint: process.env.DYNAMODB_ENDPOINT,
-      logger: asAWSLogger("DynamoDB", this.logger),
-    });
+    this.db = new DynamoDBClient(dynamoDbConfig(this.logger));
   }
 
   async getItems({ spaceId, itemId }: GetItemsQuery): Promise<Items> {
