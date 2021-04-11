@@ -5,12 +5,36 @@ test.each([
   ["d1", 1, 1],
   ["d1+1", 2, 2],
   ["d1-1", 0, 0],
-])("rolling %s results between %s and %s", (v, low, high) => {
-  const ress = roll(v);
-  expect(ress).toHaveLength(1);
-  const res = ress[0];
-  expect(res.total).toBeGreaterThanOrEqual(low);
-  expect(res.total).toBeLessThanOrEqual(high);
+  ["d6", 1, 6],
+  ["2d6", 2, 12],
+])("result of rolling %s is between %s and %s", (v, low, high) => {
+  for (let i = 0; i < 10; i++) {
+    const ress = roll(v);
+    expect(ress).toHaveLength(1);
+    const res = ress[0];
+    expect(res.total).toBeGreaterThanOrEqual(low);
+    expect(res.total).toBeLessThanOrEqual(high);
+  }
+});
+
+test("the most common result of rolling 2d6 10 000 times is 7", () => {
+  const rolls = [];
+  for (let i = 0; i < 10_000; i++) {
+    const res = roll("2d6");
+    expect(res).toHaveLength(1);
+    rolls.push(res[0].total);
+  }
+
+  const counts: Record<number, number | undefined> = {};
+  rolls.forEach((roll) => {
+    counts[roll] = (counts[roll] ?? 0) + 1;
+  });
+
+  const sevens = counts[7];
+  expect(sevens).not.toBeUndefined();
+  Object.values(counts).forEach((count) => {
+    expect(count).toBeLessThanOrEqual(sevens as number);
+  });
 });
 
 test("result of rolling an N-sided dice is between 1 and N", () => {
