@@ -33,7 +33,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  ignorePatterns: [".eslintrc.js", "jest.config.js", "next-env.d.ts"],
+  ignorePatterns: [".eslintrc.js", "jest.config.js", "next-env.d.ts", "next.config.js"],
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",
