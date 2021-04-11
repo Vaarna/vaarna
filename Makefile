@@ -65,11 +65,20 @@ test: test-jest test-testcafe
 
 .PHONY: test-jest
 test-jest:
-	${JEST}
+	${JEST} ${JEST_PARAMS}
+
+.PHONY: test-jest-watch
+test-jest-watch: JEST_PARAMS += --watch
+test-jest-watch: test-jest
 
 .PHONY: test-testcafe
 test-testcafe:
 	${TESTCAFE} \
 		-a "${NEXT} dev" \
 		--app-init-delay ${TESTCAFE_APP_INIT_DELAY} \
+		${TESTCAFE_PARAMS} \
 		${TESTCAFE_BROWSERS}
+
+.PHONY: test-testcafe-watch
+test-testcafe-watch: TESTCAFE_PARAMS += --live
+test-testcafe-watch: test-jest
