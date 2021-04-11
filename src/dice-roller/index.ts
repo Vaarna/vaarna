@@ -1,20 +1,27 @@
 const simpleDiceRollRe = /(?<count>\d+)?d(?<sides>\d+)(?<mod>[+-]\d+)?/i;
 
-type Dice = {
-  count: number;
-  sides: number;
-};
+class DiceResult {
+  constructor(readonly result: number, readonly sides: number) {}
 
-type DiceResult = {
-  result: number;
-} & Dice;
+  toString(): string {
+    return `d${this.sides} = ${this.result}`;
+  }
+}
 
-type RollResult = {
-  total: number;
-  dice: DiceResult[];
-}[];
+class RollResult {
+  constructor(
+    readonly original: string,
+    readonly total: number,
+    readonly dice: DiceResult[]
+  ) {}
 
-export function roll(v: string): RollResult {
+  toString(): string {
+    const dice = this.dice.map(String).join(", ");
+    return `${this.original} = ${this.total} (${dice})`;
+  }
+}
+
+export function roll(v: string): RollResult[] {
   const res = simpleDiceRollRe.exec(v)?.groups;
 
   if (res === undefined) {
@@ -25,10 +32,11 @@ export function roll(v: string): RollResult {
   const sides = parseInt(res?.sides ?? "1", 10);
   const mod = parseInt(res?.mod ?? "0", 10);
 
-  const rolls = new Array(count).fill(sides).map((v) => Math.ceil(Math.random() * v));
-  const result = rolls.reduce((prev, cur) => prev + cur, 0);
-  const dice = [{ count, sides, result }];
+  const rolls = new Array(count)
+    .fill(sides)
+    .map((v) => new DiceResult(Math.ceil(Math.random() * v), sides));
+  const result = rolls.reduce((prev, cur) => prev + cur.result, 0);
   const total = result + mod;
 
-  return [{ total, dice }];
+  return [new RollResult(v, total, rolls)];
 }

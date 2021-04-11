@@ -17,6 +17,14 @@ test.each([
   }
 });
 
+test.each([
+  ["d6", /d6 = [1-6] \(d6 = [1-6]\)/],
+  ["2d6", /2d6 = ([2-9]|1[0-2]) \(d6 = [1-6], d6 = [1-6]\)/],
+])("toString of rolling %s should match %s", (v, re) => {
+  const res = roll(v).toString();
+  expect(res).toMatch(re);
+});
+
 test("the most common result of rolling 2d6 10 000 times is 7", () => {
   const rolls = [];
   for (let i = 0; i < 10_000; i++) {
