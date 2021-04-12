@@ -1,17 +1,21 @@
 {
   "name": "gm-screen",
-  "version": "0.1.0",
-  "main": "index.js",
+  "version": "0.2.0",
   "repository": "git@github.com:PolarPayne/gm-screen.git",
+  "homepage": "https://www.gm-screen.net",
   "author": "Maximilian Remming <maximilian@remming.fi>",
   "license": "AGPL-3.0-or-later",
   "prettier": {
     "printWidth": 88
   },
+  "engines": {
+    "node": "^14",
+    "yarn": "^1.22"
+  },
   "scripts": {
     "build": "yarn build:next && yarn build:server",
     "build:next": "next build",
-    "build:server": "tsc --project tsconfig.server.json",
+    "build:server": "tsc --project tsconfig-server.json",
     "start": "NODE_ENV=production HOST=0.0.0.0 node dist/index.js"
   },
   "dependencies": {

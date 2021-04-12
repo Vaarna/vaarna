@@ -43,14 +43,18 @@ clean:
 .PHONY: dev
 dev: dev-services init
 	${TS_NODE} \
-	--project tsconfig.server.json \
+	--project tsconfig-server.json \
 	--require source-map-support/register \
 	server/index.ts | ${PINO_PRETTY}
 
 .PHONY: dev-services
 dev-services:
 	${DOCKER_COMPOSE} up -d
-	scripts/create-dev.sh
+	script/create-dev.sh
+
+.PHONY: dev-services-down
+dev-services-down:
+	${DOCKER_COMPOSE} down
 
 # --- CHECK ---
 
