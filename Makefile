@@ -97,6 +97,8 @@ test-testcafe-watch: test-testcafe
 .PHONY: test-testcafe-staging
 test-testcafe-staging: DOMAIN = http://staging.gm-screen.net
 test-testcafe-staging:
+	@echo wake up the heroku dyno before running tests
+	curl http://staging.gm-screen.net > /dev/null
 	${TESTCAFE} \
 		--app-init-delay 0 \
 		${TESTCAFE_PARAMS} \
