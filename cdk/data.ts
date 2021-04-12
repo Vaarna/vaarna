@@ -4,7 +4,7 @@ import * as dynamodb from "@aws-cdk/aws-dynamodb";
 import * as iam from "@aws-cdk/aws-iam";
 
 export interface DataStackProps extends cdk.StackProps {
-  dev: boolean;
+  dev?: boolean;
 }
 
 export class DataStack extends cdk.Stack {
@@ -13,9 +13,8 @@ export class DataStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props: DataStackProps) {
     super(scope, id, props);
 
-    const removalPolicy = props.dev
-      ? cdk.RemovalPolicy.DESTROY
-      : cdk.RemovalPolicy.RETAIN;
+    const removalPolicy =
+      props.dev ?? false ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN;
     this.removalPolicy = removalPolicy;
 
     const iamUser = new iam.User(this, "iamUser");
