@@ -1,4 +1,4 @@
-const simpleDiceRollRe = /(?<count>\d+)?d(?<sides>\d+)(?<mod>[+-]\d+)?/i;
+const simpleDiceRollRe = /^\s*(?<count>\d+)?\s*d\s*(?<sides>\d+)\s*(?<mod>[+-]\s*\d+)?\s*$/i;
 
 class DiceResult {
   constructor(readonly result: number, readonly sides: number) {}
@@ -30,7 +30,7 @@ export function roll(v: string): RollResult[] {
 
   const count = parseInt(res?.count ?? "1", 10);
   const sides = parseInt(res?.sides ?? "1", 10);
-  const mod = parseInt(res?.mod ?? "0", 10);
+  const mod = parseInt(res?.mod?.split(/\s*/).join("") ?? "0", 10);
 
   const rolls = new Array(count)
     .fill(sides)
@@ -38,5 +38,17 @@ export function roll(v: string): RollResult[] {
   const result = rolls.reduce((prev, cur) => prev + cur.result, 0);
   const total = result + mod;
 
-  return [new RollResult(v, total, rolls)];
+  let formatted;
+  if (count === 1) {
+    formatted = `d${sides}`;
+  } else {
+    formatted = `${count}d${sides}`;
+  }
+  if (mod < 0) {
+    formatted += ` - ${-mod}`;
+  } else if (mod > 0) {
+    formatted += ` + ${mod}`;
+  }
+
+  return [new RollResult(formatted, total, rolls)];
 }
