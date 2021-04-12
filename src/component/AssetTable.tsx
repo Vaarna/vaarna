@@ -16,7 +16,7 @@ const Row: React.FC<RowProps> = ({ spaceId, asset }: RowProps) => (
           if (!spaceId) return;
 
           axios
-            .post("/api/v1/table", { spaceId, assetId: asset.assetId })
+            .post("/api/v1/table", { spaceId, assetId: asset.assetId, messages: [] })
             .then(() => {
               rootLogger.info(asset, `succesfully changed table to ${asset.assetId}`);
             })

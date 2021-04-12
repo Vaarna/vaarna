@@ -2,7 +2,7 @@ import { requestLogger } from "logger";
 import { NextApiRequest, NextApiResponse } from "next";
 import { TableService } from "service/table";
 import { ApiInternalServerError } from "type/error";
-import { GetTableQuery, UpdateTableBody } from "type/table";
+import { GetTableQuery, UpdateTableBody, UpdateTableEvent } from "type/table";
 import { envGet } from "util/env";
 import { ApiError, parseRequest } from "util/parseRequest";
 
@@ -13,7 +13,7 @@ export default async function handle_table(
   const [logger, requestId] = requestLogger(req, res);
   const svc = new TableService({ tableName: envGet("TABLE_TABLE"), logger, requestId });
 
-  const allow = "OPTIONS, GET, POST, PUT, DELETE";
+  const allow = "OPTIONS, GET, POST, PATCH, DELETE";
 
   try {
     switch (req.method) {
@@ -30,6 +30,12 @@ export default async function handle_table(
       case "POST": {
         const { body } = parseRequest({ body: UpdateTableBody })(req, requestId);
         const table = await svc.updateTable(body);
+        return res.status(200).json({ table });
+      }
+
+      case "PATCH": {
+        const { body } = parseRequest({ body: UpdateTableEvent })(req, requestId);
+        const table = await svc.updateTableEvent(body);
         return res.status(200).json({ table });
       }
 

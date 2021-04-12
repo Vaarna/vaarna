@@ -5,7 +5,6 @@ BIN := ${shell ${YARN} bin}
 
 DOCKER_COMPOSE := docker-compose
 
-TS_NODE := ${BIN}/ts-node
 NEXT := ${BIN}/next
 PINO_PRETTY := ${BIN}/pino-pretty
 
@@ -42,10 +41,7 @@ clean:
 
 .PHONY: dev
 dev: dev-services init
-	${TS_NODE} \
-	--project tsconfig-server.json \
-	--require source-map-support/register \
-	server/index.ts | ${PINO_PRETTY}
+	${NEXT} dev | ${PINO_PRETTY}
 
 .PHONY: dev-services
 dev-services:

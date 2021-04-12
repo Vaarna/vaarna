@@ -1,9 +1,10 @@
 import axios from "axios";
 import { Loading } from "component/atom/Loading";
+import { useState } from "react";
 import { useSpaceId } from "store";
 import useSWR from "swr";
 import { AssetData, AssetDatas } from "type/assetData";
-import { Table } from "type/table";
+import { Table, UpdateTableEvent } from "type/table";
 
 async function tableFetcher(url: string, spaceId: string): Promise<Table> {
   const res = await axios(url, { params: { spaceId } });
@@ -36,6 +37,9 @@ export default function TablePage(): React.ReactNode {
         : ["/api/v1/asset/data", spaceId, table.data.assetId],
     assetFetcher
   );
+
+  const [msg, setMsg] = useState("");
+  const [expr, setExpr] = useState("");
 
   if (table.error || asset.error) {
     return (
@@ -87,14 +91,88 @@ export default function TablePage(): React.ReactNode {
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {el}
-    </div>
+    <>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {el}
+      </div>
+      <div>
+        <input
+          value={msg}
+          onChange={(ev) => {
+            setMsg(ev.target.value);
+          }}
+        />
+        <button
+          onClick={() => {
+            if (spaceId === undefined) return;
+
+            const data: UpdateTableEvent = {
+              spaceId,
+              type: "NEW_MESSAGE",
+              content: msg,
+            };
+
+            setMsg("");
+            axios
+              .patch("/api/v1/table", data)
+              .then((resp) => resp.data)
+              .then((data) => {
+                table.mutate(Table.parse(data?.table));
+                console.log("PATCH table returned", data);
+              })
+              .catch((err) => {
+                console.error("PATCH table failed", err);
+              });
+          }}
+        >
+          Send Message
+        </button>
+      </div>
+      <div>
+        <input
+          value={expr}
+          onChange={(ev) => {
+            setExpr(ev.target.value);
+          }}
+        />
+        <button
+          onClick={() => {
+            if (spaceId === undefined) return;
+
+            const data: UpdateTableEvent = {
+              spaceId,
+              type: "EVAL",
+              expr,
+            };
+
+            axios
+              .patch("/api/v1/table", data)
+              .then((resp) => resp.data)
+              .then((data) => {
+                table.mutate(Table.parse(data?.table));
+                console.log("PATCH table returned", data);
+              })
+              .catch((err) => {
+                console.error("PATCH table failed", err);
+              });
+          }}
+        >
+          Roll
+        </button>
+      </div>
+      <ul>
+        {table.data?.messages.map((msg) => (
+          <li key={msg.id}>
+            {msg.t}: {msg.msg}
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }

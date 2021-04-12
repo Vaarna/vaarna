@@ -10,7 +10,6 @@ Project related configuration files should primarily live at the root of the pro
 
 - `cdk/`, AWS CDK stacks and app.
 - `pages/`, pages for the NextJS app.
-- `server/`, custom server for NextJS and the WebSocket stuff needed on the backend.
 - `src/`, everything that is somewhat general and could be shared between other modules.
   - `component/`, all React components and their CSS.
   - `component/atom/`, "very small" components. Components that do just a single small thing, e.g. buttons and inputs.
