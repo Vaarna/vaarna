@@ -92,7 +92,9 @@ export default function TablePage(): React.ReactNode {
         : ["/api/v1/asset/data", spaceId, table.data.assetId],
     assetFetcher
   );
-  const log = useSWR(() => (!spaceId ? null : ["/api/v1/log", spaceId]), logFetcher);
+  const log = useSWR(() => (!spaceId ? null : ["/api/v1/log", spaceId]), logFetcher, {
+    refreshInterval: 3000,
+  });
   const logMessages = useRef<HTMLDivElement>(null);
 
   if (table.error || asset.error || log.error) {
@@ -164,11 +166,14 @@ export default function TablePage(): React.ReactNode {
         <MessageForm
           spaceId={spaceId}
           revalidate={() => {
-            const el = logMessages.current;
-            if (el !== null) {
-              el.scrollTo({ top: el.scrollHeight });
-            }
-            return log.revalidate();
+            return log.revalidate().then((v) => {
+              const el = logMessages.current;
+              if (el !== null) {
+                el.scrollTo({ top: el.scrollHeight });
+              }
+
+              return v;
+            });
           }}
         />
       </div>
