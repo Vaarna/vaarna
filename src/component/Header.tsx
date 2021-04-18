@@ -27,6 +27,15 @@ export const Header: React.FC<HeaderProps> = ({ showUploads }: HeaderProps) => {
           onChange={(ev) => setSpaceId(ev.target.value)}
         />
       </label>
+      <button
+        onClick={() => {
+          const url = new URL(location.href);
+          url.searchParams.set("spaceId", spaceId ?? "");
+          navigator.clipboard.writeText(url.toString());
+        }}
+      >
+        Copy
+      </button>
     </div>
   );
 };

@@ -14,6 +14,7 @@ import { z } from "zod";
 import { UploadProgress, UploadProgressProps } from "component/UploadProgress";
 import { useState } from "react";
 import { rootLogger } from "logger";
+import { useRouter } from "next/router";
 
 const ProgressEvent = z.object({
   type: z.literal("progress"),
@@ -23,7 +24,22 @@ const ProgressEvent = z.object({
 });
 
 export default function App({ Component, pageProps }: AppProps): React.ReactNode {
-  const [spaceId, _] = useSpaceId<string>();
+  const router = useRouter();
+  const { query } = router;
+  const [spaceId, setSpaceId] = useSpaceId<string>();
+
+  if (typeof query.spaceId === "string" && query.spaceId.length > 0) {
+    if (query.spaceId !== spaceId) {
+      setSpaceId(query.spaceId);
+    }
+  }
+
+  if (Array.isArray(query.spaceId) && query.spaceId.length > 0) {
+    const s = query.spaceId[query.spaceId.length - 1];
+    if (s !== spaceId) {
+      setSpaceId(s);
+    }
+  }
 
   const [showUploads, setShowUploads] = useState(false);
   const [uploads, setUploads] = useState<
