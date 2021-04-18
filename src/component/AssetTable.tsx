@@ -4,6 +4,9 @@ import bytes from "bytes";
 import axios from "axios";
 import { useSpaceId } from "store";
 import { rootLogger } from "logger";
+import { UploadProgress } from "context/UploadProgress";
+import { AssetService } from "service/asset";
+import { round } from "util/round";
 
 type RowProps = { spaceId: string | undefined; asset: AssetData };
 
@@ -39,10 +42,64 @@ const Row: React.FC<RowProps> = ({ spaceId, asset }: RowProps) => (
   </tr>
 );
 
-export type AssetTableProps = { assets: AssetDatas };
+type RowUploadProps = { spaceId: string | undefined; upload: UploadProgress };
 
-export const AssetTable: React.FC<AssetTableProps> = ({ assets }: AssetTableProps) => {
+const RowUpload: React.FC<RowUploadProps> = ({
+  spaceId,
+  upload: { loaded, total, done, filename, contentType, size },
+}: RowUploadProps) => (
+  <tr>
+    <td>
+      <button disabled>Show</button>
+    </td>
+    <td>{spaceId}</td>
+    <td>
+      {done ? (
+        "File uploaded."
+      ) : loaded >= total ? (
+        "Server is processing file."
+      ) : (
+        <>
+          {round((loaded / total) * 100, 2)}% {bytes(loaded)} / {bytes(total)}
+        </>
+      )}
+    </td>
+    <td>{filename}</td>
+    <td>{AssetService.getKind(contentType)}</td>
+    <td style={{ textAlign: "right" }}>{bytes(size)}</td>
+    <td>{contentType}</td>
+  </tr>
+);
+
+export type AssetTableProps = { assets: AssetDatas; uploads: UploadProgress[] };
+
+export const AssetTable: React.FC<AssetTableProps> = ({
+  assets,
+  uploads,
+}: AssetTableProps) => {
   const [spaceId, _] = useSpaceId<string>();
+
+  type Data =
+    | { type: "asset"; data: AssetData }
+    | { type: "upload"; data: UploadProgress };
+
+  const data: Data[] = [
+    ...assets.map(
+      (data) =>
+        ({
+          type: "asset",
+          data,
+        } as Data)
+    ),
+    ...uploads.map(
+      (data) =>
+        ({
+          type: "upload",
+          data,
+        } as Data)
+    ),
+  ];
+  data.sort((a, b) => a.data.filename.localeCompare(b.data.filename));
 
   return (
     <div className="simple-table">
@@ -59,9 +116,13 @@ export const AssetTable: React.FC<AssetTableProps> = ({ assets }: AssetTableProp
           </tr>
         </thead>
         <tbody>
-          {assets.map((asset) => (
-            <Row key={asset.assetId} spaceId={spaceId} asset={asset} />
-          ))}
+          {data.map((v) =>
+            v.type === "asset" ? (
+              <Row key={v.data.assetId} spaceId={spaceId} asset={v.data} />
+            ) : (
+              <RowUpload key={v.data.id} spaceId={spaceId} upload={v.data} />
+            )
+          )}
         </tbody>
       </table>
     </div>

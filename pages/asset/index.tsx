@@ -1,6 +1,8 @@
 import axios from "axios";
 import { AssetTable } from "component/AssetTable";
 import { Loading } from "component/atom/Loading";
+import { UploadContext } from "context/UploadProgress";
+import { useContext } from "react";
 import { useSpaceId } from "store";
 import useSWR from "swr";
 
@@ -19,7 +21,11 @@ async function fetcher(url: string, spaceId: string): Promise<AssetDatas> {
 
 export default function Asset(): React.ReactNode {
   const [spaceId, _] = useSpaceId<string>();
-  const { data, error } = useSWR(["/api/v1/asset/data", spaceId], fetcher);
+  const { data, error } = useSWR(
+    () => (!spaceId ? null : ["/api/v1/asset/data", spaceId]),
+    fetcher
+  );
+  const uploads = useContext(UploadContext);
 
   if (error) {
     return <div>{JSON.stringify(error)}</div>;
@@ -28,5 +34,5 @@ export default function Asset(): React.ReactNode {
     return <Loading large />;
   }
 
-  return <AssetTable assets={data} />;
+  return <AssetTable assets={data} uploads={uploads} />;
 }

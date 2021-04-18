@@ -11,6 +11,7 @@ const blob = Uint8Array.from(readFileSync("./test/lena.png"));
 
 test("dropping a file to the page uploads it", async (t) => {
   await t.typeText(Selector("label").withText("Space ID"), spaceId);
+  await t.navigateTo("/asset");
 
   await t.eval(
     () => {
@@ -24,12 +25,14 @@ test("dropping a file to the page uploads it", async (t) => {
     { dependencies: { blob, now } }
   );
 
-  await t.expect(Selector("div").withText("lena-drop.png").exists).ok();
-  await t.expect(Selector("div").withText("File(s) uploaded!").exists).ok();
+  await t.expect(Selector("tr").withText("lena-drop.png").exists).ok();
+  await t.expect(Selector("tr").withText("File uploaded.").exists).ok();
 });
 
 test("pasting a file to the page uploads it", async (t) => {
   await t.typeText(Selector("label").withText("Space ID"), spaceId);
+  await t.navigateTo("/asset");
+
   const { name } = t.browser;
   await t.eval(
     () => {
@@ -56,8 +59,8 @@ test("pasting a file to the page uploads it", async (t) => {
     { dependencies: { blob, now, name } }
   );
 
-  await t.expect(Selector("div").withText("lena-paste.png").exists).ok();
-  await t.expect(Selector("div").withText("File(s) uploaded!").exists).ok();
+  await t.expect(Selector("tr").withText("lena-paste.png").exists).ok();
+  await t.expect(Selector("tr").withText("File uploaded.").exists).ok();
 });
 
 test("an uploaded image can be shown on the table", async (t) => {

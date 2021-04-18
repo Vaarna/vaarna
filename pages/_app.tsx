@@ -11,10 +11,10 @@ import { useFileUpload } from "hook/useFileUpload";
 import axios from "axios";
 import { useSpaceId } from "store";
 import { z } from "zod";
-import { UploadProgress, UploadProgressProps } from "component/UploadProgress";
 import { useState } from "react";
 import { rootLogger } from "logger";
 import { useRouter } from "next/router";
+import { UploadContext, UploadProgress } from "context/UploadProgress";
 
 const ProgressEvent = z.object({
   type: z.literal("progress"),
@@ -41,10 +41,7 @@ export default function App({ Component, pageProps }: AppProps): React.ReactNode
     }
   }
 
-  const [showUploads, setShowUploads] = useState(false);
-  const [uploads, setUploads] = useState<
-    (Omit<UploadProgressProps, "parentId"> & { id: string })[]
-  >([]);
+  const [uploads, setUploads] = useState<UploadProgress[]>([]);
 
   const onUploadProgress = (id: string) => (ev: unknown): void => {
     const evParsed = ProgressEvent.safeParse(ev);
@@ -62,59 +59,46 @@ export default function App({ Component, pageProps }: AppProps): React.ReactNode
 
     setTimeout(() => {
       setUploads((prev) => prev.filter((v) => v.id !== id));
-      if (uploads.length === 0) setShowUploads(false);
     }, 5_000);
   };
 
   useFileUpload((files) => {
-    const id = v4uuid();
+    Promise.all(
+      files.map((file) => {
+        const id = v4uuid();
+        const fd = new FormData();
+        fd.append("file", file, file.name);
 
-    const fs: UploadProgressProps["files"] = [];
-    let total = 0;
-    const fd = new FormData();
-    files.forEach((file, idx) => {
-      fs.push({
-        key: file.name + file.size + file.lastModified + file.type + idx,
-        filename: file.name,
-        size: file.size,
-      });
-      total += file.size;
-      fd.append(`${idx}-${id}`, file, file.name);
-    });
+        setUploads((prev) => [
+          ...prev,
+          {
+            id,
+            filename: file.name,
+            contentType: file.type,
+            size: file.size,
+            loaded: 0,
+            total: file.size,
+            done: false,
+          },
+        ]);
 
-    setUploads((prev) => [...prev, { id, files: fs, loaded: 0, total, done: false }]);
-    setShowUploads(true);
-
-    return axios
-      .post("/api/v1/asset", fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-        params: { spaceId },
-        onUploadProgress: onUploadProgress(id),
+        return axios
+          .post("/api/v1/asset", fd, {
+            headers: { "Content-Type": "multipart/form-data" },
+            params: { spaceId },
+            onUploadProgress: onUploadProgress(id),
+          })
+          .then(() => {
+            onUploadDone(id);
+          })
+          .catch((err) => {
+            rootLogger.error(err, "failed to upload file");
+          });
       })
-      .then(() => {
-        onUploadDone(id);
-      })
-      .catch((err) => {
-        rootLogger.error(err, "failed to upload file");
-      });
+    )
+      .then((v) => rootLogger.info("succesfully uploaded %s files", v.length))
+      .catch((err) => rootLogger.error(err, "uploading files failed"));
   });
-
-  const uploadProgress = (
-    <div
-      className={s.uploadProgressContainer}
-      onClick={() => {
-        setShowUploads(false);
-      }}
-      style={{ visibility: !showUploads ? "hidden" : undefined }}
-    >
-      <div
-        id={s.uploadProgressRoot}
-        onClick={(ev) => {
-          ev.stopPropagation();
-        }}
-      />
-    </div>
-  );
 
   return (
     <>
@@ -125,22 +109,15 @@ export default function App({ Component, pageProps }: AppProps): React.ReactNode
           rel="stylesheet"
         />
       </Head>
-      <div className={s.root}>
-        <Header
-          showUploads={() => {
-            setShowUploads(true);
-          }}
-        />
+      <UploadContext.Provider value={uploads}>
+        <div className={s.root}>
+          <Header />
 
-        <div className={s.content}>
-          <Component {...pageProps} />
+          <div className={s.content}>
+            <Component {...pageProps} />
+          </div>
         </div>
-
-        {uploadProgress}
-        {Object.values(uploads).map((props) => (
-          <UploadProgress key={props.id} parentId={s.uploadProgressRoot} {...props} />
-        ))}
-      </div>
+      </UploadContext.Provider>
     </>
   );
 }
