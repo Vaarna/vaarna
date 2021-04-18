@@ -1,36 +1,36 @@
 import { requestLogger } from "logger";
 import { NextApiRequest, NextApiResponse } from "next";
-import { TableService } from "service/table";
+import { LogService } from "service/log";
 import { ApiInternalServerError } from "type/error";
-import { GetTableQuery, UpdateTableBody } from "type/table";
+import { GetLogQuery, LogEvent } from "type/log";
 import { envGet } from "util/env";
 import { ApiError, parseRequest } from "util/parseRequest";
 
-export default async function handle_table(
+export default async function Log(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
-  const svc = new TableService({ tableName: envGet("TABLE_TABLE"), logger, requestId });
+  const svc = new LogService({
+    tableName: envGet("LOG_TABLE"),
+    logger,
+    requestId,
+  });
 
-  const allow = "OPTIONS, GET, POST, DELETE";
+  const allow = "OPTIONS, GET, PATCH";
 
   try {
     switch (req.method) {
-      case "OPTIONS":
-        res.setHeader("Allow", allow);
-        return res.status(204).end();
-
       case "GET": {
-        const { query } = parseRequest({ query: GetTableQuery })(req, requestId);
-        const table = await svc.getTable(query.spaceId);
-        return res.status(200).json({ table });
+        const { query } = parseRequest({ query: GetLogQuery })(req, requestId);
+        const data = await svc.get(query.spaceId);
+        return res.status(200).json({ data });
       }
 
-      case "POST": {
-        const { body } = parseRequest({ body: UpdateTableBody })(req, requestId);
-        const table = await svc.updateTable(body);
-        return res.status(200).json({ table });
+      case "PATCH": {
+        const { body } = parseRequest({ body: LogEvent })(req, requestId);
+        const data = await svc.event(body);
+        return res.status(200).json({ data });
       }
 
       default:

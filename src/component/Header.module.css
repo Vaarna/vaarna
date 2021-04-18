@@ -6,8 +6,7 @@
 
   background-color: var(--color-orange);
   padding: 1rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.5);
+  height: var(--header-height);
 }
 
 .header a {
@@ -22,7 +21,6 @@
 
 .title {
   font-size: xx-large;
-  margin-left: 1rem;
 }
 
 .spaceSelector {

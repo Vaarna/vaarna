@@ -55,6 +55,13 @@ export class DataStack extends cdk.Stack {
       grantee,
       removalPolicy,
     });
+
+    this.table({
+      name: "log",
+      sortKey: { name: "messageId", type: dynamodb.AttributeType.STRING },
+      grantee,
+      removalPolicy,
+    });
   }
 
   private table({

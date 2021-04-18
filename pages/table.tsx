@@ -1,10 +1,60 @@
 import axios from "axios";
 import { Loading } from "component/atom/Loading";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useSpaceId } from "store";
 import useSWR from "swr";
 import { AssetData, AssetDatas } from "type/assetData";
-import { Table, UpdateTableEvent } from "type/table";
+import { LogEvent, LogItems } from "type/log";
+import { Table } from "type/table";
+import { sortBy } from "lodash";
+import { formatDistanceToNowStrict } from "date-fns";
+import s from "./table.module.css";
+
+type FormProps = {
+  spaceId: string | undefined;
+  revalidate: () => Promise<boolean>;
+};
+
+const MessageForm: React.FC<FormProps> = ({ spaceId, revalidate }: FormProps) => {
+  const [msg, setMsg] = useState("");
+
+  return (
+    <form className={s.messageForm} onSubmit={(ev) => ev.preventDefault()}>
+      <input
+        value={msg}
+        onChange={(ev) => {
+          setMsg(ev.target.value);
+        }}
+      />
+      <button
+        onClick={() => {
+          if (spaceId === undefined) return;
+
+          let data: LogEvent;
+          if (msg.startsWith("/roll ")) {
+            data = { spaceId, type: "ROLL", expr: msg.slice("/roll ".length) };
+          } else {
+            data = {
+              spaceId,
+              type: "MESSAGE",
+              msg,
+            };
+          }
+
+          setMsg("");
+          axios
+            .patch("/api/v1/log", data)
+            .then((resp) => resp.data)
+            .then(() => {
+              return revalidate();
+            });
+        }}
+      >
+        Send
+      </button>
+    </form>
+  );
+};
 
 async function tableFetcher(url: string, spaceId: string): Promise<Table> {
   const res = await axios(url, { params: { spaceId } });
@@ -23,6 +73,11 @@ async function assetFetcher(
   return datas[0];
 }
 
+async function logFetcher(url: string, spaceId: string): Promise<LogItems> {
+  const resp = await axios(url, { params: { spaceId } });
+  return LogItems.parse(resp.data?.data);
+}
+
 export default function TablePage(): React.ReactNode {
   const [spaceId, _] = useSpaceId<string>();
   const table = useSWR(
@@ -37,14 +92,17 @@ export default function TablePage(): React.ReactNode {
         : ["/api/v1/asset/data", spaceId, table.data.assetId],
     assetFetcher
   );
+  const log = useSWR(() => (!spaceId ? null : ["/api/v1/log", spaceId]), logFetcher);
+  const logMessages = useRef<HTMLDivElement>(null);
 
-  const [msg, setMsg] = useState("");
-  const [expr, setExpr] = useState("");
-
-  if (table.error || asset.error) {
+  if (table.error || asset.error || log.error) {
     return (
       <pre>
-        {JSON.stringify({ table: table.error, asset: asset.error }, null, "  ")}
+        {JSON.stringify(
+          { table: table.error, asset: asset.error, log: log.error },
+          null,
+          "  "
+        )}
       </pre>
     );
   }
@@ -55,19 +113,15 @@ export default function TablePage(): React.ReactNode {
   const assetData = asset.data;
   const src = `/api/v1/asset?spaceId=${spaceId}&assetId=${assetData.assetId}`;
 
-  const innerStyle = {
-    maxWidth: "100%",
-  };
-
   let el: React.ReactElement;
   switch (assetData.kind) {
     case "image":
-      el = <img style={innerStyle} src={src} />;
+      el = <img className={s.assetElement} src={src} />;
       break;
 
     case "video":
       el = (
-        <video style={innerStyle} autoPlay loop>
+        <video className={s.assetElement} autoPlay loop>
           <source src={src} />
         </video>
       );
@@ -75,104 +129,49 @@ export default function TablePage(): React.ReactNode {
 
     case "audio":
       el = (
-        <audio style={innerStyle} autoPlay loop>
+        <audio className={s.assetElement} autoPlay loop>
           <source src={src} />
         </audio>
       );
       break;
 
     case "pdf":
-      el = <div>PDFs are not yet supported.</div>;
+      el = <div className={s.assetElement}>PDFs are not yet supported.</div>;
       break;
 
     default:
-      el = <div>Other files can not be displayed at the moment.</div>;
+      el = (
+        <div className={s.assetElement}>
+          Other files can not be displayed at the moment.
+        </div>
+      );
       break;
   }
 
   return (
-    <>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {el}
-      </div>
-      <div>
-        <input
-          value={msg}
-          onChange={(ev) => {
-            setMsg(ev.target.value);
+    <div className={s.container}>
+      <div className={s.asset}>{el}</div>
+      <div className={s.log}>
+        <div ref={logMessages} className={s.messages}>
+          {sortBy(log?.data, (v) => v.t).map((msg) => (
+            <p key={msg.messageId}>
+              {formatDistanceToNowStrict(new Date(msg.t), { addSuffix: true })}:{" "}
+              {msg.msg}
+            </p>
+          ))}
+        </div>
+
+        <MessageForm
+          spaceId={spaceId}
+          revalidate={() => {
+            const el = logMessages.current;
+            if (el !== null) {
+              el.scrollTo({ top: el.scrollHeight });
+            }
+            return log.revalidate();
           }}
         />
-        <button
-          onClick={() => {
-            if (spaceId === undefined) return;
-
-            const data: UpdateTableEvent = {
-              spaceId,
-              type: "NEW_MESSAGE",
-              content: msg,
-            };
-
-            setMsg("");
-            axios
-              .patch("/api/v1/table", data)
-              .then((resp) => resp.data)
-              .then((data) => {
-                table.mutate(Table.parse(data?.table));
-                console.log("PATCH table returned", data);
-              })
-              .catch((err) => {
-                console.error("PATCH table failed", err);
-              });
-          }}
-        >
-          Send Message
-        </button>
       </div>
-      <div>
-        <input
-          value={expr}
-          onChange={(ev) => {
-            setExpr(ev.target.value);
-          }}
-        />
-        <button
-          onClick={() => {
-            if (spaceId === undefined) return;
-
-            const data: UpdateTableEvent = {
-              spaceId,
-              type: "EVAL",
-              expr,
-            };
-
-            axios
-              .patch("/api/v1/table", data)
-              .then((resp) => resp.data)
-              .then((data) => {
-                table.mutate(Table.parse(data?.table));
-                console.log("PATCH table returned", data);
-              })
-              .catch((err) => {
-                console.error("PATCH table failed", err);
-              });
-          }}
-        >
-          Roll
-        </button>
-      </div>
-      <ul>
-        {table.data?.messages.map((msg) => (
-          <li key={msg.id}>
-            {msg.t}: {msg.msg}
-          </li>
-        ))}
-      </ul>
-    </>
+    </div>
   );
 }

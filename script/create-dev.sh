@@ -39,6 +39,17 @@ aws --endpoint-url http://localhost:8000 \
         AttributeName=spaceId,KeyType=HASH \
     --billing-mode PAY_PER_REQUEST &
 
+aws --endpoint-url http://localhost:8000 \
+    dynamodb create-table \
+    --table-name Log \
+    --attribute-definitions \
+        AttributeName=spaceId,AttributeType=S \
+        AttributeName=messageId,AttributeType=S \
+    --key-schema \
+        AttributeName=spaceId,KeyType=HASH \
+        AttributeName=messageId,KeyType=RANGE \
+    --billing-mode PAY_PER_REQUEST &
+
 wait
 
 exit 0
