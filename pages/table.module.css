@@ -39,6 +39,7 @@
   flex-direction: row;
   align-items: stretch;
   margin: 0.5rem;
+  margin-top: auto;
 }
 
 .messageForm input {
