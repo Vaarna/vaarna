@@ -57,7 +57,12 @@ export class DataStack extends cdk.Stack {
       removalPolicy,
     });
     user.addGlobalSecondaryIndex({
-      indexName: "sessionId-index",
+      indexName: "reverse",
+      partitionKey: { name: "sk", type: dynamodb.AttributeType.STRING },
+      projectionType: dynamodb.ProjectionType.KEYS_ONLY,
+    });
+    user.addGlobalSecondaryIndex({
+      indexName: "sessionId",
       partitionKey: { name: "sessionId", type: dynamodb.AttributeType.STRING },
       projectionType: dynamodb.ProjectionType.ALL,
     });

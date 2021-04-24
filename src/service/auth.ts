@@ -11,9 +11,9 @@ import axios from "axios";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { v4 as uuidv4 } from "uuid";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ProfileGoogle, User, Account, Session } from "type/auth";
+import { ProfileGoogle, User, Account, Session, UserItem } from "type/auth";
 import config from "config";
-import { ApiInternalServerError, ApiNotFoundError } from "type/error";
+import { ApiNotFoundError } from "type/error";
 
 type AuthServiceParams = ServiceParams;
 
@@ -121,6 +121,27 @@ export class AuthService extends Service {
     }
   }
 
+  private async getAccount(sk: string): Promise<UserItem | undefined> {
+    const cmd = new QueryCommand({
+      TableName: this.tableName,
+      KeyConditionExpression: "sk = :sk",
+      ExpressionAttributeValues: marshall({
+        ":sk": sk,
+      }),
+      IndexName: "reverse",
+    });
+
+    const resp = await this.db.send(cmd);
+    if (!resp.Items) {
+      return undefined;
+    }
+    if (resp.Items.length !== 1) {
+      return undefined;
+    }
+
+    return UserItem.parse(unmarshall(resp.Items[0]));
+  }
+
   private async callbackGoogle(params: CallbackParams): Promise<CallbackOut> {
     const now = new Date().getTime();
     const r = await this.googleClient.getToken(params.code);
@@ -131,24 +152,29 @@ export class AuthService extends Service {
       .then((v) => v.data)
       .then(ProfileGoogle.parseAsync);
 
+    const accountPrev = await this.getAccount(`account:google:${profile.id}`);
+    const userId = accountPrev?.userId ?? uuidv4();
+
     const user = User.parse({
       ...profile,
-      userId: profile.email,
+      userId,
       sk: "user",
+      email: profile.email,
       created: now,
       updated: now,
     });
     const account = Account.parse({
-      userId: profile.email,
+      userId,
       sk: `account:google:${profile.id}`,
       created: now,
       updated: now,
+      email: profile.email,
       profile,
       tokens: r.tokens,
     });
     const sessionId = uuidv4();
     const session = Session.parse({
-      userId: profile.email,
+      userId,
       sk: `session:${sessionId}`,
       sessionId,
       userAgent: params.userAgent,
@@ -194,15 +220,15 @@ export class AuthService extends Service {
       TableName: this.tableName,
       KeyConditionExpression: "sessionId = :sessionId",
       ExpressionAttributeValues: marshall({ ":sessionId": sessionId }),
-      IndexName: "sessionId-index",
+      IndexName: "sessionId",
     });
 
     const resp = await this.db.send(cmd);
     if (!resp.Items) {
-      throw new ApiNotFoundError(this.requestId, "sessionId not found");
+      throw new ApiNotFoundError(this.requestId, "session not found");
     }
     if (resp.Items.length !== 1) {
-      throw new ApiInternalServerError(this.requestId);
+      throw new ApiNotFoundError(this.requestId, "session not found");
     }
 
     return Session.parse(unmarshall(resp.Items[0]));

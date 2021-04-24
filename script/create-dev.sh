@@ -37,11 +37,13 @@ aws --endpoint-url http://localhost:8000 \
         AttributeName=userId,AttributeType=S \
         AttributeName=sk,AttributeType=S \
         AttributeName=sessionId,AttributeType=S \
+        AttributeName=email,AttributeType=S \
     --key-schema \
         AttributeName=userId,KeyType=HASH \
         AttributeName=sk,KeyType=RANGE \
     --global-secondary-index \
-        'IndexName=sessionId-index,KeySchema=[{AttributeName=sessionId,KeyType=HASH}],Projection={ProjectionType=ALL}' \
+        'IndexName=reverse,KeySchema=[{AttributeName=sk,KeyType=HASH}],Projection={ProjectionType=KEYS_ONLY}' \
+        'IndexName=sessionId,KeySchema=[{AttributeName=sessionId,KeyType=HASH}],Projection={ProjectionType=ALL}' \
     --billing-mode PAY_PER_REQUEST &
 
 wait
