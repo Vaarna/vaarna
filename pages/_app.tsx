@@ -83,7 +83,7 @@ export default function App({ Component, pageProps }: AppProps): React.ReactNode
         ]);
 
         return axios
-          .post("/api/v1/asset", fd, {
+          .post("/api/asset", fd, {
             headers: { "Content-Type": "multipart/form-data" },
             params: { spaceId },
             onUploadProgress: onUploadProgress(id),

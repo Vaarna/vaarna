@@ -22,7 +22,7 @@ async function fetcher(url: string, spaceId: string): Promise<AssetDatas> {
 export default function Asset(): React.ReactNode {
   const [spaceId, _] = useSpaceId<string>();
   const { data, error } = useSWR(
-    () => (!spaceId ? null : ["/api/v1/asset/data", spaceId]),
+    () => (!spaceId ? null : ["/api/asset/data", spaceId]),
     fetcher
   );
   const uploads = useContext(UploadContext);

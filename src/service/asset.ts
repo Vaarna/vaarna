@@ -14,7 +14,7 @@ import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
 import { GetAssetHeaders, GetAssetQuery } from "type/asset";
-import { AssetData, AssetDatas, GetAssetDataQuery } from "type/assetData";
+import { AssetData, AssetDatas, GetAssetDataQuery, getKind } from "type/assetData";
 import { ApiInternalServerError } from "type/error";
 import { getItemsFromTable } from "util/dynamodb";
 import { dynamoDbConfig, s3Config, Service, ServiceParams } from "./common";
@@ -167,29 +167,6 @@ export class AssetService extends Service {
     );
   }
 
-  static getKind(contentType: string): AssetData["kind"] {
-    // eslint-disable-next-line default-case
-    switch (contentType) {
-      case "application/pdf":
-        return "pdf";
-    }
-
-    const split = contentType.split("/");
-
-    if (split.length !== 2) return "other";
-
-    const [lhs, _rhs] = split;
-    // eslint-disable-next-line default-case
-    switch (lhs) {
-      case "audio":
-      case "video":
-      case "image":
-        return lhs;
-    }
-
-    return "other";
-  }
-
   async uploadAsset(
     body: Exclude<PutObjectCommandInput["Body"], undefined>,
     params: Omit<AssetData, "kind">
@@ -209,7 +186,7 @@ export class AssetService extends Service {
 
     await this.s3.send(cmd);
 
-    const kind = AssetService.getKind(params.contentType);
+    const kind = getKind(params.contentType);
     const item: AssetData = { ...params, kind };
     const dbCmd = new PutItemCommand({
       TableName: this.tableName,

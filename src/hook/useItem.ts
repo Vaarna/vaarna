@@ -39,7 +39,7 @@ export const useItem = (
   const [dirty, setDirty] = useState(false);
   const [item, setItem] = useState<Item | null | undefined>(undefined);
   const { data, error, mutate } = useSWR(
-    () => (spaceId && itemId ? ["/api/v1/item", spaceId, itemId] : null),
+    () => (spaceId && itemId ? ["/api/item", spaceId, itemId] : null),
     fetcher
   );
 
@@ -54,7 +54,7 @@ export const useItem = (
 
     return axios({
       method: "PUT",
-      url: "/api/v1/item",
+      url: "/api/item",
       data: item,
     })
       .then(({ data }) => {

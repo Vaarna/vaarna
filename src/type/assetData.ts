@@ -21,3 +21,26 @@ export const GetAssetDataQuery = z.object({
   assetId: z.union([z.undefined(), z.string().uuid(), z.array(z.string().uuid())]),
 });
 export type GetAssetDataQuery = z.infer<typeof GetAssetDataQuery>;
+
+export function getKind(contentType: string): AssetData["kind"] {
+  // eslint-disable-next-line default-case
+  switch (contentType) {
+    case "application/pdf":
+      return "pdf";
+  }
+
+  const split = contentType.split("/");
+
+  if (split.length !== 2) return "other";
+
+  const [lhs, _rhs] = split;
+  // eslint-disable-next-line default-case
+  switch (lhs) {
+    case "audio":
+    case "video":
+    case "image":
+      return lhs;
+  }
+
+  return "other";
+}

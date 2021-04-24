@@ -43,7 +43,7 @@ const MessageForm: React.FC<FormProps> = ({ spaceId, revalidate }: FormProps) =>
 
           setMsg("");
           axios
-            .patch("/api/v1/log", data)
+            .patch("/api/log", data)
             .then((resp) => resp.data)
             .then(() => {
               return revalidate();
@@ -81,18 +81,16 @@ async function logFetcher(url: string, spaceId: string): Promise<LogItems> {
 export default function TablePage(): React.ReactNode {
   const [spaceId, _] = useSpaceId<string>();
   const table = useSWR(
-    () => (!spaceId ? null : ["/api/v1/table", spaceId]),
+    () => (!spaceId ? null : ["/api/table", spaceId]),
     tableFetcher,
     { refreshInterval: 3000 }
   );
   const asset = useSWR(
     () =>
-      !spaceId || !table.data
-        ? null
-        : ["/api/v1/asset/data", spaceId, table.data.assetId],
+      !spaceId || !table.data ? null : ["/api/asset/data", spaceId, table.data.assetId],
     assetFetcher
   );
-  const log = useSWR(() => (!spaceId ? null : ["/api/v1/log", spaceId]), logFetcher, {
+  const log = useSWR(() => (!spaceId ? null : ["/api/log", spaceId]), logFetcher, {
     refreshInterval: 3000,
   });
   const logMessages = useRef<HTMLDivElement>(null);
@@ -113,7 +111,7 @@ export default function TablePage(): React.ReactNode {
   }
 
   const assetData = asset.data;
-  const src = `/api/v1/asset?spaceId=${spaceId}&assetId=${assetData.assetId}`;
+  const src = `/api/asset?spaceId=${spaceId}&assetId=${assetData.assetId}`;
 
   let el: React.ReactElement;
   switch (assetData.kind) {

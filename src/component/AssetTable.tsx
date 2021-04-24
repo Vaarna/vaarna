@@ -1,11 +1,10 @@
 import Link from "next/link";
-import { AssetData, AssetDatas } from "type/assetData";
+import { AssetData, AssetDatas, getKind } from "type/assetData";
 import bytes from "bytes";
 import axios from "axios";
 import { useSpaceId } from "store";
 import { rootLogger } from "logger";
 import { UploadProgress } from "context/UploadProgress";
-import { AssetService } from "service/asset";
 import { round } from "util/round";
 
 type RowProps = { spaceId: string | undefined; asset: AssetData };
@@ -19,7 +18,7 @@ const Row: React.FC<RowProps> = ({ spaceId, asset }: RowProps) => (
           if (!spaceId) return;
 
           axios
-            .post("/api/v1/table", { spaceId, assetId: asset.assetId, messages: [] })
+            .post("/api/table", { spaceId, assetId: asset.assetId, messages: [] })
             .then(() => {
               rootLogger.info(asset, `succesfully changed table to ${asset.assetId}`);
             })
@@ -65,7 +64,7 @@ const RowUpload: React.FC<RowUploadProps> = ({
       )}
     </td>
     <td>{filename}</td>
-    <td>{AssetService.getKind(contentType)}</td>
+    <td>{getKind(contentType)}</td>
     <td style={{ textAlign: "right" }}>{bytes(size)}</td>
     <td>{contentType}</td>
   </tr>

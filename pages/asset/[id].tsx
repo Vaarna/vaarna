@@ -36,7 +36,7 @@ export default function Asset(): React.ReactNode {
     () =>
       spaceId === undefined || id === undefined || Array.isArray(id)
         ? null
-        : ["/api/v1/asset/data", spaceId, id],
+        : ["/api/asset/data", spaceId, id],
     fetcher
   );
 
