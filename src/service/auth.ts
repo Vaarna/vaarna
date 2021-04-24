@@ -10,7 +10,7 @@ import axios from "axios";
 import { marshall } from "@aws-sdk/util-dynamodb";
 import { v4 as uuidv4 } from "uuid";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ProfileGoogle, User } from "type/auth";
+import { ProfileGoogle, User, Account } from "type/auth";
 import config from "config";
 
 type AuthServiceParams = {
@@ -74,6 +74,57 @@ export class AuthService extends Service {
     throw new Error("unsupported provider");
   }
 
+  private async createUser(user: User): Promise<void> {
+    try {
+      const cmd = new PutItemCommand({
+        TableName: this.tableNameUser,
+        Item: marshall(user),
+        ConditionExpression: "attribute_not_exists(userId)",
+      });
+      await this.db.send(cmd);
+    } catch (err) {
+      if (err?.name === "ConditionalCheckFailedException") {
+        this.logger.info(user, "user already exists");
+      } else {
+        this.logger.error(err, "failed to create user");
+        throw err;
+      }
+    }
+  }
+
+  private async upsertAccount(account: Account): Promise<void> {
+    try {
+      const cmd = new PutItemCommand({
+        TableName: "User",
+        Item: marshall(account),
+        ConditionExpression: "attribute_not_exists(userId)",
+      });
+      await this.db.send(cmd);
+    } catch (err) {
+      if (err?.name === "ConditionalCheckFailedException") {
+        this.logger.info(account, "account already exists, updating it");
+        const cmd = new UpdateItemCommand({
+          TableName: this.tableNameUser,
+          Key: marshall({
+            userId: account.userId,
+            sk: account.sk,
+          }),
+          UpdateExpression:
+            "SET updated = :updated, profile = :profile, tokens = :tokens",
+          ExpressionAttributeValues: marshall({
+            ":updated": new Date().getTime(),
+            ":profile": account.profile,
+            ":tokens": account.tokens,
+          }),
+        });
+        await this.db.send(cmd);
+      } else {
+        this.logger.error(err, "failed to created account");
+        throw err;
+      }
+    }
+  }
+
   private async callbackGoogle(params: CallbackParams): Promise<CallbackOut> {
     const now = new Date().getTime();
     const r = await this.googleClient.getToken(params.code);
@@ -91,76 +142,29 @@ export class AuthService extends Service {
       created: now,
       updated: now,
     });
-    const account = {
+    const account = Account.parse({
       userId: profile.email,
       sk: `account:google:${profile.id}`,
       created: now,
       updated: now,
       profile,
       tokens: r.tokens,
-    };
+    });
     const sessionId = uuidv4();
 
-    try {
-      const cmd = new PutItemCommand({
-        TableName: this.tableNameUser,
-        Item: marshall(user),
-        ConditionExpression: "attribute_not_exists(userId)",
-      });
-      await this.db.send(cmd);
-    } catch (err) {
-      if (err?.name === "ConditionalCheckFailedException") {
-        this.logger.info(user, "user already exists");
-      } else {
-        this.logger.error(err, "failed to create user");
-        throw err;
-      }
-    }
+    await Promise.all([this.createUser(user), this.upsertAccount(account)]);
 
-    try {
-      const cmd = new PutItemCommand({
-        TableName: "User",
-        Item: marshall(account),
-        ConditionExpression: "attribute_not_exists(userId)",
-      });
-      await this.db.send(cmd);
-    } catch (err) {
-      if (err?.name === "ConditionalCheckFailedException") {
-        this.logger.info(account, "account already exists");
-        const cmd = new UpdateItemCommand({
-          TableName: this.tableNameUser,
-          Key: marshall({
-            userId: profile.email,
-            sk: `account:google:${profile.id}`,
-          }),
-          UpdateExpression:
-            "SET updated = :updated, profile = :profile, tokens = :tokens",
-          ExpressionAttributeValues: marshall({
-            ":updated": now,
-            ":profile": account.profile,
-            ":tokens": account.tokens,
-          }),
-        });
-        await this.db.send(cmd);
-      } else {
-        this.logger.error(err, "failed to created account");
-        throw err;
-      }
-    }
-
-    {
-      // TODO: should sessions expire??
-      const cmd = new PutItemCommand({
-        TableName: this.tableNameSession,
-        Item: marshall({
-          sessionId,
-          userId: profile.email,
-          created: now,
-          userAgent: params.userAgent,
-        }),
-      });
-      await this.db.send(cmd);
-    }
+    // TODO: should sessions expire??
+    const cmd = new PutItemCommand({
+      TableName: this.tableNameSession,
+      Item: marshall({
+        sessionId,
+        userId: profile.email,
+        created: now,
+        userAgent: params.userAgent,
+      }),
+    });
+    await this.db.send(cmd);
 
     return {
       cookie: `__Host-sessionId=${sessionId}; Max-Age=3600; Path=/; Secure; HttpOnly; SameSite=Strict;`,

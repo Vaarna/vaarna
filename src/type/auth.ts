@@ -23,3 +23,13 @@ export const User = z.object({
   picture: z.string().url().optional(),
 });
 export type User = z.infer<typeof User>;
+
+export const Account = z.object({
+  userId: z.string().email(),
+  sk: z.string(),
+  created: z.number(),
+  updated: z.number(),
+  profile: z.record(z.unknown()),
+  tokens: z.record(z.unknown()),
+});
+export type Account = z.infer<typeof Account>;
