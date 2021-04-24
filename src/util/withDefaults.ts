@@ -36,6 +36,7 @@ export function withDefaults(methods: Method[], h: HandlerIn): HandlerOut {
       await h(req as RequestWithLogger, res);
     } catch (error) {
       logger.error(error, error.message);
+
       if (error instanceof ApiError) {
         res.status(error.code).json(error.json());
       } else {

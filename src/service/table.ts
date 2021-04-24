@@ -18,7 +18,7 @@ export class TableService extends Service {
   private readonly db: DynamoDBClient;
 
   constructor(params: TableServiceConfig) {
-    super(params, { tableName: config.TABLE_TABLE });
+    super(params, { tableName: config.SPACE_TABLE });
 
     this.tableName = config.SPACE_TABLE;
     this.db = new DynamoDBClient(dynamoDbConfig(this.logger));
