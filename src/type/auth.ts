@@ -33,3 +33,12 @@ export const Account = z.object({
   tokens: z.record(z.unknown()),
 });
 export type Account = z.infer<typeof Account>;
+
+export const Session = z.object({
+  userId: z.string().email(),
+  sk: z.string(),
+  sessionId: z.string().uuid(),
+  userAgent: z.string().optional(),
+  created: z.number(),
+});
+export type Session = z.infer<typeof Session>;

@@ -13,8 +13,13 @@ async function signout(req: RequestWithLogger, res: NextApiResponse): Promise<vo
     return;
   }
 
-  await svc.signout({ sessionId });
-  res.redirect("/");
+  try {
+    await svc.signout({ sessionId });
+  } catch (err) {
+    req.logger.error(err, `failed to complete signout on the backend: ${err.message}`);
+  } finally {
+    res.redirect("/");
+  }
 }
 
 export default withDefaults(["POST"], signout);

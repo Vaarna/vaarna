@@ -2,16 +2,18 @@ import {
   DeleteItemCommand,
   DynamoDBClient,
   PutItemCommand,
+  QueryCommand,
   UpdateItemCommand,
 } from "@aws-sdk/client-dynamodb";
 import { OAuth2Client } from "google-auth-library";
 import { Service, ServiceParams, dynamoDbConfig } from "./common";
 import axios from "axios";
-import { marshall } from "@aws-sdk/util-dynamodb";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { v4 as uuidv4 } from "uuid";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ProfileGoogle, User, Account } from "type/auth";
+import { ProfileGoogle, User, Account, Session } from "type/auth";
 import config from "config";
+import { ApiInternalServerError, ApiNotFoundError } from "type/error";
 
 type AuthServiceParams = ServiceParams;
 
@@ -37,20 +39,17 @@ type SignoutParams = {
 };
 
 export class AuthService extends Service {
-  readonly tableNameUser: string;
-  readonly tableNameSession: string;
+  readonly tableName: string;
 
   private readonly db: DynamoDBClient;
   private readonly googleClient: OAuth2Client;
 
   constructor(params: AuthServiceParams) {
     super(params, {
-      tableNameUser: config.USER_TABLE,
-      tableNameSession: config.SESSION_TABLE,
+      tableName: config.USER_TABLE,
     });
 
-    this.tableNameUser = config.USER_TABLE;
-    this.tableNameSession = config.SESSION_TABLE;
+    this.tableName = config.USER_TABLE;
     this.db = new DynamoDBClient(dynamoDbConfig(this.logger));
     this.googleClient = new OAuth2Client({
       clientId: config.GOOGLE_CLIENT_ID,
@@ -74,7 +73,7 @@ export class AuthService extends Service {
   private async createUser(user: User): Promise<void> {
     try {
       const cmd = new PutItemCommand({
-        TableName: this.tableNameUser,
+        TableName: this.tableName,
         Item: marshall(user),
         ConditionExpression: "attribute_not_exists(userId)",
       });
@@ -101,7 +100,7 @@ export class AuthService extends Service {
       if (err?.name === "ConditionalCheckFailedException") {
         this.logger.info(account, "account already exists, updating it");
         const cmd = new UpdateItemCommand({
-          TableName: this.tableNameUser,
+          TableName: this.tableName,
           Key: marshall({
             userId: account.userId,
             sk: account.sk,
@@ -148,18 +147,20 @@ export class AuthService extends Service {
       tokens: r.tokens,
     });
     const sessionId = uuidv4();
+    const session = Session.parse({
+      userId: profile.email,
+      sk: `session:${sessionId}`,
+      sessionId,
+      userAgent: params.userAgent,
+      created: now,
+    });
 
     await Promise.all([this.createUser(user), this.upsertAccount(account)]);
 
-    // TODO: should sessions expire??
+    // TODO: should sessions have an expiration??
     const cmd = new PutItemCommand({
-      TableName: this.tableNameSession,
-      Item: marshall({
-        sessionId,
-        userId: profile.email,
-        created: now,
-        userAgent: params.userAgent,
-      }),
+      TableName: this.tableName,
+      Item: marshall(session),
     });
     await this.db.send(cmd);
 
@@ -178,12 +179,33 @@ export class AuthService extends Service {
   }
 
   async signout(params: SignoutParams): Promise<void> {
+    const { userId, sk } = await this.getSession(params.sessionId);
+
     const cmd = new DeleteItemCommand({
-      TableName: this.tableNameSession,
-      Key: marshall({ sessionId: params.sessionId }),
+      TableName: this.tableName,
+      Key: marshall({ userId, sk }),
     });
 
     await this.db.send(cmd);
+  }
+
+  async getSession(sessionId: string): Promise<Session> {
+    const cmd = new QueryCommand({
+      TableName: this.tableName,
+      KeyConditionExpression: "sessionId = :sessionId",
+      ExpressionAttributeValues: marshall({ ":sessionId": sessionId }),
+      IndexName: "sessionId-index",
+    });
+
+    const resp = await this.db.send(cmd);
+    if (!resp.Items) {
+      throw new ApiNotFoundError(this.requestId, "sessionId not found");
+    }
+    if (resp.Items.length !== 1) {
+      throw new ApiInternalServerError(this.requestId);
+    }
+
+    return Session.parse(unmarshall(resp.Items[0]));
   }
 
   static getSessionCookie(req: NextApiRequest): string | undefined {

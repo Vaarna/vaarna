@@ -42,13 +42,6 @@ export class DataStack extends cdk.Stack {
     });
 
     this.table({
-      name: "session",
-      partitionKey: { name: "sessionId", type: dynamodb.AttributeType.STRING },
-      grantee,
-      removalPolicy,
-    });
-
-    this.table({
       name: "space",
       partitionKey: { name: "spaceId", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "sk", type: dynamodb.AttributeType.STRING },
@@ -56,12 +49,17 @@ export class DataStack extends cdk.Stack {
       removalPolicy,
     });
 
-    this.table({
+    const user = this.table({
       name: "user",
       partitionKey: { name: "userId", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "sk", type: dynamodb.AttributeType.STRING },
       grantee,
       removalPolicy,
+    });
+    user.addGlobalSecondaryIndex({
+      indexName: "sessionId-index",
+      partitionKey: { name: "sessionId", type: dynamodb.AttributeType.STRING },
+      projectionType: dynamodb.ProjectionType.ALL,
     });
   }
 

@@ -21,15 +21,6 @@ aws --endpoint-url http://localhost:8000 \
 
 aws --endpoint-url http://localhost:8000 \
     dynamodb create-table \
-    --table-name Session \
-    --attribute-definitions \
-        AttributeName=sessionId,AttributeType=S \
-    --key-schema \
-        AttributeName=sessionId,KeyType=HASH \
-    --billing-mode PAY_PER_REQUEST &
-
-aws --endpoint-url http://localhost:8000 \
-    dynamodb create-table \
     --table-name Space \
     --attribute-definitions \
         AttributeName=spaceId,AttributeType=S \
@@ -45,9 +36,12 @@ aws --endpoint-url http://localhost:8000 \
     --attribute-definitions \
         AttributeName=userId,AttributeType=S \
         AttributeName=sk,AttributeType=S \
+        AttributeName=sessionId,AttributeType=S \
     --key-schema \
         AttributeName=userId,KeyType=HASH \
         AttributeName=sk,KeyType=RANGE \
+    --global-secondary-index \
+        'IndexName=sessionId-index,KeySchema=[{AttributeName=sessionId,KeyType=HASH}],Projection={ProjectionType=ALL}' \
     --billing-mode PAY_PER_REQUEST &
 
 wait
