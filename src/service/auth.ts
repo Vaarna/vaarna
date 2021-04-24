@@ -13,10 +13,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { ProfileGoogle, User, Account } from "type/auth";
 import config from "config";
 
-type AuthServiceParams = {
-  tableNameUser: string;
-  tableNameSession: string;
-} & ServiceParams;
+type AuthServiceParams = ServiceParams;
 
 type SigninParams = {
   provider: string;

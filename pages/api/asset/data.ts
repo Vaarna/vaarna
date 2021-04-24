@@ -1,41 +1,16 @@
-import { requestLogger } from "logger";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import { AssetService } from "service/asset";
 import { GetAssetDataQuery } from "type/assetData";
-import { ApiError, parseRequest } from "util/parseRequest";
+import { parseRequest } from "util/parseRequest";
+import { RequestWithLogger, withDefaults } from "util/withDefaults";
 
-export default async function (
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<void> {
-  const [logger, requestId] = requestLogger(req, res);
-  const svc = new AssetService({ logger, requestId });
+async function assetData(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
+  const svc = new AssetService(req);
 
-  const allow = "OPTIONS, GET";
-
-  try {
-    switch (req.method) {
-      case "OPTIONS":
-        res.setHeader("Allow", allow);
-        return res.status(204).end();
-
-      case "GET": {
-        const { query } = parseRequest({
-          query: GetAssetDataQuery,
-        })(req, requestId);
-        return res.json({ data: await svc.getAssetData(query) });
-      }
-
-      default:
-        res.setHeader("Allow", allow);
-        return res.status(405).end();
-    }
-  } catch (error) {
-    if (error instanceof ApiError) {
-      res.status(error.code).json(error.json());
-    } else {
-      logger.error(error, "internal server error");
-      res.status(500).end();
-    }
-  }
+  const { query } = parseRequest(req, {
+    query: GetAssetDataQuery,
+  });
+  return res.json({ data: await svc.getAssetData(query) });
 }
+
+export default withDefaults(["GET"], assetData);

@@ -1,30 +1,9 @@
-import { requestLogger } from "logger";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import { AuthService } from "service/auth";
-import config from "config";
+import { RequestWithLogger, withDefaults } from "util/withDefaults";
 
-export default async function signout(
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<void> {
-  const allow = "OPTIONS, POST";
-
-  if (req.method === "OPTIONS") {
-    res.setHeader("Allow", allow);
-    return res.status(204).end();
-  }
-  if (req.method !== "POST") {
-    res.setHeader("Allow", allow);
-    return res.status(405).end();
-  }
-
-  const [logger, requestId] = requestLogger(req, res);
-  const svc = new AuthService({
-    tableNameUser: config.USER_TABLE,
-    tableNameSession: config.SESSION_TABLE,
-    logger,
-    requestId,
-  });
+async function signout(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
+  const svc = new AuthService(req);
 
   AuthService.clearSessionCookie(res);
 
@@ -37,3 +16,5 @@ export default async function signout(
   await svc.signout({ sessionId });
   res.redirect("/");
 }
+
+export default withDefaults(["POST"], signout);

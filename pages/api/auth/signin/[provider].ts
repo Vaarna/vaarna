@@ -1,30 +1,9 @@
-import config from "config";
-import { requestLogger } from "logger";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
 import { AuthService } from "service/auth";
+import { RequestWithLogger, withDefaults } from "util/withDefaults";
 
-export default async function signin(
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<void> {
-  const allow = "OPTIONS, POST";
-
-  if (req.method === "OPTIONS") {
-    res.setHeader("Allow", allow);
-    return res.status(204).end();
-  }
-  if (req.method !== "POST") {
-    res.setHeader("Allow", allow);
-    return res.status(405).end();
-  }
-
-  const [logger, requestId] = requestLogger(req, res);
-  const svc = new AuthService({
-    tableNameUser: config.USER_TABLE,
-    tableNameSession: config.SESSION_TABLE,
-    logger,
-    requestId,
-  });
+async function signin(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
+  const svc = new AuthService(req);
 
   const { provider } = req.query;
   if (typeof provider !== "string") {
@@ -34,3 +13,5 @@ export default async function signin(
   const url = svc.signinUrl({ provider });
   res.redirect(url);
 }
+
+export default withDefaults(["POST"], signin);

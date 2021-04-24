@@ -5,6 +5,7 @@ export type Kind = z.infer<typeof Kind>;
 
 export const AssetData = z.object({
   spaceId: z.string().uuid(),
+  sk: z.string(),
   assetId: z.string().uuid(),
   size: z.number().int(),
   contentType: z.string(),

@@ -18,6 +18,7 @@ import {
 import { getItemsFromTable } from "util/dynamodb";
 import { dynamoDbConfig, Service, ServiceParams } from "./common";
 import config from "config";
+import { SpaceItem } from "type/space";
 
 type ItemServiceParams = ServiceParams;
 
@@ -29,7 +30,7 @@ export class ItemService extends Service {
   constructor(params: ItemServiceParams) {
     super(params, { tableName: config.ITEM_TABLE });
 
-    this.tableName = config.ITEM_TABLE;
+    this.tableName = config.SPACE_TABLE;
     this.db = new DynamoDBClient(dynamoDbConfig(this.logger));
   }
 
@@ -37,17 +38,20 @@ export class ItemService extends Service {
     const items = await getItemsFromTable(this.db, {
       tableName: this.tableName,
       partition: { key: "spaceId", value: spaceId },
-      sort: { key: "itemId", value: itemId },
+      sort: { key: "sk", prefix: "item:", value: itemId },
     });
-
-    return Items.parse(items);
+    return Items.parse(
+      items.map((v) => SpaceItem.parse(v)).filter((v) => v.sk.startsWith("item:"))
+    );
   }
 
   async createItem(item: ItemCreate): Promise<Item> {
     const itemId = v4uuid();
     const now = new Date().toISOString();
+    this.logger.error(item, "create item");
     const fullItem = Item.parse({
       ...item,
+      sk: `item:${itemId}`,
       itemId,
       created: now,
       updated: now,
@@ -67,7 +71,15 @@ export class ItemService extends Service {
   async updateItem(item: ItemUpdate): Promise<Item | null> {
     const now = new Date().toISOString();
 
-    const noTouchy = new Set(["spaceId", "itemId", "type", "created", "version"]);
+    const noTouchy = new Set([
+      "spaceId",
+      "sk",
+      "version",
+      "itemId",
+      "type",
+      "created",
+      "version",
+    ]);
 
     const fieldsToUpdate = Object.keys({
       ...item,
@@ -92,14 +104,13 @@ export class ItemService extends Service {
 
     const cmd = new UpdateItemCommand({
       TableName: this.tableName,
-      Key: marshall({ spaceId, itemId }),
+      Key: marshall({ spaceId, sk: `item:${itemId}` }),
       UpdateExpression: updateExpr,
       ConditionExpression: "version = :version",
       ExpressionAttributeValues: attributeValues,
       ExpressionAttributeNames: attributeNames,
       ReturnValues: "ALL_NEW",
     });
-
     const res = await this.db.send(cmd);
 
     if (res.Attributes) return Item.parse(unmarshall(res.Attributes));
@@ -113,7 +124,7 @@ export class ItemService extends Service {
   }: RemoveItemQuery): Promise<Item | null> {
     const cmd = new DeleteItemCommand({
       TableName: this.tableName,
-      Key: marshall({ spaceId, itemId }),
+      Key: marshall({ spaceId, sk: `item:${itemId}` }),
       ConditionExpression: "version = :v",
       ExpressionAttributeValues: {
         ":v": { N: version },

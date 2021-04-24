@@ -20,14 +20,14 @@ export class TableService extends Service {
   constructor(params: TableServiceConfig) {
     super(params, { tableName: config.TABLE_TABLE });
 
-    this.tableName = config.TABLE_TABLE;
+    this.tableName = config.SPACE_TABLE;
     this.db = new DynamoDBClient(dynamoDbConfig(this.logger));
   }
 
   async getTable(spaceId: string): Promise<Table> {
     const cmd = new GetItemCommand({
       TableName: this.tableName,
-      Key: marshall({ spaceId }),
+      Key: marshall({ spaceId, sk: "table" }),
     });
 
     const res = await this.db.send(cmd);
@@ -45,7 +45,7 @@ export class TableService extends Service {
 
     const cmd = new UpdateItemCommand({
       TableName: this.tableName,
-      Key: marshall({ spaceId: table.spaceId }),
+      Key: marshall({ spaceId: table.spaceId, sk: "table" }),
       UpdateExpression: "SET updated = :updated, assetId = :assetId",
       ExpressionAttributeValues: marshall({
         ":updated": now,
@@ -64,7 +64,12 @@ export class TableService extends Service {
       return Table.parse(unmarshall(res.Attributes));
     } catch (error) {
       if (error?.name === "ResourceNotFoundException") {
-        const out = { ...table, updated: now };
+        const out = {
+          spaceId: table.spaceId,
+          sk: "table",
+          assetId: table.assetId,
+          updated: now,
+        };
         const cmd = new PutItemCommand({
           TableName: this.tableName,
           Item: marshall(out),

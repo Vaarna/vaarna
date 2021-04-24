@@ -41,7 +41,7 @@ clean:
 
 .PHONY: dev
 dev: dev-services init
-	${NEXT} dev | ${PINO_PRETTY}
+	NODE_OPTIONS='--inspect' ${NEXT} dev | ${PINO_PRETTY}
 
 .PHONY: dev-services
 dev-services:

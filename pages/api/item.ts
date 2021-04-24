@@ -1,59 +1,41 @@
-import { NextApiRequest, NextApiResponse } from "next";
-
-import { requestLogger } from "logger";
+import { NextApiResponse } from "next";
 import { ItemService } from "service/item";
-import { ApiError, parseRequest } from "util/parseRequest";
+import { parseRequest } from "util/parseRequest";
 import { ItemCreate, ItemUpdate, GetItemsQuery, RemoveItemQuery } from "type/item";
+import { RequestWithLogger, withDefaults } from "util/withDefaults";
 
-export default async function Item(
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<void> {
-  const [logger, requestId] = requestLogger(req, res);
-  const svc = new ItemService({ logger, requestId });
+async function item(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
+  const svc = new ItemService(req);
 
-  const allow = "OPTIONS, GET, POST, PUT, DELETE";
-
-  try {
-    switch (req.method) {
-      case "OPTIONS":
-        res.setHeader("Allow", allow);
-        return res.status(204).end();
-
-      case "GET": {
-        const { query } = parseRequest({ query: GetItemsQuery })(req, requestId);
-        logger.info({ spaceId: query.spaceId, itemId: query.itemId }, "getting items");
-        return res.json({ data: await svc.getItems(query) });
-      }
-
-      case "POST": {
-        const { body } = parseRequest({ body: ItemCreate })(req, requestId);
-        logger.info({ spaceId: body.spaceId }, "creating item");
-        return res.json({ data: await svc.createItem(body) });
-      }
-
-      case "PUT": {
-        const { body } = parseRequest({ body: ItemUpdate })(req, requestId);
-        logger.info({ spaceId: body.spaceId, itemId: body.itemId }, "updating item");
-        return res.json({ data: await svc.updateItem(body) });
-      }
-
-      case "DELETE": {
-        const { query } = parseRequest({ query: RemoveItemQuery })(req, requestId);
-        logger.info(query, "removing item");
-        return res.json({ data: await svc.removeItem(query) });
-      }
-
-      default:
-        res.setHeader("Allow", allow);
-        return res.status(405).end();
+  // eslint-disable-next-line default-case
+  switch (req.method) {
+    case "GET": {
+      const { query } = parseRequest(req, { query: GetItemsQuery });
+      req.logger.info(
+        { spaceId: query.spaceId, itemId: query.itemId },
+        "getting items"
+      );
+      return res.json({ data: await svc.getItems(query) });
     }
-  } catch (error) {
-    if (error instanceof ApiError) {
-      res.status(error.code).json(error.json());
-    } else {
-      logger.error(error, "internal server error");
-      res.status(500).end();
+
+    case "POST": {
+      const { body } = parseRequest(req, { body: ItemCreate });
+      req.logger.info({ spaceId: body.spaceId }, "creating item");
+      return res.json({ data: await svc.createItem(body) });
+    }
+
+    case "PUT": {
+      const { body } = parseRequest(req, { body: ItemUpdate });
+      req.logger.info({ spaceId: body.spaceId, itemId: body.itemId }, "updating item");
+      return res.json({ data: await svc.updateItem(body) });
+    }
+
+    case "DELETE": {
+      const { query } = parseRequest(req, { query: RemoveItemQuery });
+      req.logger.info(query, "removing item");
+      return res.json({ data: await svc.removeItem(query) });
     }
   }
 }
+
+export default withDefaults(["GET", "POST", "PUT", "DELETE"], item);

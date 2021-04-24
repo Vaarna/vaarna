@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const ItemBase = z.object({
   spaceId: z.string().uuid(),
+  sk: z.string(),
   itemId: z.string().uuid(),
   created: z.string(),
   updated: z.string(),
@@ -12,20 +13,24 @@ export type ItemBase = z.infer<typeof ItemBase>;
 
 const createOmit: {
   itemId: true;
+  sk: true;
   created: true;
   updated: true;
   version: true;
 } = {
   itemId: true,
+  sk: true,
   created: true,
   updated: true,
   version: true,
 };
 
 const updateOmit: {
+  sk: true;
   created: true;
   updated: true;
 } = {
+  sk: true,
   created: true,
   updated: true,
 };

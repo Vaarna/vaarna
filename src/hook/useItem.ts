@@ -50,6 +50,8 @@ export const useItem = (
   }, [data, error, dirty]);
 
   const save = () => {
+    if (inflight) return;
+
     setInflight(true);
 
     return axios({

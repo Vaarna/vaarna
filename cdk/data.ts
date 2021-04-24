@@ -8,14 +8,11 @@ export interface DataStackProps extends cdk.StackProps {
 }
 
 export class DataStack extends cdk.Stack {
-  private readonly removalPolicy: cdk.RemovalPolicy;
-
   constructor(scope: cdk.Construct, id: string, props: DataStackProps) {
     super(scope, id, props);
 
     const removalPolicy =
       props.dev ?? false ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN;
-    this.removalPolicy = removalPolicy;
 
     const iamUser = new iam.User(this, "iamUser");
     iamUser.applyRemovalPolicy(removalPolicy);
@@ -37,28 +34,32 @@ export class DataStack extends cdk.Stack {
     const grantee = iamUser;
 
     this.table({
-      name: "assetData",
-      sortKey: { name: "assetId", type: dynamodb.AttributeType.STRING },
-      grantee,
-      removalPolicy,
-    });
-
-    this.table({
-      name: "item",
-      sortKey: { name: "itemId", type: dynamodb.AttributeType.STRING },
-      grantee,
-      removalPolicy,
-    });
-
-    this.table({
-      name: "table",
-      grantee,
-      removalPolicy,
-    });
-
-    this.table({
       name: "log",
+      partitionKey: { name: "spaceId", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "messageId", type: dynamodb.AttributeType.STRING },
+      grantee,
+      removalPolicy,
+    });
+
+    this.table({
+      name: "session",
+      partitionKey: { name: "sessionId", type: dynamodb.AttributeType.STRING },
+      grantee,
+      removalPolicy,
+    });
+
+    this.table({
+      name: "space",
+      partitionKey: { name: "spaceId", type: dynamodb.AttributeType.STRING },
+      sortKey: { name: "sk", type: dynamodb.AttributeType.STRING },
+      grantee,
+      removalPolicy,
+    });
+
+    this.table({
+      name: "user",
+      partitionKey: { name: "userId", type: dynamodb.AttributeType.STRING },
+      sortKey: { name: "sk", type: dynamodb.AttributeType.STRING },
       grantee,
       removalPolicy,
     });
@@ -68,18 +69,20 @@ export class DataStack extends cdk.Stack {
     name,
     grantee,
     removalPolicy,
+    partitionKey,
     sortKey,
   }: {
     name: string;
     grantee: iam.IGrantable;
     removalPolicy: cdk.RemovalPolicy;
+    partitionKey: dynamodb.Attribute;
     sortKey?: dynamodb.Attribute;
   }): dynamodb.Table {
     const table = new dynamodb.Table(this, `${name}Table`, {
-      partitionKey: { name: "spaceId", type: dynamodb.AttributeType.STRING },
+      partitionKey,
       sortKey,
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy,
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
     });
     table.grantReadWriteData(grantee);
 

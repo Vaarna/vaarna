@@ -1,15 +1,11 @@
 import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { dynamoDbConfig } from "service/common";
-import { requestLogger } from "logger";
-import { NextApiRequest, NextApiResponse } from "next";
+import { NextApiResponse } from "next";
+import { RequestWithLogger, withDefaults } from "util/withDefaults";
 
-export default async function session(
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<void> {
-  const [logger, _requestId] = requestLogger(req, res);
-  const db = new DynamoDBClient(dynamoDbConfig(logger));
+async function session(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
+  const db = new DynamoDBClient(dynamoDbConfig(req.logger));
 
   const sessionId = req.cookies["__Host-sessionId"];
 
@@ -29,3 +25,5 @@ export default async function session(
 
   return res.status(404).end();
 }
+
+export default withDefaults(["GET"], session);

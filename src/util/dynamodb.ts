@@ -128,13 +128,14 @@ async function getItemsAll(
 type GetItemsParameters = {
   tableName: string;
   partition: { key: string; value: string };
-  sort: { key: string; value: string[] | string | undefined };
+  sort: { key: string; prefix?: string; value: string[] | string | undefined };
 };
 
 export async function getItemsFromTable(
   db: DynamoDBClient,
   params: GetItemsParameters
 ): Promise<unknown[]> {
+  const prefix = params.sort.prefix ?? "";
   const sortValue = params.sort.value;
 
   let items;
@@ -145,13 +146,13 @@ export async function getItemsFromTable(
     logger.info("get single item from table %s", params.tableName);
     items = await getItemsSingle(db, {
       ...params,
-      sort: { ...params.sort, value: sortValue },
+      sort: { ...params.sort, value: `${prefix}${sortValue}` },
     });
   } else {
     logger.info("get multiple items from table %s", params.tableName);
     items = await getItemsMultiple(db, {
       ...params,
-      sort: { ...params.sort, value: sortValue },
+      sort: { ...params.sort, value: sortValue.map((v) => `${prefix}${v}`) },
     });
   }
 

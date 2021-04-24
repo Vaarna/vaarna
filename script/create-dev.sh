@@ -10,37 +10,6 @@ aws --endpoint-url http://localhost:9000 \
 
 aws --endpoint-url http://localhost:8000 \
     dynamodb create-table \
-    --table-name AssetData \
-    --attribute-definitions \
-        AttributeName=spaceId,AttributeType=S \
-        AttributeName=assetId,AttributeType=S \
-    --key-schema \
-        AttributeName=spaceId,KeyType=HASH \
-        AttributeName=assetId,KeyType=RANGE \
-    --billing-mode PAY_PER_REQUEST &
-
-aws --endpoint-url http://localhost:8000 \
-    dynamodb create-table \
-    --table-name Item \
-    --attribute-definitions \
-        AttributeName=spaceId,AttributeType=S \
-        AttributeName=itemId,AttributeType=S \
-    --key-schema \
-        AttributeName=spaceId,KeyType=HASH \
-        AttributeName=itemId,KeyType=RANGE \
-    --billing-mode PAY_PER_REQUEST &
-
-aws --endpoint-url http://localhost:8000 \
-    dynamodb create-table \
-    --table-name Table \
-    --attribute-definitions \
-        AttributeName=spaceId,AttributeType=S \
-    --key-schema \
-        AttributeName=spaceId,KeyType=HASH \
-    --billing-mode PAY_PER_REQUEST &
-
-aws --endpoint-url http://localhost:8000 \
-    dynamodb create-table \
     --table-name Log \
     --attribute-definitions \
         AttributeName=spaceId,AttributeType=S \
@@ -52,6 +21,26 @@ aws --endpoint-url http://localhost:8000 \
 
 aws --endpoint-url http://localhost:8000 \
     dynamodb create-table \
+    --table-name Session \
+    --attribute-definitions \
+        AttributeName=sessionId,AttributeType=S \
+    --key-schema \
+        AttributeName=sessionId,KeyType=HASH \
+    --billing-mode PAY_PER_REQUEST &
+
+aws --endpoint-url http://localhost:8000 \
+    dynamodb create-table \
+    --table-name Space \
+    --attribute-definitions \
+        AttributeName=spaceId,AttributeType=S \
+        AttributeName=sk,AttributeType=S \
+    --key-schema \
+        AttributeName=spaceId,KeyType=HASH \
+        AttributeName=sk,KeyType=RANGE \
+    --billing-mode PAY_PER_REQUEST &
+
+aws --endpoint-url http://localhost:8000 \
+    dynamodb create-table \
     --table-name User \
     --attribute-definitions \
         AttributeName=userId,AttributeType=S \
@@ -59,15 +48,6 @@ aws --endpoint-url http://localhost:8000 \
     --key-schema \
         AttributeName=userId,KeyType=HASH \
         AttributeName=sk,KeyType=RANGE \
-    --billing-mode PAY_PER_REQUEST &
-
-aws --endpoint-url http://localhost:8000 \
-    dynamodb create-table \
-    --table-name Session \
-    --attribute-definitions \
-        AttributeName=sessionId,AttributeType=S \
-    --key-schema \
-        AttributeName=sessionId,KeyType=HASH \
     --billing-mode PAY_PER_REQUEST &
 
 wait

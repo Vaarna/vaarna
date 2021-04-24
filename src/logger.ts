@@ -22,10 +22,10 @@ type AWSClient = "DynamoDB" | "S3";
 export function asAWSLogger(client: AWSClient, logger: P.Logger): AWSLogger {
   const l = logger.child({ client });
   return {
-    debug: l.trace,
-    info: l.debug,
-    warn: l.warn,
-    error: l.error,
+    debug: (v) => l.trace(v, client),
+    info: (v) => l.debug(v, client),
+    warn: (v) => l.warn(v, client),
+    error: (v) => l.error(v, client),
   };
 }
 
