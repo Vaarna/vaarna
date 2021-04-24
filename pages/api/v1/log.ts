@@ -3,7 +3,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { LogService } from "service/log";
 import { ApiInternalServerError } from "type/error";
 import { GetLogQuery, LogEvent } from "type/log";
-import { envGet } from "util/env";
 import { ApiError, parseRequest } from "util/parseRequest";
 
 export default async function Log(
@@ -11,11 +10,7 @@ export default async function Log(
   res: NextApiResponse
 ): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
-  const svc = new LogService({
-    tableName: envGet("LOG_TABLE"),
-    logger,
-    requestId,
-  });
+  const svc = new LogService({ logger, requestId });
 
   const allow = "OPTIONS, GET, PATCH";
 

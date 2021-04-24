@@ -5,18 +5,18 @@ import {
   UpdateItemCommand,
 } from "@aws-sdk/client-dynamodb";
 import { OAuth2Client } from "google-auth-library";
-import { Service, ServiceConfig, dynamoDbConfig } from "./common";
-import { envGet } from "util/env";
+import { Service, ServiceParams, dynamoDbConfig } from "./common";
 import axios from "axios";
-import { z } from "zod";
 import { marshall } from "@aws-sdk/util-dynamodb";
 import { v4 as uuidv4 } from "uuid";
 import { NextApiRequest, NextApiResponse } from "next";
+import { ProfileGoogle, User } from "type/auth";
+import config from "config";
 
-type AuthServiceConfig = {
+type AuthServiceParams = {
   tableNameUser: string;
   tableNameSession: string;
-} & ServiceConfig;
+} & ServiceParams;
 
 type SigninParams = {
   provider: string;
@@ -39,30 +39,6 @@ type SignoutParams = {
   sessionId: string;
 };
 
-export const ProfileGoogle = z
-  .object({
-    id: z.string(),
-    email: z.string().email(),
-    name: z.string().optional(),
-    given_name: z.string().optional(),
-    family_name: z.string().optional(),
-    picture: z.string().url().optional(),
-  })
-  .passthrough();
-export type ProfileGoogle = z.infer<typeof ProfileGoogle>;
-
-export const User = z.object({
-  userId: z.string().email(),
-  sk: z.literal("user"),
-  created: z.number(),
-  updated: z.number(),
-  name: z.string().optional(),
-  given_name: z.string().optional(),
-  family_name: z.string().optional(),
-  picture: z.string().url().optional(),
-});
-export type User = z.infer<typeof User>;
-
 export class AuthService extends Service {
   readonly tableNameUser: string;
   readonly tableNameSession: string;
@@ -70,19 +46,19 @@ export class AuthService extends Service {
   private readonly db: DynamoDBClient;
   private readonly googleClient: OAuth2Client;
 
-  constructor(config: AuthServiceConfig) {
-    super(config, {
-      tableNameUser: config.tableNameUser,
-      tableNameSession: config.tableNameSession,
+  constructor(params: AuthServiceParams) {
+    super(params, {
+      tableNameUser: config.USER_TABLE,
+      tableNameSession: config.SESSION_TABLE,
     });
 
-    this.tableNameUser = config.tableNameUser;
-    this.tableNameSession = config.tableNameSession;
+    this.tableNameUser = config.USER_TABLE;
+    this.tableNameSession = config.SESSION_TABLE;
     this.db = new DynamoDBClient(dynamoDbConfig(this.logger));
     this.googleClient = new OAuth2Client({
-      clientId: envGet("GOOGLE_CLIENT_ID"),
-      clientSecret: envGet("GOOGLE_CLIENT_SECRET"),
-      redirectUri: "http://localhost:3000/api/auth/callback/google",
+      clientId: config.GOOGLE_CLIENT_ID,
+      clientSecret: config.GOOGLE_CLIENT_SECRET,
+      redirectUri: `${config.BASE_URL}/api/auth/callback/google`,
     });
   }
 

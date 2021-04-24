@@ -8,19 +8,13 @@ import { ApiError, parseRequest } from "util/parseRequest";
 import { pathToFileURL } from "url";
 import { ParsedMultipartBody, parseMultipartBody } from "util/multipart";
 import { AssetService } from "service/asset";
-import { envGet } from "util/env";
 
 export default async function Asset(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
-  const svc = new AssetService({
-    bucket: envGet("ASSET_BUCKET"),
-    tableName: envGet("ASSET_DATA_TABLE"),
-    logger,
-    requestId,
-  });
+  const svc = new AssetService({ logger, requestId });
 
   async function post(query: PostAssetQuery, body: ParsedMultipartBody) {
     const out = await Promise.all(

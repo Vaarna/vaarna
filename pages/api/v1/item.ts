@@ -4,18 +4,13 @@ import { requestLogger } from "logger";
 import { ItemService } from "service/item";
 import { ApiError, parseRequest } from "util/parseRequest";
 import { ItemCreate, ItemUpdate, GetItemsQuery, RemoveItemQuery } from "type/item";
-import { envGet } from "util/env";
 
 export default async function Item(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
-  const svc = new ItemService({
-    tableName: envGet("ITEM_TABLE"),
-    logger,
-    requestId,
-  });
+  const svc = new ItemService({ logger, requestId });
 
   const allow = "OPTIONS, GET, POST, PUT, DELETE";
 

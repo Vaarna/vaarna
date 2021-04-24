@@ -12,7 +12,6 @@ export default async function session(
   const db = new DynamoDBClient(dynamoDbConfig(logger));
 
   const sessionId = req.cookies["__Host-sessionId"];
-  console.log("sessionId =", sessionId);
 
   if (typeof sessionId !== "string") {
     return res.status(400).end();

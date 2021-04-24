@@ -17,7 +17,6 @@ type Out =
 
 export const useSession = (): Out => {
   const { data, error } = useSWR("/api/auth/session", fetcher);
-  console.log(data);
 
   const isLoggedIn = !error && Boolean(data);
 

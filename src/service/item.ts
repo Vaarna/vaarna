@@ -16,21 +16,20 @@ import {
   RemoveItemQuery,
 } from "type/item";
 import { getItemsFromTable } from "util/dynamodb";
-import { dynamoDbConfig, Service, ServiceConfig } from "./common";
+import { dynamoDbConfig, Service, ServiceParams } from "./common";
+import config from "config";
 
-type ItemServiceConfig = {
-  tableName: string;
-} & ServiceConfig;
+type ItemServiceParams = ServiceParams;
 
 export class ItemService extends Service {
   readonly tableName: string;
 
   private readonly db: DynamoDBClient;
 
-  constructor(config: ItemServiceConfig) {
-    super(config, { tableName: config.tableName });
+  constructor(params: ItemServiceParams) {
+    super(params, { tableName: config.ITEM_TABLE });
 
-    this.tableName = config.tableName;
+    this.tableName = config.ITEM_TABLE;
     this.db = new DynamoDBClient(dynamoDbConfig(this.logger));
   }
 

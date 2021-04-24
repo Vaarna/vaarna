@@ -2,7 +2,6 @@ import { requestLogger } from "logger";
 import { NextApiRequest, NextApiResponse } from "next";
 import { AssetService } from "service/asset";
 import { GetAssetDataQuery } from "type/assetData";
-import { envGet } from "util/env";
 import { ApiError, parseRequest } from "util/parseRequest";
 
 export default async function (
@@ -10,12 +9,7 @@ export default async function (
   res: NextApiResponse
 ): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
-  const svc = new AssetService({
-    bucket: envGet("ASSET_BUCKET"),
-    tableName: envGet("ASSET_DATA_TABLE"),
-    logger,
-    requestId,
-  });
+  const svc = new AssetService({ logger, requestId });
 
   const allow = "OPTIONS, GET";
 

@@ -3,7 +3,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { TableService } from "service/table";
 import { ApiInternalServerError } from "type/error";
 import { GetTableQuery, UpdateTableBody } from "type/table";
-import { envGet } from "util/env";
 import { ApiError, parseRequest } from "util/parseRequest";
 
 export default async function handle_table(
@@ -11,7 +10,7 @@ export default async function handle_table(
   res: NextApiResponse
 ): Promise<void> {
   const [logger, requestId] = requestLogger(req, res);
-  const svc = new TableService({ tableName: envGet("TABLE_TABLE"), logger, requestId });
+  const svc = new TableService({ logger, requestId });
 
   const allow = "OPTIONS, GET, POST, DELETE";
 

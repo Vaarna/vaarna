@@ -9,6 +9,7 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import { marshall } from "@aws-sdk/util-dynamodb";
+import config from "config";
 import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
@@ -16,7 +17,7 @@ import { GetAssetHeaders, GetAssetQuery } from "type/asset";
 import { AssetData, AssetDatas, GetAssetDataQuery } from "type/assetData";
 import { ApiInternalServerError } from "type/error";
 import { getItemsFromTable } from "util/dynamodb";
-import { dynamoDbConfig, s3Config, Service, ServiceConfig } from "./common";
+import { dynamoDbConfig, s3Config, Service, ServiceParams } from "./common";
 
 type ApiHeaders = {
   name: string;
@@ -43,11 +44,9 @@ class AssetResponse {
   }
 }
 
-type AssetServiceConfig = {
-  bucket: string;
-  tableName: string;
+type AssetServiceParams = {
   maxAge?: number;
-} & ServiceConfig;
+} & ServiceParams;
 
 const MINUTE = 60;
 const HOUR = 60 * MINUTE;
@@ -61,15 +60,15 @@ export class AssetService extends Service {
   private readonly s3: S3Client;
   private readonly db: DynamoDBClient;
 
-  constructor(config: AssetServiceConfig) {
-    super(config, {
-      bucket: config.bucket,
-      tableName: config.tableName,
+  constructor(params: AssetServiceParams) {
+    super(params, {
+      bucket: config.ASSET_BUCKET,
+      tableName: config.ASSET_DATA_TABLE,
     });
 
-    this.bucket = config.bucket;
-    this.tableName = config.tableName;
-    if (config.maxAge) this.maxAge = config.maxAge;
+    this.bucket = config.ASSET_BUCKET;
+    this.tableName = config.ASSET_DATA_TABLE;
+    if (params.maxAge) this.maxAge = params.maxAge;
 
     this.s3 = new S3Client(s3Config(this.logger));
     this.db = new DynamoDBClient(dynamoDbConfig(this.logger));

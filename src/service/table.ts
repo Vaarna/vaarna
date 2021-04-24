@@ -5,23 +5,22 @@ import {
   UpdateItemCommand,
 } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-import { dynamoDbConfig, Service, ServiceConfig } from "./common";
+import { dynamoDbConfig, Service, ServiceParams } from "./common";
 import { Table, UpdateTableBody } from "type/table";
 import { ApiInternalServerError, ApiNotFoundError } from "type/error";
+import config from "config";
 
-type TableServiceConfig = {
-  tableName: string;
-} & ServiceConfig;
+type TableServiceConfig = ServiceParams;
 
 export class TableService extends Service {
   readonly tableName: string;
 
   private readonly db: DynamoDBClient;
 
-  constructor(config: TableServiceConfig) {
-    super(config, { tableName: config.tableName });
+  constructor(params: TableServiceConfig) {
+    super(params, { tableName: config.TABLE_TABLE });
 
-    this.tableName = config.tableName;
+    this.tableName = config.TABLE_TABLE;
     this.db = new DynamoDBClient(dynamoDbConfig(this.logger));
   }
 

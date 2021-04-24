@@ -1,24 +1,23 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
-import { dynamoDbConfig, Service, ServiceConfig } from "./common";
+import { dynamoDbConfig, Service, ServiceParams } from "./common";
 import { v4 as uuidv4 } from "uuid";
 import { marshall } from "@aws-sdk/util-dynamodb";
 import { roll } from "dice-roller";
 import { LogEvent, LogItem, LogItems } from "type/log";
 import { getItemsFromTable } from "util/dynamodb";
+import config from "config";
 
-type LogServiceConfig = {
-  tableName: string;
-} & ServiceConfig;
+type LogServiceParams = ServiceParams;
 
 export class LogService extends Service {
   readonly tableName: string;
 
   private readonly db: DynamoDBClient;
 
-  constructor(config: LogServiceConfig) {
-    super(config, { tableName: config.tableName });
+  constructor(params: LogServiceParams) {
+    super(params, { tableName: config.LOG_TABLE });
 
-    this.tableName = config.tableName;
+    this.tableName = config.LOG_TABLE;
     this.db = new DynamoDBClient(dynamoDbConfig(this.logger));
   }
 
