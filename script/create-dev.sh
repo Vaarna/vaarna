@@ -50,6 +50,26 @@ aws --endpoint-url http://localhost:8000 \
         AttributeName=messageId,KeyType=RANGE \
     --billing-mode PAY_PER_REQUEST &
 
+aws --endpoint-url http://localhost:8000 \
+    dynamodb create-table \
+    --table-name User \
+    --attribute-definitions \
+        AttributeName=userId,AttributeType=S \
+        AttributeName=sk,AttributeType=S \
+    --key-schema \
+        AttributeName=userId,KeyType=HASH \
+        AttributeName=sk,KeyType=RANGE \
+    --billing-mode PAY_PER_REQUEST &
+
+aws --endpoint-url http://localhost:8000 \
+    dynamodb create-table \
+    --table-name Session \
+    --attribute-definitions \
+        AttributeName=sessionId,AttributeType=S \
+    --key-schema \
+        AttributeName=sessionId,KeyType=HASH \
+    --billing-mode PAY_PER_REQUEST &
+
 wait
 
 exit 0

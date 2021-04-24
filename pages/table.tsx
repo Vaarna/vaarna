@@ -99,13 +99,13 @@ export default function TablePage(): React.ReactNode {
 
   if (table.error || asset.error || log.error) {
     return (
-      <pre>
+      <code>
         {JSON.stringify(
           { table: table.error, asset: asset.error, log: log.error },
           null,
           "  "
         )}
-      </pre>
+      </code>
     );
   }
   if (!asset.data) {
