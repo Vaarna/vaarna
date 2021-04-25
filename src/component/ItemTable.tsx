@@ -1,5 +1,8 @@
 import { Item, Items } from "type/item";
 import Link from "next/link";
+import { formatDistanceToNowStrict } from "date-fns";
+
+const formatTime = (v: number) => formatDistanceToNowStrict(v, { addSuffix: true });
 
 type RowProps = { item: Item };
 
@@ -11,8 +14,8 @@ const Row: React.FC<RowProps> = ({ item }: RowProps) => {
         <Link href={`/item/${item.itemId}`}>{item.itemId}</Link>
       </td>
       <td>{item.path}</td>
-      <td>{item.created}</td>
-      <td>{item.updated}</td>
+      <td>{formatTime(item.created)}</td>
+      <td>{formatTime(item.updated)}</td>
       <td style={{ textAlign: "right" }}>{item.version}</td>
     </tr>
   );

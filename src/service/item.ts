@@ -47,7 +47,7 @@ export class ItemService extends Service {
 
   async createItem(item: ItemCreate): Promise<Item> {
     const itemId = v4uuid();
-    const now = new Date().toISOString();
+    const now = new Date().getTime();
     this.logger.error(item, "create item");
     const fullItem = Item.parse({
       ...item,
@@ -69,7 +69,7 @@ export class ItemService extends Service {
   }
 
   async updateItem(item: ItemUpdate): Promise<Item | null> {
-    const now = new Date().toISOString();
+    const now = new Date().getTime();
 
     const noTouchy = new Set([
       "spaceId",

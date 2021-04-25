@@ -4,8 +4,8 @@ export const ItemBase = z.object({
   spaceId: z.string().uuid(),
   sk: z.string(),
   itemId: z.string().uuid(),
-  created: z.string(),
-  updated: z.string(),
+  created: z.number(),
+  updated: z.number(),
   version: z.number().int(),
   path: z.string(),
 });
