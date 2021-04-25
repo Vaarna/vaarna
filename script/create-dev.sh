@@ -37,7 +37,6 @@ aws --endpoint-url http://localhost:8000 \
         AttributeName=userId,AttributeType=S \
         AttributeName=sk,AttributeType=S \
         AttributeName=sessionId,AttributeType=S \
-        AttributeName=email,AttributeType=S \
     --key-schema \
         AttributeName=userId,KeyType=HASH \
         AttributeName=sk,KeyType=RANGE \
