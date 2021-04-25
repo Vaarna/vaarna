@@ -91,7 +91,7 @@ export class AuthService extends Service {
   private async upsertAccount(account: Account): Promise<void> {
     try {
       const cmd = new PutItemCommand({
-        TableName: "User",
+        TableName: this.tableName,
         Item: marshall(account),
         ConditionExpression: "attribute_not_exists(userId)",
       });
