@@ -14,4 +14,5 @@ new DataStack(app, "DataStackStaging", {
 
 new DataStack(app, "DataStack", {
   env,
+  dev: true,
 });
