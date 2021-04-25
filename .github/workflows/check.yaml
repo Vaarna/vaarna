@@ -34,6 +34,9 @@ jobs:
       - name: Run end-to-end tests
         id: test
         continue-on-error: true
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: >
           xvfb-run --server-args="-screen 0 1280x720x24"
           make test-testcafe
@@ -42,6 +45,9 @@ jobs:
 
       - name: Run end-to-end tests in quarantine mode
         if: steps.test.outcome != 'success'
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: >
           xvfb-run --server-args="-screen 0 1280x720x24"
           make test-testcafe
@@ -75,6 +81,9 @@ jobs:
         run: make init
 
       - name: Run all checks and tests
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: make -j check test-jest
 
       - name: Build next app
