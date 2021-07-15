@@ -44,7 +44,7 @@ const MessageForm: React.FC<FormProps> = ({ spaceId, revalidate }: FormProps) =>
   return (
     <form onSubmit={(ev) => ev.preventDefault()}>
       <div className="field has-addons m-1">
-        <div className="control">
+        <div className="control" style={{width: "100%"}}>
           <input
             className="input is-primary"
             value={msg}
