@@ -1,6 +1,4 @@
-import "normalize.css";
-import "../styles/index.scss";
-import s from "./_app.module.css";
+import "../styles/_all.scss";
 
 import type { AppProps } from "next/app";
 import { v4 as v4uuid } from "uuid";
@@ -103,6 +101,7 @@ export default function App({ Component, pageProps }: AppProps): React.ReactNode
   return (
     <>
       <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
           href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
@@ -110,13 +109,9 @@ export default function App({ Component, pageProps }: AppProps): React.ReactNode
         />
       </Head>
       <UploadContext.Provider value={uploads}>
-        <div className={s.root}>
-          <Header />
+        <Header />
 
-          <div className={s.content}>
-            <Component {...pageProps} />
-          </div>
-        </div>
+        <Component {...pageProps} />
       </UploadContext.Provider>
     </>
   );

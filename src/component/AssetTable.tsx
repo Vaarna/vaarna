@@ -7,12 +7,31 @@ import { rootLogger } from "logger";
 import { UploadProgress } from "context/UploadProgress";
 import { round } from "util/round";
 
+type ButtonProps = {
+  disabled: boolean;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+};
+
+const Button: React.FC<ButtonProps> = ({
+  disabled,
+  onClick,
+  children,
+}: React.PropsWithChildren<ButtonProps>) => (
+  <button
+    className="button is-primary is-light is-small"
+    disabled={disabled}
+    onClick={onClick}
+  >
+    {children}
+  </button>
+);
+
 type RowProps = { spaceId: string | undefined; asset: AssetData };
 
 const Row: React.FC<RowProps> = ({ spaceId, asset }: RowProps) => (
   <tr>
     <td>
-      <button
+      <Button
         disabled={!spaceId}
         onClick={() => {
           if (!spaceId) return;
@@ -28,7 +47,7 @@ const Row: React.FC<RowProps> = ({ spaceId, asset }: RowProps) => (
         }}
       >
         Show
-      </button>
+      </Button>
     </td>
     <td>{asset.spaceId}</td>
     <td>
@@ -49,7 +68,7 @@ const RowUpload: React.FC<RowUploadProps> = ({
 }: RowUploadProps) => (
   <tr>
     <td>
-      <button disabled>Show</button>
+      <Button disabled>Show</Button>
     </td>
     <td>{spaceId}</td>
     <td>
@@ -101,7 +120,7 @@ export const AssetTable: React.FC<AssetTableProps> = ({
   data.sort((a, b) => a.data.filename.localeCompare(b.data.filename));
 
   return (
-    <div className="simple-table">
+    <div className="table">
       <table>
         <thead>
           <tr>

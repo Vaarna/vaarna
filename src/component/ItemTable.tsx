@@ -25,7 +25,7 @@ export type ItemTableProps = { items: Items };
 
 export const ItemTable: React.FC<ItemTableProps> = ({ items }: ItemTableProps) => {
   return (
-    <div className="simple-table">
+    <div className="table">
       <table>
         <thead>
           <tr>

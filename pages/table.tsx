@@ -9,6 +9,7 @@ import { Table } from "type/table";
 import { sortBy } from "lodash";
 import { formatDistanceToNowStrict } from "date-fns";
 import s from "./table.module.css";
+import classNames from "classnames";
 
 type FormProps = {
   spaceId: string | undefined;
@@ -17,41 +18,47 @@ type FormProps = {
 
 const MessageForm: React.FC<FormProps> = ({ spaceId, revalidate }: FormProps) => {
   const [msg, setMsg] = useState("");
+  const onClick = () => {
+    if (spaceId === undefined) return;
+
+    let data: LogEvent;
+    if (msg.startsWith("/roll ")) {
+      data = { spaceId, type: "ROLL", expr: msg.slice("/roll ".length) };
+    } else {
+      data = {
+        spaceId,
+        type: "MESSAGE",
+        msg,
+      };
+    }
+
+    setMsg("");
+    axios
+      .patch("/api/log", data)
+      .then((resp) => resp.data)
+      .then(() => {
+        return revalidate();
+      });
+  };
 
   return (
-    <form className={s.messageForm} onSubmit={(ev) => ev.preventDefault()}>
-      <input
-        value={msg}
-        onChange={(ev) => {
-          setMsg(ev.target.value);
-        }}
-      />
-      <button
-        onClick={() => {
-          if (spaceId === undefined) return;
-
-          let data: LogEvent;
-          if (msg.startsWith("/roll ")) {
-            data = { spaceId, type: "ROLL", expr: msg.slice("/roll ".length) };
-          } else {
-            data = {
-              spaceId,
-              type: "MESSAGE",
-              msg,
-            };
-          }
-
-          setMsg("");
-          axios
-            .patch("/api/log", data)
-            .then((resp) => resp.data)
-            .then(() => {
-              return revalidate();
-            });
-        }}
-      >
-        Send
-      </button>
+    <form onSubmit={(ev) => ev.preventDefault()}>
+      <div className="field has-addons m-1">
+        <div className="control">
+          <input
+            className="input is-primary"
+            value={msg}
+            onChange={(ev) => {
+              setMsg(ev.target.value);
+            }}
+          />
+        </div>
+        <div className="control">
+          <button className="button is-submit" onClick={onClick}>
+            Send
+          </button>
+        </div>
+      </div>
     </form>
   );
 };
@@ -149,9 +156,9 @@ export default function TablePage(): React.ReactNode {
   }
 
   return (
-    <div className={s.container}>
-      <div className={s.asset}>{el}</div>
-      <div className={s.log}>
+    <div className={classNames([s.container, "columns"])}>
+      <div className={classNames([s.asset, "column", "is-two-thirds"])}>{el}</div>
+      <div className={classNames([s.log, "column"])}>
         <div ref={logMessages} className={s.messages}>
           {sortBy(log?.data, (v) => v.t).map((msg) => (
             <p key={msg.messageId}>

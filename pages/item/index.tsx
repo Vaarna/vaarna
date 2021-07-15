@@ -30,20 +30,25 @@ export default function ItemsC(): React.ReactNode {
 
   return (
     <>
-      <button
-        onClick={() => {
-          axios({
-            url: "/api/item",
-            method: "POST",
-            data: { spaceId, type: "note", path: "", public: "", private: "" },
-          })
-            .then(({ data: { data } }) => router.push(`/item/${data.itemId}`))
-            .then(() => revalidate());
-        }}
-      >
-        New Note
-      </button>
-      <ItemTable items={data} />
+      <div className="block p-1">
+        <button
+          className="button"
+          onClick={() => {
+            axios({
+              url: "/api/item",
+              method: "POST",
+              data: { spaceId, type: "note", path: "", public: "", private: "" },
+            })
+              .then(({ data: { data } }) => router.push(`/item/${data.itemId}`))
+              .then(() => revalidate());
+          }}
+        >
+          New Note
+        </button>
+      </div>
+      <div className="block">
+        <ItemTable items={data} />
+      </div>
     </>
   );
 }
