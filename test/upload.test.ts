@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { Selector } from "testcafe";
 import { v4 as v4uuid } from "uuid";
-import { getPage } from "./util";
+import { getPage, setSpaceId } from "./util";
 
 fixture`Upload`.page(getPage());
 
@@ -10,7 +10,7 @@ const now = new Date().getTime() / 1000;
 const blob = Uint8Array.from(readFileSync("./test/lena.png"));
 
 test("dropping a file to the page uploads it", async (t) => {
-  await t.typeText(Selector("label").withText("Space ID"), spaceId);
+  await setSpaceId(t, spaceId);
   await t.navigateTo("/asset");
 
   await t.eval(
@@ -30,7 +30,7 @@ test("dropping a file to the page uploads it", async (t) => {
 });
 
 test("pasting a file to the page uploads it", async (t) => {
-  await t.typeText(Selector("label").withText("Space ID"), spaceId);
+  await setSpaceId(t, spaceId);
   await t.navigateTo("/asset");
 
   const { name } = t.browser;
@@ -64,7 +64,7 @@ test("pasting a file to the page uploads it", async (t) => {
 });
 
 test("an uploaded image can be shown on the table", async (t) => {
-  await t.typeText(Selector("label").withText("Space ID"), spaceId);
+  await setSpaceId(t, spaceId);
   await t.click(Selector("a").withText("Asset"));
   await t.click(Selector("button").withText("Show"));
   await t.click(Selector("a").withText("Table"));

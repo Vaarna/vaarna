@@ -56,6 +56,7 @@ export const Header: React.FC = () => {
               </div>
               <div className="control">
                 <input
+                  id="spaceId"
                   className="input"
                   style={{ minWidth: "23rem" }}
                   value={spaceId}
