@@ -3158,15 +3158,15 @@
   dependencies:
     "@types/node" "*"
 
-"@types/pino@*", "@types/pino@^6.3.7":
-  version "6.3.7"
-  resolved "https://registry.yarnpkg.com/@types/pino/-/pino-6.3.7.tgz#0ccef98a159230cb3fa2589c7e8b00a7550a69f6"
-  integrity sha512-v7FdDXVEL0Zx1zcCf0cJZMojChnF+O0ujDKV1UdocsLuUhENjdtNIaanCZK1zRELp35x//bI2/IHtYUK0vmRvw==
+"@types/pino@*", "@types/pino@^6.3.11":
+  version "6.3.11"
+  resolved "https://registry.yarnpkg.com/@types/pino/-/pino-6.3.11.tgz#83652799e76b3ad692aaf68f6fbf994e83af5db2"
+  integrity sha512-S7+fLONqSpHeW9d7TApUqO6VN47KYgOXhCNKwGBVLHObq8HhaAYlVqUNdfnvoXjCMiwE5xcPm/5R2ZUh8bgaXQ==
   dependencies:
     "@types/node" "*"
     "@types/pino-pretty" "*"
     "@types/pino-std-serializers" "*"
-    "@types/sonic-boom" "*"
+    sonic-boom "^2.1.0"
 
 "@types/prettier@^2.0.0":
   version "2.2.3"
@@ -3198,13 +3198,6 @@
   version "0.16.1"
   resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.1.tgz#18845205e86ff0038517aab7a18a62a6b9f71275"
   integrity sha512-EaCxbanVeyxDRTQBkdLb3Bvl/HK7PBK6UJjsSixB0iHKoWxE5uu2Q/DgtpOhPIojN0Zl1whvOd7PoHs2P0s5eA==
-
-"@types/sonic-boom@*":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@types/sonic-boom/-/sonic-boom-0.7.0.tgz#38337036293992a1df65dd3161abddf8fb9b7176"
-  integrity sha512-AfqR0fZMoUXUNwusgXKxcE9DPlHNDHQp6nKYUd4PSRpLobF5CCevSpyTEBcVZreqaWKCnGBr9KI1fHMTttoB7A==
-  dependencies:
-    "@types/node" "*"
 
 "@types/stack-utils@^2.0.0":
   version "2.0.0"
@@ -9345,6 +9338,13 @@ sonic-boom@^1.0.2:
   dependencies:
     atomic-sleep "^1.0.0"
     flatstr "^1.0.12"
+
+sonic-boom@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/sonic-boom/-/sonic-boom-2.1.0.tgz#07b7b181b078aeb5f202019769e4088c70c4f0eb"
+  integrity sha512-x2j9LXx27EDlyZEC32gBM+scNVMdPutU7FIKV2BOTKCnPrp7bY5BsplCMQ4shYYR3IhDSIrEXoqb6GlS+z7KyQ==
+  dependencies:
+    atomic-sleep "^1.0.0"
 
 source-map-resolve@^0.5.0, source-map-resolve@^0.5.1:
   version "0.5.3"
