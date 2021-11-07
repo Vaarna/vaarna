@@ -2,6 +2,7 @@ import { requestLogger } from "logger";
 import { NextApiRequest, NextApiResponse } from "next";
 import P from "pino";
 import { ApiError } from "type/error";
+import { z } from "zod";
 
 export type RequestWithLogger = NextApiRequest & {
   requestId: string;
@@ -34,11 +35,14 @@ export function withDefaults(methods: Method[], h: HandlerIn): HandlerOut {
       (req as RequestWithLogger).requestId = requestId;
 
       await h(req as RequestWithLogger, res);
-    } catch (error) {
-      logger.error(error, error.message);
+    } catch (err) {
+      const parsedErr = z.object({ message: z.string() }).passthrough().safeParse(err);
 
-      if (error instanceof ApiError) {
-        res.status(error.code).json(error.json());
+      if (parsedErr.success) logger.error(parsedErr.data, parsedErr.data.message);
+      else logger.error({ thrown: err }, "handler threw a non-Error object");
+
+      if (err instanceof ApiError) {
+        res.status(err.code).json(err.json());
       } else {
         res.status(500).end();
       }

@@ -14,6 +14,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { ProfileGoogle, User, Account, Session, UserItem } from "type/auth";
 import config from "config";
 import { ApiNotFoundError } from "type/error";
+import { z } from "zod";
 
 type AuthServiceParams = ServiceParams;
 
@@ -79,10 +80,14 @@ export class AuthService extends Service {
       });
       await this.db.send(cmd);
     } catch (err) {
-      if (err?.name === "ConditionalCheckFailedException") {
+      const parsedErr = z
+        .object({ name: z.literal("ConditionalCheckFailedException") })
+        .safeParse(err);
+
+      if (parsedErr.success) {
         this.logger.info(user, "user already exists");
       } else {
-        this.logger.error(err, "failed to create user");
+        this.logger.error({ thrown: err }, "failed to create user");
         throw err;
       }
     }
@@ -97,7 +102,11 @@ export class AuthService extends Service {
       });
       await this.db.send(cmd);
     } catch (err) {
-      if (err?.name === "ConditionalCheckFailedException") {
+      const parsedErr = z
+        .object({ name: z.literal("ConditionalCheckFailedException") })
+        .safeParse(err);
+
+      if (parsedErr.success) {
         this.logger.info(account, "account already exists, updating it");
         const cmd = new UpdateItemCommand({
           TableName: this.tableName,
@@ -115,7 +124,7 @@ export class AuthService extends Service {
         });
         await this.db.send(cmd);
       } else {
-        this.logger.error(err, "failed to created account");
+        this.logger.error({ thrown: err }, "failed to created account");
         throw err;
       }
     }

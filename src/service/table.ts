@@ -9,6 +9,7 @@ import { dynamoDbConfig, Service, ServiceParams } from "./common";
 import { Table, UpdateTableBody } from "type/table";
 import { ApiInternalServerError, ApiNotFoundError } from "type/error";
 import config from "config";
+import { z } from "zod";
 
 type TableServiceConfig = ServiceParams;
 
@@ -62,8 +63,12 @@ export class TableService extends Service {
       }
 
       return Table.parse(unmarshall(res.Attributes));
-    } catch (error) {
-      if (error?.name === "ResourceNotFoundException") {
+    } catch (err) {
+      const parsedErr = z
+        .object({ name: z.literal("ResourceNotFoundException") })
+        .safeParse(err);
+
+      if (parsedErr.success) {
         const out = {
           spaceId: table.spaceId,
           sk: "table",
@@ -80,7 +85,7 @@ export class TableService extends Service {
         return out;
       }
 
-      throw error;
+      throw err;
     }
   }
 }
