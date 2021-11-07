@@ -1,5 +1,4 @@
-const simpleDiceRollRe =
-  /^\s*(?<count>\d+)?\s*d\s*(?<sides>\d+)\s*(?<mod>[+-]\s*\d+)?\s*$/i;
+const simpleDiceRollRe = /^\s*(?<count>\d+)?\s*d\s*(?<sides>\d+)\s*(?<mod>[+-]\s*\d+)?\s*$/i;
 
 class DiceResult {
   constructor(readonly result: number, readonly sides: number) {}

@@ -69,6 +69,15 @@ check-eslint:
 check-prettier:
 	${PRETTIER} --check --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'
 
+# --- FIX ---
+
+.PHONY: fix
+fix: fix-prettier
+
+.PHONY: fix-prettier
+fix-prettier:
+	${PRETTIER} --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,css}'
+
 # --- TEST ---
 
 .PHONY: test
