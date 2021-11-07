@@ -18,6 +18,7 @@ import { AssetData, AssetDatas, GetAssetDataQuery, getKind } from "type/assetDat
 import { ApiInternalServerError } from "type/error";
 import { SpaceItem } from "type/space";
 import { getItemsFromTable } from "util/dynamodb";
+import { z } from "zod";
 import { dynamoDbConfig, s3Config, Service, ServiceParams } from "./common";
 
 type ApiHeaders = {
@@ -146,12 +147,16 @@ export class AssetService extends Service {
     let data;
     try {
       data = await this.s3.send(cmd);
-    } catch (error) {
-      if (error?.$metadata?.httpStatusCode === 304) {
+    } catch (err) {
+      const parsedErr = z
+        .object({ $metadata: z.object({ httpStatusCode: z.literal(304) }) })
+        .safeParse(err);
+
+      if (parsedErr.success) {
         return this.headAsset(query, { status: 304 });
       }
 
-      throw error;
+      throw err;
     }
 
     if (!data.Body) {

@@ -19,6 +19,7 @@ import { getItemsFromTable } from "util/dynamodb";
 import { dynamoDbConfig, Service, ServiceParams } from "./common";
 import config from "config";
 import { SpaceItem } from "type/space";
+import { z } from "zod";
 
 type ItemServiceParams = ServiceParams;
 
@@ -137,16 +138,21 @@ export class ItemService extends Service {
 
       if (res.Attributes) return Item.parse(unmarshall(res.Attributes));
       return null;
-    } catch (error) {
-      if (error?.name === "ConditionalCheckFailedException") {
+    } catch (err) {
+      const parsedErr = z
+        .object({ name: z.literal("ConditionalCheckFailedException") })
+        .passthrough()
+        .safeParse(err);
+
+      if (parsedErr.success) {
         this.logger.warn(
-          error,
+          parsedErr,
           "failed to delete item because either it does not exist, or it had the wrong version"
         );
         return null;
       }
 
-      throw error;
+      throw err;
     }
   }
 }
