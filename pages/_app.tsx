@@ -41,16 +41,20 @@ export default function App({ Component, pageProps }: AppProps): React.ReactNode
 
   const [uploads, setUploads] = useState<UploadProgress[]>([]);
 
-  const onUploadProgress = (id: string) => (ev: unknown): void => {
-    const evParsed = ProgressEvent.safeParse(ev);
-    if (!evParsed.success) throw evParsed.error;
-    const progress = evParsed.data;
-    const { loaded, total } = progress;
+  const onUploadProgress =
+    (id: string) =>
+    (ev: unknown): void => {
+      const evParsed = ProgressEvent.safeParse(ev);
+      if (!evParsed.success) throw evParsed.error;
+      const progress = evParsed.data;
+      const { loaded, total } = progress;
 
-    setUploads((prev) => prev.map((v) => (v.id !== id ? v : { ...v, loaded, total })));
+      setUploads((prev) =>
+        prev.map((v) => (v.id !== id ? v : { ...v, loaded, total }))
+      );
 
-    return;
-  };
+      return;
+    };
 
   const onUploadDone = (id: string) => {
     setUploads((prev) => prev.map((v) => (v.id !== id ? v : { ...v, done: true })));
