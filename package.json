@@ -44,7 +44,7 @@
     "@aws-cdk/aws-iam": "^1.97.0",
     "@aws-cdk/aws-s3": "^1.97.0",
     "@aws-cdk/core": "^1.97.0",
-    "@types/bytes": "^3.1.0",
+    "@types/bytes": "^3.1.1",
     "@types/classnames": "^2.3.1",
     "@types/jest": "^26.0.22",
     "@types/lodash": "^4.14.170",
