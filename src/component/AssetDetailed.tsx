@@ -18,7 +18,12 @@ export const AssetDetailed: React.FC<AssetDetailedProps> = ({
         <li>Size: {asset.size}</li>
       </ul>
       {asset.kind === "image" ? (
-        <img src={src} style={{ maxWidth: "20rem" }} />
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          style={{ maxWidth: "20rem" }}
+          alt={`Image of resource with ID ${asset.spaceId}}`}
+        />
       ) : asset.kind === "video" ? (
         <video style={{ maxWidth: "20rem" }} controls>
           <source src={src} />

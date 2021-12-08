@@ -123,7 +123,14 @@ export default function TablePage(): React.ReactNode {
   let el: React.ReactElement;
   switch (assetData.kind) {
     case "image":
-      el = <img className={s.assetElement} src={src} />;
+      el = (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          className={s.assetElement}
+          src={src}
+          alt={`Image of resource with ID ${assetData.assetId}`}
+        />
+      );
       break;
 
     case "video":

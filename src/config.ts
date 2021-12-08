@@ -25,7 +25,7 @@ const envGetBool = (name: string, def?: boolean): boolean => {
   return trimmed !== "" && trimmed !== "0" && trimmed.toLowerCase() !== "false";
 };
 
-export default {
+const config = {
   BASE_URL: envGet("BASE_URL"),
 
   GOOGLE_CLIENT_ID: envGet("GOOGLE_CLIENT_ID"),
@@ -41,3 +41,5 @@ export default {
   SPACE_TABLE: envGet("SPACE_TABLE"),
   USER_TABLE: envGet("USER_TABLE"),
 };
+
+export default config;
