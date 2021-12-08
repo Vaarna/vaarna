@@ -36,8 +36,7 @@ module.exports = {
   ignorePatterns: [".eslintrc.js", "jest.config.js", "next-env.d.ts", "next.config.js"],
   extends: [
     "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
+    "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",
     "prettier",
   ],
@@ -48,12 +47,10 @@ module.exports = {
     },
     ecmaVersion: 12,
   },
-  plugins: ["react", "react-hooks", "@typescript-eslint"],
+  plugins: ["@typescript-eslint"],
   rules: {
     ...warns,
     ...errors,
-
-    "react/react-in-jsx-scope": "off",
 
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -66,11 +63,5 @@ module.exports = {
         ignoreProperties: true,
       },
     ],
-  },
-  settings: {
-    react: {
-      version: "detect",
-      linkComponents: [{ name: "Link", linkAttribute: "href" }],
-    },
   },
 };
