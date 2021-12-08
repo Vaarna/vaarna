@@ -31,10 +31,7 @@ type Out = {
   save: () => void;
 };
 
-export const useItem = (
-  spaceId: string | undefined,
-  itemId: string | undefined
-): Out => {
+export const useItem = (spaceId: string | null, itemId: string | undefined): Out => {
   const [inflight, setInflight] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [item, setItem] = useState<Item | null | undefined>(undefined);

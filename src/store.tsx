@@ -1,3 +1,3 @@
-import createPersistedState from "use-persisted-state";
+import { createLocalStorage } from "./hook/createLocalStorage";
 
-export const useSpaceId = createPersistedState("spaceId");
+export const useSpaceId = createLocalStorage("spaceId");

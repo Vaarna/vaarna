@@ -12,14 +12,14 @@ import s from "./table.module.css";
 import classNames from "classnames";
 
 type FormProps = {
-  spaceId: string | undefined;
+  spaceId: string | null;
   revalidate: () => Promise<boolean>;
 };
 
 const MessageForm: React.FC<FormProps> = ({ spaceId, revalidate }: FormProps) => {
   const [msg, setMsg] = useState("");
   const onClick = () => {
-    if (spaceId === undefined) return;
+    if (spaceId === null) return;
 
     let data: LogEvent;
     if (msg.startsWith("/roll ")) {
@@ -86,7 +86,7 @@ async function logFetcher(url: string, spaceId: string): Promise<LogItems> {
 }
 
 export default function TablePage(): React.ReactNode {
-  const [spaceId, _] = useSpaceId<string>();
+  const [spaceId, _] = useSpaceId();
   const table = useSWR(
     () => (!spaceId ? null : ["/api/table", spaceId]),
     tableFetcher,

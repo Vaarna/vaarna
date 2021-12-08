@@ -9,7 +9,7 @@ export default function ItemC(): React.ReactNode {
   const router = useRouter();
   const { id } = router.query;
 
-  const [spaceId, _] = useSpaceId<string>();
+  const [spaceId, _] = useSpaceId();
 
   const itemProps = useItem(spaceId, id as string | undefined);
 

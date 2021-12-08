@@ -23,7 +23,7 @@ const ProgressEvent = z.object({
 export default function App({ Component, pageProps }: AppProps): React.ReactNode {
   const router = useRouter();
   const { query } = router;
-  const [spaceId, setSpaceId] = useSpaceId<string>();
+  const [spaceId, setSpaceId] = useSpaceId();
 
   if (typeof query.spaceId === "string" && query.spaceId.length > 0) {
     if (query.spaceId !== spaceId) {

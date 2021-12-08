@@ -26,7 +26,7 @@ const Button: React.FC<ButtonProps> = ({
   </button>
 );
 
-type RowProps = { spaceId: string | undefined; asset: AssetData };
+type RowProps = { spaceId: string | null; asset: AssetData };
 
 const Row: React.FC<RowProps> = ({ spaceId, asset }: RowProps) => (
   <tr>
@@ -60,7 +60,7 @@ const Row: React.FC<RowProps> = ({ spaceId, asset }: RowProps) => (
   </tr>
 );
 
-type RowUploadProps = { spaceId: string | undefined; upload: UploadProgress };
+type RowUploadProps = { spaceId: string | null; upload: UploadProgress };
 
 const RowUpload: React.FC<RowUploadProps> = ({
   spaceId,
@@ -95,7 +95,7 @@ export const AssetTable: React.FC<AssetTableProps> = ({
   assets,
   uploads,
 }: AssetTableProps) => {
-  const [spaceId, _] = useSpaceId<string>();
+  const [spaceId, _] = useSpaceId();
 
   type Data =
     | { type: "asset"; data: AssetData }

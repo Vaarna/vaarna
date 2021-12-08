@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 import classNames from "classnames";
 
 export const Header: React.FC = () => {
-  const [spaceId, setSpaceId] = useSpaceId<string>();
+  const [spaceId, setSpaceId] = useSpaceId();
   const [showMenu, setShowMenu] = useState(false);
   const navbarBurger = useRef<HTMLAnchorElement>(null);
 
@@ -59,7 +59,7 @@ export const Header: React.FC = () => {
                   id="spaceId"
                   className="input"
                   style={{ minWidth: "23rem" }}
-                  value={spaceId}
+                  value={spaceId ?? ""}
                   onChange={(ev) => setSpaceId(ev.target.value)}
                 />
               </div>

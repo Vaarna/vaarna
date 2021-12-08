@@ -31,7 +31,7 @@ export default function Asset(): React.ReactNode {
   const router = useRouter();
   const { id } = router.query;
 
-  const [spaceId, _] = useSpaceId<string>();
+  const [spaceId, _] = useSpaceId();
   const { data, error } = useSWR(
     () =>
       spaceId === undefined || id === undefined || Array.isArray(id)
