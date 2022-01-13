@@ -27,6 +27,7 @@
     "classnames": "^2.3.1",
     "date-fns": "^2.22.1",
     "google-auth-library": "^7.10.2",
+    "immer": "^9.0.12",
     "lodash": "^4.17.21",
     "multiparty": "^4.2.2",
     "mustache": "^4.2.0",
