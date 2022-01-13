@@ -4,7 +4,6 @@ const errors = Object.fromEntries(
   [
     "class-methods-use-this",
     "default-case-last",
-    "default-case",
     "default-param-last",
     "eqeqeq",
     "no-alert",
