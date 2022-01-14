@@ -12,7 +12,7 @@ TSC := ${BIN}/tsc
 ESLINT := ${BIN}/eslint
 PRETTIER := ${BIN}/prettier
 
-JEST := ${BIN}/jest
+JEST := NODE_OPTIONS=--experimental-vm-modules ${BIN}/jest
 TESTCAFE := ${BIN}/testcafe
 
 TESTCAFE_APP_INIT_DELAY := 1000

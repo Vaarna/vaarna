@@ -1,8 +1,8 @@
 import { useReducer, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { SheetItemAction, SheetState, sheetStateReducer } from "type/sheet";
+import { Item, SheetItemAction, SheetState, sheetStateReducer } from "type/sheet";
 import { Controller, Mode } from "component/Controller";
-import { render } from "render";
+import { evaluate } from "render";
 
 const collectionInitialState: SheetState = {
   groups: [],
@@ -17,6 +17,30 @@ const collectionInitialState: SheetState = {
       readOnly: false,
       onclickEnabled: false,
       onclick: "",
+    },
+    {
+      id: uuid(),
+      type: "omni",
+      group: "",
+      key: "con",
+      name: "Constitution",
+      value: "13",
+      readOnly: false,
+      onclickEnabled: false,
+      onclick: "",
+    },
+    {
+      id: uuid(),
+      type: "range",
+      group: "",
+      key: "hp",
+      name: "HP",
+      value: "22",
+      readOnly: false,
+      onclickEnabled: false,
+      onclick: "",
+      min: "0",
+      max: "={{level}} * (ceil(({{hit_die}} + 1) / 2) + {{con_mod}})",
     },
     {
       id: uuid(),
@@ -42,6 +66,41 @@ const collectionInitialState: SheetState = {
     },
     {
       id: uuid(),
+      type: "range",
+      group: "",
+      key: "level",
+      name: "Level",
+      value: "3",
+      min: "1",
+      max: "20",
+      readOnly: false,
+      onclickEnabled: false,
+      onclick: "",
+    },
+    {
+      id: uuid(),
+      type: "omni",
+      group: "",
+      key: "hit_die",
+      name: "Hit Die",
+      value: "10",
+      readOnly: false,
+      onclickEnabled: true,
+      onclick: "=d{{self}} + {{prof}}",
+    },
+    {
+      id: uuid(),
+      type: "omni",
+      group: "",
+      key: "con_mod",
+      name: "Constitution Modifier",
+      value: "=floor(({{con}}-10)/2)",
+      readOnly: true,
+      onclickEnabled: true,
+      onclick: "=d20 + {{self}} + {{prof}}",
+    },
+    {
+      id: uuid(),
       type: "boolean",
       group: "",
       key: "athletics",
@@ -52,6 +111,17 @@ const collectionInitialState: SheetState = {
       onclick: "=d20 + {{str_mod}} + {{self}} * {{prof}}",
     },
   ],
+};
+
+const itemToKeyValues = (item: Item): [string, string][] => {
+  const out: [string, string][] = [[item.key, item.value]];
+
+  if (item.type === "range") {
+    out.push([`${item.key}#min`, item.min]);
+    out.push([`${item.key}#max`, item.max]);
+  }
+
+  return out;
 };
 
 export default function Sheet(): React.ReactNode {
@@ -85,9 +155,17 @@ export default function Sheet(): React.ReactNode {
               mode={mode}
               state={{
                 ...item,
-                valueRendered: render(
+                valueRendered: evaluate(
                   item.value,
-                  state.items.map((item) => [item.key, item.value])
+                  state.items.flatMap(itemToKeyValues)
+                ),
+                minRendered: evaluate(
+                  "min" in item ? item.min : "",
+                  state.items.flatMap(itemToKeyValues)
+                ),
+                maxRendered: evaluate(
+                  "max" in item ? item.max : "",
+                  state.items.flatMap(itemToKeyValues)
                 ),
               }}
               dispatch={(v: SheetItemAction) => dispatch({ ...v, id: item.id })}
