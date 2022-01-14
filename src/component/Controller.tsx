@@ -1,4 +1,4 @@
-import { Item, ItemOmni, ItemBoolean, SheetItemAction } from "type/sheet";
+import { Item, ItemOmni, ItemBoolean, SheetItemAction, ItemRange } from "type/sheet";
 
 type PropsWithExactlyTwoChildren<T> = T & {
   children: [React.ReactNode, React.ReactNode];
@@ -104,7 +104,7 @@ const EditTemplate: React.FC<EditTemplateProps> = ({
       <SelectField
         name="Type"
         value={type}
-        options={["omni", "boolean"]}
+        options={["omni", "boolean", "range"]}
         onChange={(v) => dispatch({ action: "SET_TYPE", type: v })}
       />
       <CheckboxField
@@ -134,6 +134,75 @@ const EditTemplate: React.FC<EditTemplateProps> = ({
       <button onClick={() => dispatch({ action: "REMOVE_ITEM" })}>Remove</button>
     </div>
   );
+};
+
+type ControllerRangeProps = {
+  mode: Mode;
+  state: ItemRange & {
+    valueRendered: string;
+    minRendered: string;
+    maxRendered: string;
+  };
+  dispatch: React.Dispatch<SheetItemAction>;
+};
+
+const ControllerRange: React.FC<ControllerRangeProps> = ({
+  mode,
+  state,
+  dispatch,
+}: ControllerRangeProps) => {
+  switch (mode) {
+    case "display":
+      return (
+        <Display state={state} dispatch={dispatch}>
+          <input value={`${state.valueRendered}/${state.maxRendered}`} disabled />
+        </Display>
+      );
+
+    case "edit":
+      return (
+        <Edit state={state}>
+          <>
+            <input
+              type="number"
+              disabled
+              min={state.minRendered}
+              max={state.maxRendered}
+              value={state.valueRendered}
+            />
+            <span>/ {state.maxRendered}</span>
+          </>
+          <>
+            <input
+              type="number"
+              min={state.minRendered}
+              max={state.maxRendered}
+              value={state.valueRendered}
+              onChange={(ev) =>
+                dispatch({ action: "SET_VALUE", value: ev.target.value })
+              }
+            />
+            <span>/ {state.maxRendered}</span>
+          </>
+        </Edit>
+      );
+
+    case "edit_template":
+      return (
+        <EditTemplate state={state} dispatch={dispatch}>
+          <StringField
+            name="Min"
+            value={state.minRendered}
+            onChange={(v) => dispatch({ action: "SET_MINMAX", min: v })}
+          />
+          <StringField
+            name="Max"
+            value={state.maxRendered}
+            onChange={(v) => dispatch({ action: "SET_MINMAX", max: v })}
+          />
+        </EditTemplate>
+      );
+  }
 };
 
 type ControllerCheckboxProps = {
@@ -213,7 +282,7 @@ const ControllerOmni: React.FC<ControllerOmniProps> = ({
 
 type ControllerProps = {
   mode: Mode;
-  state: Item & { valueRendered: string };
+  state: Item & { valueRendered: string; minRendered: string; maxRendered: string };
   dispatch: React.Dispatch<SheetItemAction>;
 };
 
@@ -228,5 +297,8 @@ export const Controller: React.FC<ControllerProps> = ({
 
     case "boolean":
       return <ControllerCheckbox mode={mode} state={state} dispatch={dispatch} />;
+
+    case "range":
+      return <ControllerRange mode={mode} state={state} dispatch={dispatch} />;
   }
 };

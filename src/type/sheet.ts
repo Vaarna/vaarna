@@ -32,7 +32,17 @@ export const ItemBoolean = ItemShared.merge(
 
 export type ItemBoolean = z.infer<typeof ItemBoolean>;
 
-export const Item = z.union([ItemOmni, ItemBoolean]);
+export const ItemRange = ItemShared.merge(
+  z.object({
+    type: z.literal("range"),
+    min: z.string(),
+    max: z.string(),
+  })
+);
+
+export type ItemRange = z.infer<typeof ItemRange>;
+
+export const Item = z.union([ItemOmni, ItemBoolean, ItemRange]);
 export type Item = z.infer<typeof Item>;
 
 // --- Sheet state and dispatch types ---
@@ -51,6 +61,7 @@ export type SheetItemAction =
   | { action: "SET_VALUE"; value: string }
   | { action: "SET_READONLY"; readOnly: boolean }
   | { action: "SET_TYPE"; type: string }
+  | { action: "SET_MINMAX"; min?: string; max?: string }
   | { action: "COPY_ITEM" }
   | { action: "REMOVE_ITEM" }
   | { action: "SET_ONCLICK_ENABLED"; enabled: boolean }
@@ -98,7 +109,7 @@ export const sheetStateReducer = (state: SheetState, action: SheetAction): Sheet
 
       case "SET_TYPE": {
         const parsedType = z
-          .union([z.literal("omni"), z.literal("boolean")])
+          .union([z.literal("omni"), z.literal("boolean"), z.literal("range")])
           .safeParse(action.type);
         if (parsedType.success) {
           draft.items.forEach((item) => {
@@ -107,6 +118,19 @@ export const sheetStateReducer = (state: SheetState, action: SheetAction): Sheet
         }
         break;
       }
+
+      case "SET_MINMAX":
+        draft.items.forEach((item) => {
+          if (item.id === action.id) {
+            if (item.type !== "range") {
+              console.error(`tried to set min/max of item with type ${item.type}`);
+            } else {
+              item.min = action.min ?? item.min;
+              item.max = action.max ?? item.max;
+            }
+          }
+        });
+        break;
 
       case "SET_ONCLICK_ENABLED":
         draft.items.forEach((item) => {
@@ -124,16 +148,22 @@ export const sheetStateReducer = (state: SheetState, action: SheetAction): Sheet
         // TODO: actually do something useful here...
         draft.items
           .filter((item) => item.id === action.id && item.onclickEnabled)
-          .forEach((item) =>
-            console.log(
-              roll(
-                item.onclick,
-                [["self", item.value] as [string, string]].concat(
-                  state.items.map((item) => [item.key, item.value])
-                )
-              )
-            )
-          );
+          .forEach((item) => {
+            try {
+              console.log(
+                roll(item.onclick, [
+                  ["self", item.value],
+                  ...state.items.map((item): [string, string] => [
+                    item.key,
+                    item.value,
+                  ]),
+                ]).output
+              );
+            } catch (err) {
+              console.error(err);
+            }
+          });
+
         break;
 
       case "APPEND_ITEM":
