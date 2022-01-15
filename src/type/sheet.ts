@@ -45,9 +45,22 @@ export type ItemRange = z.infer<typeof ItemRange>;
 export const Item = z.union([ItemOmni, ItemBoolean, ItemRange]);
 export type Item = z.infer<typeof Item>;
 
+export const itemToKeyValues = (item: Item): [string, string][] => {
+  const out: [string, string][] = [[item.key, item.value]];
+
+  if (item.type === "range") {
+    out.push([`${item.key}#min`, item.min]);
+    out.push([`${item.key}#max`, item.max]);
+  }
+
+  return out;
+};
+
 // --- Sheet state and dispatch types ---
 
 export type SheetState = {
+  id: string;
+  name: string;
   groups: string[];
   items: Item[];
 };
@@ -70,6 +83,7 @@ export type SheetItemAction =
 
 export type SheetAction =
   | (SheetItemActionBase & SheetItemAction)
+  | { action: "SET_SHEET_NAME"; name: string }
   | { action: "APPEND_ITEM" };
 
 // --- Sheet state and dispatch logic ---
@@ -77,6 +91,10 @@ export type SheetAction =
 export const sheetStateReducer = (state: SheetState, action: SheetAction): SheetState =>
   produce(state, (draft) => {
     switch (action.action) {
+      case "SET_SHEET_NAME":
+        draft.name = action.name;
+        break;
+
       case "SET_GROUP":
         draft.items.forEach((item) => {
           if (item.id === action.id) item.group = action.group;
@@ -198,8 +216,3 @@ export const sheetStateReducer = (state: SheetState, action: SheetAction): Sheet
         break;
     }
   });
-
-export const emptySheetState: SheetState = {
-  groups: [],
-  items: [],
-};
