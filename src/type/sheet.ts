@@ -73,6 +73,7 @@ export const itemToKeyValues = (item: Item): [string, string][] => {
 export const GroupConfig = z
   .object({
     name: z.string(),
+    sortKey: z.string(),
     display: z.union([z.literal("rows"), z.literal("columns")]),
     sortBy: z.array(
       z.union([
@@ -100,6 +101,7 @@ export const SheetState = z.object({
 export type SheetState = z.infer<typeof SheetState>;
 
 type ActionWithId<T> = T & { id: string };
+type ActionWithKey<T> = T & { key: string };
 
 export type SheetItemAction =
   | { action: "SET_GROUP"; group: string }
@@ -236,7 +238,7 @@ const sheetItemReducer = (
 
       case "REMOVE_ITEM": {
         const i = draft.findIndex((item) => item.id === action.id);
-        if (i >= 0) delete draft[i];
+        if (i >= 0) draft.splice(i, 1);
         break;
       }
     }
@@ -259,6 +261,10 @@ export type SheetGroupAction =
   | {
       action: `${SheetGroupActionPrefix}SET_SORTORDER`;
       sortOrder: GroupConfig["sortOrder"];
+    }
+  | {
+      action: `${SheetGroupActionPrefix}SET_SORTKEY`;
+      sortKey: GroupConfig["sortKey"];
     };
 
 const sheetGroupReducer = (
@@ -268,30 +274,35 @@ const sheetGroupReducer = (
   produce(state, (draft) => {
     switch (action.action) {
       case "GROUP.SET_NAME":
-        if (!(action.id in state)) return;
-        draft[action.id].name = action.name;
+        if (!(action.key in state)) draft[action.key] = {};
+        draft[action.key].name = action.name;
         break;
 
       case "GROUP.SET_DISPLAY":
-        if (!(action.id in state)) return;
-        draft[action.id].display = action.display;
+        if (!(action.key in state)) draft[action.key] = {};
+        draft[action.key].display = action.display;
         break;
 
       case "GROUP.SET_SORTBY":
-        if (!(action.id in state)) return;
-        draft[action.id].sortBy = action.sortBy;
+        if (!(action.key in state)) draft[action.key] = {};
+        draft[action.key].sortBy = action.sortBy;
         break;
 
       case "GROUP.SET_SORTORDER":
-        if (!(action.id in state)) return;
-        draft[action.id].sortOrder = action.sortOrder;
+        if (!(action.key in state)) draft[action.key] = {};
+        draft[action.key].sortOrder = action.sortOrder;
+        break;
+
+      case "GROUP.SET_SORTKEY":
+        if (!(action.key in state)) draft[action.key] = {};
+        draft[action.key].sortKey = action.sortKey;
         break;
     }
   });
 
 export type SheetAction =
   | ActionWithId<SheetItemAction>
-  | ActionWithId<SheetGroupAction>
+  | ActionWithKey<SheetGroupAction>
   | { action: "SET_SHEET_NAME"; name: string }
   | { action: "APPEND_ITEM" };
 
@@ -326,19 +337,21 @@ const evaluateItems = (items: Item[]): ItemEvaluated[] => {
   }));
 };
 
-export type Group = {
-  name: string;
+export type SheetGroupedItems = {
+  key: string;
   config: GroupConfig;
   items: ItemEvaluated[];
 };
 
-const evaluateAndGroupItems = (sheet: SheetState): Group[] => {
-  const out: Group[] = [{ name: "", config: sheet.groups[""] ?? {}, items: [] }];
+const evaluateAndGroupItems = (sheet: SheetState): SheetGroupedItems[] => {
+  const out: SheetGroupedItems[] = [
+    { key: "", config: sheet.groups[""] ?? {}, items: [] },
+  ];
 
   const sortedItems = [...sheet.items];
   sortedItems.sort((a, b) => a.group.localeCompare(b.group));
 
-  const evaluatedItems = evaluateItems(sheet.items);
+  const evaluatedItems = evaluateItems(sortedItems);
 
   let prevGroup = "";
   sortedItems.forEach((_item, i) => {
@@ -347,7 +360,7 @@ const evaluateAndGroupItems = (sheet: SheetState): Group[] => {
       out[out.length - 1].items.push(e);
     } else {
       out.push({
-        name: e.group,
+        key: e.group,
         config: sheet.groups[e.group] ?? {},
         items: [e],
       });
@@ -362,12 +375,12 @@ const itemCompare =
   (ks: ("sortKey" | "key" | "name" | "valueEvaluated")[]) =>
   (a: ItemEvaluated, b: ItemEvaluated): number => {
     for (const k of ks) {
-      if (a[k] !== b[k]) return a[k].localeCompare(b[k]);
+      if (a[k] !== b[k]) return a[k].localeCompare(b[k], undefined, { numeric: true });
     }
     return a.id.localeCompare(b.id);
   };
 
-const sortGroup = (group: Group): Group => {
+const sortGroup = (group: SheetGroupedItems): SheetGroupedItems => {
   const sortOrder = group.config.sortBy ?? ["sortKey", "key", "name"];
   const items = [...group.items].sort(itemCompare(sortOrder));
   if (group.config.sortOrder === "asc") items.reverse();
@@ -375,5 +388,11 @@ const sortGroup = (group: Group): Group => {
   return { ...group, items };
 };
 
-export const groupItems = (sheet: SheetState): Group[] =>
-  evaluateAndGroupItems(sheet).map((group) => sortGroup(group));
+export const groupItems = (sheet: SheetState): SheetGroupedItems[] =>
+  evaluateAndGroupItems(sheet)
+    .map((group) => sortGroup(group))
+    .sort((a, b) =>
+      (a.config?.sortKey ?? "").localeCompare(b.config?.sortKey ?? "", undefined, {
+        numeric: true,
+      })
+    );
