@@ -1,5 +1,5 @@
 import { Item, SheetItemAction } from "type/sheet";
-import { FieldString, FieldCheckbox, FieldSelect } from "./Field";
+import { Fields, FieldString, FieldCheckbox, FieldSelect } from "./Field";
 
 export type EditTemplateProps = {
   state: Item;
@@ -12,7 +12,7 @@ export const EditTemplate: React.FC<EditTemplateProps> = ({
   children,
 }: React.PropsWithChildren<EditTemplateProps>) => {
   return (
-    <div>
+    <Fields>
       <FieldString
         name="Group"
         value={group}
@@ -64,6 +64,6 @@ export const EditTemplate: React.FC<EditTemplateProps> = ({
 
       <button onClick={() => dispatch({ action: "COPY_ITEM" })}>Copy</button>
       <button onClick={() => dispatch({ action: "REMOVE_ITEM" })}>Remove</button>
-    </div>
+    </Fields>
   );
 };

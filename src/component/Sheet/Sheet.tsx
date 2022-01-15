@@ -1,8 +1,8 @@
 import styles from "./Sheet.module.css";
 import { useState } from "react";
-import { SheetState, SheetAction, SheetItemAction, groupItems } from "type/sheet";
+import { SheetState, SheetAction, groupItems, SheetGroupAction } from "type/sheet";
 import { Mode } from "./common";
-import { Controller } from "./Controller";
+import { Group } from "./Group";
 import classNames from "classnames";
 
 export type SheetProps = {
@@ -53,32 +53,18 @@ export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => 
 
       <div className={classNames({ [styles.body]: true, [styles.hidden]: hidden })}>
         {groups.map((group) => (
-          <div
-            key={group.name}
-            className={classNames({
-              [styles.group]: true,
-              [styles.groupRows]: group.config.display === "rows",
-              [styles.groupColumns]: group.config.display === "columns",
-            })}
-          >
-            {group.config.name === "" ? null : (
-              <div className={styles.groupName}>
-                <span>{group.config.name}</span>
-              </div>
-            )}
-            {group.items.map((item) => (
-              <Controller
-                key={item.id}
-                mode={mode}
-                state={item}
-                dispatch={(v: SheetItemAction) => dispatch({ ...v, id: item.id })}
-              />
-            ))}
-          </div>
+          <Group
+            key={group.key}
+            mode={mode}
+            group={group}
+            dispatch={dispatch}
+            groupDispatch={(v: SheetGroupAction) => dispatch({ ...v, key: group.key })}
+          />
         ))}
 
         {mode !== "edit_template" ? null : (
           <button
+            className={styles.newItem}
             onClick={() => {
               setEditTemplate();
               dispatch({ action: "APPEND_ITEM" });

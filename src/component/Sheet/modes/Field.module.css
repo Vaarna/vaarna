@@ -1,0 +1,19 @@
+.fields {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.fields:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  padding: 0.2rem;
+}
+
+.label {
+  font-size: small;
+}
