@@ -1,4 +1,6 @@
+import styles from "./Display.module.css";
 import { Item, SheetItemAction } from "type/sheet";
+import classNames from "classnames";
 
 export type DisplayProps = React.PropsWithChildren<{
   state: Item;
@@ -10,9 +12,24 @@ export const Display: React.FC<DisplayProps> = ({
   dispatch,
   children,
 }: DisplayProps) => (
-  <button disabled={!onclickEnabled} onClick={() => dispatch({ action: "CLICK" })}>
-    <label>
-      {name}: {children}
-    </label>
-  </button>
+  <div
+    className={classNames({
+      [styles.container]: true,
+      [styles.clickable]: onclickEnabled,
+    })}
+    onClick={
+      onclickEnabled
+        ? () => dispatch({ action: "CLICK" })
+        : () => {
+            return;
+          }
+    }
+  >
+    <div className={styles.name}>
+      <span className={classNames({ [styles.clickableText]: onclickEnabled })}>
+        {name}
+      </span>
+    </div>
+    <div className={styles.value}>{children}</div>
+  </div>
 );

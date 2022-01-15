@@ -6,7 +6,7 @@ import { ControllerRange } from "./ControllerRange";
 
 export type ControllerProps = {
   mode: Mode;
-  state: Item & { valueRendered: string; minRendered: string; maxRendered: string };
+  state: Item & { valueEvaluated: string; minEvaluated: string; maxEvaluated: string };
   dispatch: React.Dispatch<SheetItemAction>;
 };
 

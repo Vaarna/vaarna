@@ -4,7 +4,7 @@ import { Display, Edit, EditTemplate } from "./modes";
 
 export type ControllerCheckboxProps = {
   mode: Mode;
-  state: ItemBoolean & { valueRendered: string };
+  state: ItemBoolean & { valueEvaluated: string };
   dispatch: React.Dispatch<SheetItemAction>;
 };
 
@@ -13,23 +13,23 @@ export const ControllerCheckbox: React.FC<ControllerCheckboxProps> = ({
   state,
   dispatch,
 }: ControllerCheckboxProps) => {
-  const valueRenderedBool = parseFloat(state.valueRendered) !== 0;
+  const valueEvaluatedBool = parseFloat(state.valueEvaluated) !== 0;
 
   switch (mode) {
     case "display":
       return (
         <Display state={state} dispatch={dispatch}>
-          <input type="checkbox" checked={valueRenderedBool} disabled />
+          <input type="checkbox" checked={valueEvaluatedBool} disabled />
         </Display>
       );
 
     case "edit":
       return (
         <Edit state={state}>
-          <input type="checkbox" disabled={true} checked={valueRenderedBool} />
+          <input type="checkbox" disabled={true} checked={valueEvaluatedBool} />
           <input
             type="checkbox"
-            checked={valueRenderedBool}
+            checked={valueEvaluatedBool}
             onChange={(ev) =>
               dispatch({ action: "SET_VALUE", value: ev.target.checked ? "1" : "0" })
             }

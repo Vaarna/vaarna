@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { produce } from "immer";
 import { v4 as uuid } from "uuid";
-import { roll } from "../render";
+import { evaluate, roll } from "../render";
 
 export const ItemShared = z.object({
   id: z.string().uuid(),
   group: z.string(),
   key: z.string(),
+  sortKey: z.string(),
   name: z.string(),
   value: z.string(),
   readOnly: z.boolean(),
@@ -16,9 +17,16 @@ export const ItemShared = z.object({
 
 export type ItemShared = z.infer<typeof ItemShared>;
 
+const ItemType = {
+  omni: z.literal("omni"),
+  boolean: z.literal("boolean"),
+  range: z.literal("range"),
+};
+const ItemTypeUnion = z.union([ItemType.omni, ItemType.boolean, ItemType.range]);
+
 export const ItemOmni = ItemShared.merge(
   z.object({
-    type: z.literal("omni"),
+    type: ItemType.omni,
   })
 );
 
@@ -26,7 +34,7 @@ export type ItemOmni = z.infer<typeof ItemOmni>;
 
 export const ItemBoolean = ItemShared.merge(
   z.object({
-    type: z.literal("boolean"),
+    type: ItemType.boolean,
   })
 );
 
@@ -34,7 +42,7 @@ export type ItemBoolean = z.infer<typeof ItemBoolean>;
 
 export const ItemRange = ItemShared.merge(
   z.object({
-    type: z.literal("range"),
+    type: ItemType.range,
     min: z.string(),
     max: z.string(),
   })
@@ -44,6 +52,12 @@ export type ItemRange = z.infer<typeof ItemRange>;
 
 export const Item = z.union([ItemOmni, ItemBoolean, ItemRange]);
 export type Item = z.infer<typeof Item>;
+
+export type ItemEvaluated = Item & {
+  valueEvaluated: string;
+  minEvaluated: string;
+  maxEvaluated: string;
+};
 
 export const itemToKeyValues = (item: Item): [string, string][] => {
   const out: [string, string][] = [[item.key, item.value]];
@@ -56,20 +70,41 @@ export const itemToKeyValues = (item: Item): [string, string][] => {
   return out;
 };
 
+export const GroupConfig = z
+  .object({
+    name: z.string(),
+    display: z.union([z.literal("rows"), z.literal("columns")]),
+    sortBy: z.array(
+      z.union([
+        z.literal("sortKey"),
+        z.literal("key"),
+        z.literal("name"),
+        z.literal("valueEvaluated"),
+      ])
+    ),
+    sortOrder: z.union([z.literal("asc"), z.literal("desc")]),
+  })
+  .partial();
+
+export type GroupConfig = z.infer<typeof GroupConfig>;
+
 // --- Sheet state and dispatch types ---
 
-export type SheetState = {
-  id: string;
-  name: string;
-  groups: string[];
-  items: Item[];
-};
+export const SheetState = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  groups: z.record(GroupConfig),
+  items: z.array(Item),
+});
 
-type SheetItemActionBase = { id: string };
+export type SheetState = z.infer<typeof SheetState>;
+
+type ActionWithId<T> = T & { id: string };
 
 export type SheetItemAction =
   | { action: "SET_GROUP"; group: string }
   | { action: "SET_KEY"; key: string }
+  | { action: "SET_SORTKEY"; sortKey: string }
   | { action: "SET_NAME"; name: string }
   | { action: "SET_VALUE"; value: string }
   | { action: "SET_READONLY"; readOnly: boolean }
@@ -81,56 +116,52 @@ export type SheetItemAction =
   | { action: "SET_ONCLICK"; value: string }
   | { action: "CLICK" };
 
-export type SheetAction =
-  | (SheetItemActionBase & SheetItemAction)
-  | { action: "SET_SHEET_NAME"; name: string }
-  | { action: "APPEND_ITEM" };
-
-// --- Sheet state and dispatch logic ---
-
-export const sheetStateReducer = (state: SheetState, action: SheetAction): SheetState =>
+const sheetItemReducer = (
+  state: SheetState["items"],
+  action: SheetAction
+): SheetState["items"] =>
   produce(state, (draft) => {
     switch (action.action) {
-      case "SET_SHEET_NAME":
-        draft.name = action.name;
-        break;
-
       case "SET_GROUP":
-        draft.items.forEach((item) => {
+        draft.forEach((item) => {
           if (item.id === action.id) item.group = action.group;
         });
         break;
 
       case "SET_KEY":
-        draft.items.forEach((item) => {
+        draft.forEach((item) => {
           if (item.id === action.id) item.key = action.key;
         });
         break;
 
+      case "SET_SORTKEY":
+        draft.forEach((item) => {
+          if (item.id === action.id) item.sortKey = action.sortKey;
+        });
+        break;
+
       case "SET_NAME":
-        draft.items.forEach((item) => {
+        draft.forEach((item) => {
           if (item.id === action.id) item.name = action.name;
         });
         break;
 
       case "SET_VALUE":
-        draft.items.forEach((item) => {
+        draft.forEach((item) => {
           if (item.id === action.id) item.value = action.value;
         });
         break;
 
       case "SET_READONLY":
-        draft.items.forEach((item) => {
+        draft.forEach((item) => {
           if (item.id === action.id) item.readOnly = action.readOnly;
         });
         break;
 
       case "SET_TYPE": {
-        const parsedType = z
-          .union([z.literal("omni"), z.literal("boolean"), z.literal("range")])
-          .safeParse(action.type);
+        const parsedType = ItemTypeUnion.safeParse(action.type);
         if (parsedType.success) {
-          draft.items.forEach((item) => {
+          draft.forEach((item) => {
             if (item.id === action.id) item.type = parsedType.data;
           });
         }
@@ -138,7 +169,7 @@ export const sheetStateReducer = (state: SheetState, action: SheetAction): Sheet
       }
 
       case "SET_MINMAX":
-        draft.items.forEach((item) => {
+        draft.forEach((item) => {
           if (item.id === action.id) {
             if (item.type !== "range") {
               console.error(`tried to set min/max of item with type ${item.type}`);
@@ -151,45 +182,42 @@ export const sheetStateReducer = (state: SheetState, action: SheetAction): Sheet
         break;
 
       case "SET_ONCLICK_ENABLED":
-        draft.items.forEach((item) => {
+        draft.forEach((item) => {
           if (item.id === action.id) item.onclickEnabled = action.enabled;
         });
         break;
 
       case "SET_ONCLICK":
-        draft.items.forEach((item) => {
+        draft.forEach((item) => {
           if (item.id === action.id) item.onclick = action.value;
         });
         break;
 
       case "CLICK":
         // TODO: actually do something useful here...
-        draft.items
+        draft
           .filter((item) => item.id === action.id && item.onclickEnabled)
           .forEach((item) => {
             try {
               console.log(
                 roll(item.onclick, [
                   ["self", item.value],
-                  ...state.items.map((item): [string, string] => [
-                    item.key,
-                    item.value,
-                  ]),
+                  ...draft.map((item): [string, string] => [item.key, item.value]),
                 ]).output
               );
             } catch (err) {
               console.error(err);
             }
           });
-
         break;
 
       case "APPEND_ITEM":
         // TODO: generate uuid on the server side
-        draft.items.push({
+        draft.push({
           id: uuid(),
           group: "",
           key: "",
+          sortKey: "",
           name: "",
           type: "omni",
           value: "0",
@@ -199,20 +227,153 @@ export const sheetStateReducer = (state: SheetState, action: SheetAction): Sheet
         });
         break;
 
-      case "COPY_ITEM":
+      case "COPY_ITEM": {
         // TODO: generate uuid on the server side
-        draft.items = draft.items.flatMap((item) =>
-          item.id === action.id ? [item, { ...item, id: uuid() }] : [item]
-        );
+        const item = draft.find((item) => item.id === action.id);
+        if (item !== undefined) draft.push({ ...item, id: uuid() });
+        break;
+      }
+
+      case "REMOVE_ITEM": {
+        const i = draft.findIndex((item) => item.id === action.id);
+        if (i >= 0) delete draft[i];
+        break;
+      }
+    }
+  });
+
+type SheetGroupActionPrefix = "GROUP.";
+export type SheetGroupAction =
+  | {
+      action: `${SheetGroupActionPrefix}SET_NAME`;
+      name: GroupConfig["name"];
+    }
+  | {
+      action: `${SheetGroupActionPrefix}SET_DISPLAY`;
+      display: GroupConfig["display"];
+    }
+  | {
+      action: `${SheetGroupActionPrefix}SET_SORTBY`;
+      sortBy: GroupConfig["sortBy"];
+    }
+  | {
+      action: `${SheetGroupActionPrefix}SET_SORTORDER`;
+      sortOrder: GroupConfig["sortOrder"];
+    };
+
+const sheetGroupReducer = (
+  state: SheetState["groups"],
+  action: SheetAction
+): SheetState["groups"] =>
+  produce(state, (draft) => {
+    switch (action.action) {
+      case "GROUP.SET_NAME":
+        if (!(action.id in state)) return;
+        draft[action.id].name = action.name;
         break;
 
-      case "REMOVE_ITEM":
-        draft.items = draft.items.flatMap((item) =>
-          item.id === action.id ? [] : [item]
-        );
+      case "GROUP.SET_DISPLAY":
+        if (!(action.id in state)) return;
+        draft[action.id].display = action.display;
         break;
 
-      default:
+      case "GROUP.SET_SORTBY":
+        if (!(action.id in state)) return;
+        draft[action.id].sortBy = action.sortBy;
+        break;
+
+      case "GROUP.SET_SORTORDER":
+        if (!(action.id in state)) return;
+        draft[action.id].sortOrder = action.sortOrder;
         break;
     }
   });
+
+export type SheetAction =
+  | ActionWithId<SheetItemAction>
+  | ActionWithId<SheetGroupAction>
+  | { action: "SET_SHEET_NAME"; name: string }
+  | { action: "APPEND_ITEM" };
+
+// --- Sheet state and dispatch logic ---
+
+export const sheetStateReducer = (
+  state: SheetState,
+  action: SheetAction
+): SheetState => {
+  switch (action.action) {
+    case "SET_SHEET_NAME":
+      return { ...state, name: action.name };
+
+    default:
+      return {
+        ...state,
+        groups: sheetGroupReducer(state.groups, action),
+        items: sheetItemReducer(state.items, action),
+      };
+  }
+};
+
+// ---
+
+const evaluateItems = (items: Item[]): ItemEvaluated[] => {
+  const env = items.flatMap(itemToKeyValues);
+  return items.map((item) => ({
+    ...item,
+    valueEvaluated: evaluate(item.value, env),
+    minEvaluated: "min" in item ? evaluate(item.min, env) : "",
+    maxEvaluated: "max" in item ? evaluate(item.max, env) : "",
+  }));
+};
+
+export type Group = {
+  name: string;
+  config: GroupConfig;
+  items: ItemEvaluated[];
+};
+
+const evaluateAndGroupItems = (sheet: SheetState): Group[] => {
+  const out: Group[] = [{ name: "", config: sheet.groups[""] ?? {}, items: [] }];
+
+  const sortedItems = [...sheet.items];
+  sortedItems.sort((a, b) => a.group.localeCompare(b.group));
+
+  const evaluatedItems = evaluateItems(sheet.items);
+
+  let prevGroup = "";
+  sortedItems.forEach((_item, i) => {
+    const e = evaluatedItems[i];
+    if (prevGroup === e.group) {
+      out[out.length - 1].items.push(e);
+    } else {
+      out.push({
+        name: e.group,
+        config: sheet.groups[e.group] ?? {},
+        items: [e],
+      });
+      prevGroup = e.group;
+    }
+  });
+
+  return out.filter((group) => group.items.length > 0);
+};
+
+const itemCompare =
+  (ks: ("sortKey" | "key" | "name" | "valueEvaluated")[]) =>
+  (a: ItemEvaluated, b: ItemEvaluated): number => {
+    for (const k of ks) {
+      if (a[k] !== b[k]) return a[k].localeCompare(b[k]);
+    }
+    return a.id.localeCompare(b.id);
+  };
+
+const sortGroup = (group: Group): Group => {
+  const sortOrder = group.config.sortBy ?? ["sortKey", "key", "name"];
+  const items = [...group.items].sort(itemCompare(sortOrder));
+  if (group.config.sortOrder === "asc") items.reverse();
+
+  return { ...group, items };
+};
+
+export const groupItems = (sheet: SheetState): Group[] =>
+  evaluateAndGroupItems(sheet).map((group) => sortGroup(group));
