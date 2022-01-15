@@ -7,7 +7,7 @@ export type EditTemplateProps = {
 };
 
 export const EditTemplate: React.FC<EditTemplateProps> = ({
-  state: { key, group, value, name, onclickEnabled, onclick, readOnly, type },
+  state: { key, sortKey, group, value, name, onclickEnabled, onclick, readOnly, type },
   dispatch,
   children,
 }: React.PropsWithChildren<EditTemplateProps>) => {
@@ -22,6 +22,11 @@ export const EditTemplate: React.FC<EditTemplateProps> = ({
         name="Key"
         value={key}
         onChange={(v) => dispatch({ action: "SET_KEY", key: v })}
+      />
+      <FieldString
+        name="Sort Key"
+        value={sortKey}
+        onChange={(v) => dispatch({ action: "SET_SORTKEY", sortKey: v })}
       />
       <FieldString
         name="Name"

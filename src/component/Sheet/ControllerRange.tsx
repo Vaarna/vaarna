@@ -6,9 +6,9 @@ import { FieldString } from "./modes/Field";
 export type ControllerRangeProps = {
   mode: Mode;
   state: ItemRange & {
-    valueRendered: string;
-    minRendered: string;
-    maxRendered: string;
+    valueEvaluated: string;
+    minEvaluated: string;
+    maxEvaluated: string;
   };
   dispatch: React.Dispatch<SheetItemAction>;
 };
@@ -18,11 +18,13 @@ export const ControllerRange: React.FC<ControllerRangeProps> = ({
   state,
   dispatch,
 }: ControllerRangeProps) => {
+  const leftPadStyle = { paddingLeft: "0.5rem" };
   switch (mode) {
     case "display":
       return (
         <Display state={state} dispatch={dispatch}>
-          <input value={`${state.valueRendered}/${state.maxRendered}`} disabled />
+          {state.valueEvaluated}
+          {!state.maxEvaluated ? null : ` / ${state.maxEvaluated}`}
         </Display>
       );
 
@@ -33,23 +35,27 @@ export const ControllerRange: React.FC<ControllerRangeProps> = ({
             <input
               type="number"
               disabled
-              min={state.minRendered}
-              max={state.maxRendered}
-              value={state.valueRendered}
+              min={state.minEvaluated}
+              max={state.maxEvaluated}
+              value={state.valueEvaluated}
             />
-            <span>/ {state.maxRendered}</span>
+            {!state.maxEvaluated ? null : (
+              <span style={leftPadStyle}>/ {state.maxEvaluated}</span>
+            )}
           </>
           <>
             <input
               type="number"
-              min={state.minRendered}
-              max={state.maxRendered}
-              value={state.valueRendered}
+              min={state.minEvaluated}
+              max={state.maxEvaluated}
+              value={state.valueEvaluated}
               onChange={(ev) =>
                 dispatch({ action: "SET_VALUE", value: ev.target.value })
               }
             />
-            <span>/ {state.maxRendered}</span>
+            {!state.maxEvaluated ? null : (
+              <span style={leftPadStyle}>/ {state.maxEvaluated}</span>
+            )}
           </>
         </Edit>
       );
@@ -59,12 +65,12 @@ export const ControllerRange: React.FC<ControllerRangeProps> = ({
         <EditTemplate state={state} dispatch={dispatch}>
           <FieldString
             name="Min"
-            value={state.minRendered}
+            value={state.minEvaluated}
             onChange={(v) => dispatch({ action: "SET_MINMAX", min: v })}
           />
           <FieldString
             name="Max"
-            value={state.maxRendered}
+            value={state.maxEvaluated}
             onChange={(v) => dispatch({ action: "SET_MINMAX", max: v })}
           />
         </EditTemplate>

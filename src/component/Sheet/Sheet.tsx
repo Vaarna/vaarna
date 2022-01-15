@@ -1,8 +1,9 @@
+import styles from "./Sheet.module.css";
 import { useState } from "react";
-import { SheetState, SheetAction, SheetItemAction, itemToKeyValues } from "type/sheet";
-import { evaluate } from "render";
+import { SheetState, SheetAction, SheetItemAction, groupItems } from "type/sheet";
 import { Mode } from "./common";
 import { Controller } from "./Controller";
+import classNames from "classnames";
 
 export type SheetProps = {
   state: SheetState;
@@ -15,57 +16,78 @@ export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => 
   const setEdit = () => setMode("edit");
   const setEditTemplate = () => setMode("edit_template");
 
+  const [hidden, _setHidden] = useState(false);
+  const toggleHidden = () => {
+    _setHidden((prev) => !prev);
+    setDisplay();
+  };
+
+  const groups = groupItems(state);
+
   return (
-    <>
-      <div>
-        <button disabled={mode === "display"} onClick={setDisplay}>
-          display
-        </button>
-        <button disabled={mode === "edit"} onClick={setEdit}>
-          edit
-        </button>
-        <button disabled={mode === "edit_template"} onClick={setEditTemplate}>
-          edit template
-        </button>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        {mode === "display" ? (
+          <h2>{state.name}</h2>
+        ) : (
+          <input
+            value={state.name}
+            onChange={(ev) =>
+              dispatch({ action: "SET_SHEET_NAME", name: ev.target.value })
+            }
+          />
+        )}
+        <div>
+          <button disabled={mode === "display"} onClick={setDisplay}>
+            display
+          </button>
+          <button disabled={mode === "edit"} onClick={setEdit}>
+            edit
+          </button>
+          <button disabled={mode === "edit_template"} onClick={setEditTemplate}>
+            edit template
+          </button>
+          <button onClick={toggleHidden}>{hidden ? "v" : "^"}</button>
+        </div>
       </div>
 
-      <hr />
-
-      <div>
-        {state.items.map((item) => (
-          <div key={item.id} style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-            <Controller
-              mode={mode}
-              state={{
-                ...item,
-                valueRendered: evaluate(
-                  item.value,
-                  state.items.flatMap(itemToKeyValues)
-                ),
-                minRendered: evaluate(
-                  "min" in item ? item.min : "",
-                  state.items.flatMap(itemToKeyValues)
-                ),
-                maxRendered: evaluate(
-                  "max" in item ? item.max : "",
-                  state.items.flatMap(itemToKeyValues)
-                ),
-              }}
-              dispatch={(v: SheetItemAction) => dispatch({ ...v, id: item.id })}
-            />
+      <div className={classNames({ [styles.body]: true, [styles.hidden]: hidden })}>
+        {groups.map((group) => (
+          <div
+            key={group.name}
+            className={classNames({
+              [styles.group]: true,
+              [styles.groupRows]: group.config.display === "rows",
+              [styles.groupColumns]: group.config.display === "columns",
+            })}
+          >
+            {group.config.name === "" ? null : (
+              <div className={styles.groupName}>
+                <span>{group.config.name}</span>
+              </div>
+            )}
+            {group.items.map((item) => (
+              <Controller
+                key={item.id}
+                mode={mode}
+                state={item}
+                dispatch={(v: SheetItemAction) => dispatch({ ...v, id: item.id })}
+              />
+            ))}
           </div>
         ))}
-      </div>
 
-      <hr />
-      <button
-        onClick={() => {
-          setEditTemplate();
-          dispatch({ action: "APPEND_ITEM" });
-        }}
-      >
-        New Item
-      </button>
-    </>
+        {mode !== "edit_template" ? null : (
+          <button
+            onClick={() => {
+              setEditTemplate();
+              dispatch({ action: "APPEND_ITEM" });
+            }}
+          >
+            New Item
+          </button>
+        )}
+      </div>
+    </div>
   );
 };

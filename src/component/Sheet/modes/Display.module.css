@@ -1,0 +1,33 @@
+.container {
+  border: 1px solid black;
+  margin: 0.1rem;
+  display: flex;
+  width: fit-content;
+}
+
+.name {
+  border-right: 1px solid black;
+  background-color: lightgray;
+  padding: 0.2rem 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.value {
+  min-height: 4rem;
+  min-width: 4rem;
+  padding: 0.4rem;
+  border: 0.4rem inset lightgray;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickableText {
+  border-bottom: 1px dotted black;
+}

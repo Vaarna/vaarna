@@ -4,7 +4,7 @@ import { Display, Edit, EditTemplate } from "./modes";
 
 export type ControllerOmniProps = {
   mode: Mode;
-  state: ItemOmni & { valueRendered: string };
+  state: ItemOmni & { valueEvaluated: string };
   dispatch: React.Dispatch<SheetItemAction>;
 };
 
@@ -17,14 +17,14 @@ export const ControllerOmni: React.FC<ControllerOmniProps> = ({
     case "display":
       return (
         <Display state={state} dispatch={dispatch}>
-          {state.valueRendered}
+          {state.valueEvaluated}
         </Display>
       );
 
     case "edit":
       return (
         <Edit state={state}>
-          <span>{state.valueRendered}</span>
+          <span>{state.valueEvaluated}</span>
           <input
             value={state.value}
             onChange={(ev) => dispatch({ action: "SET_VALUE", value: ev.target.value })}

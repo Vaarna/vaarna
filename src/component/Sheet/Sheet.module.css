@@ -1,0 +1,48 @@
+.container {
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  max-width: fit-content;
+}
+
+.header {
+  padding: 0.5rem;
+  background-color: lightgray;
+  border-bottom: 1px solid black;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.body {
+  margin: 0.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none;
+}
+
+.group:not(:last-child) {
+  margin-bottom: 1rem;
+}
+
+.group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.groupName {
+  border-bottom: 1px solid black;
+  margin-bottom: 1rem;
+}
+
+.groupRows {
+  flex-direction: column;
+}
+
+.groupColumns {
+  flex-direction: row;
+}

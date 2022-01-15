@@ -1,3 +1,4 @@
+import styles from "./Display.module.css";
 import { Item } from "type/sheet";
 import { PropsWithExactlyTwoChildren } from "util/react";
 
@@ -9,7 +10,10 @@ export const Edit: React.FC<EditProps> = ({
   state: { name, readOnly },
   children,
 }: EditProps) => (
-  <label>
-    {name}: {readOnly ? children[0] : children[1]}
-  </label>
+  <div className={styles.container}>
+    <div className={styles.name}>
+      <span>{name}</span>
+    </div>
+    <div className={styles.value}>{readOnly ? children[0] : children[1]}</div>
+  </div>
 );
