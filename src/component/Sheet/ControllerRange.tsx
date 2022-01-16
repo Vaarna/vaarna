@@ -10,12 +10,14 @@ export type ControllerRangeProps = {
     minEvaluated: string;
     maxEvaluated: string;
   };
+  groups: string[];
   dispatch: React.Dispatch<SheetItemAction>;
 };
 
 export const ControllerRange: React.FC<ControllerRangeProps> = ({
   mode,
   state,
+  groups,
   dispatch,
 }: ControllerRangeProps) => {
   const leftPadStyle = { paddingLeft: "0.5rem" };
@@ -62,17 +64,17 @@ export const ControllerRange: React.FC<ControllerRangeProps> = ({
 
     case "edit_template":
       return (
-        <EditTemplate state={state} dispatch={dispatch}>
+        <EditTemplate state={state} groups={groups} dispatch={dispatch}>
           <FieldString
             name="Min"
-            value={state.minEvaluated}
+            value={state.min}
             onChange={(v) =>
               dispatch({ action: "ITEM.SET_MINMAX", min: v, max: state.max })
             }
           />
           <FieldString
             name="Max"
-            value={state.maxEvaluated}
+            value={state.max}
             onChange={(v) =>
               dispatch({ action: "ITEM.SET_MINMAX", min: state.min, max: v })
             }

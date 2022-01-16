@@ -4,19 +4,22 @@ import { Fields, FieldString, FieldCheckbox, FieldSelect } from "./Field";
 
 export type EditTemplateProps = {
   state: Item;
+  groups: string[];
   dispatch: React.Dispatch<SheetItemAction>;
 };
 
 export const EditTemplate: React.FC<EditTemplateProps> = ({
   state: { key, sortKey, group, value, name, onclickEnabled, onclick, readOnly, type },
+  groups,
   dispatch,
   children,
 }: React.PropsWithChildren<EditTemplateProps>) => {
   return (
     <Fields>
-      <FieldString
+      <FieldSelect
         name="Group"
         value={group}
+        options={groups}
         onChange={(v) => dispatch({ action: "ITEM.SET_GROUP", group: v })}
       />
       <FieldString

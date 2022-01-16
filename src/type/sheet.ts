@@ -408,7 +408,13 @@ const evaluateAndGroupItems = (sheet: SheetState): SheetGroupedItems[] => {
     }
   });
 
-  return out.filter((group) => group.items.length > 0);
+  // add groups that have zero items
+  const addedGroups = new Set(out.map((v) => v.key));
+  sheet.groups.forEach((group) => {
+    if (!addedGroups.has(group.key)) out.push({ items: [], ...group });
+  });
+
+  return out;
 };
 
 const itemCompare =
