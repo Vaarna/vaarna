@@ -3,6 +3,7 @@
 YARN := yarn
 BIN := ${shell ${YARN} bin}
 
+DOCKER := docker
 DOCKER_COMPOSE := docker-compose
 
 NEXT := ${BIN}/next
@@ -29,13 +30,17 @@ init:
 	${YARN}
 
 .PHONY: clean
-clean:
+clean: clean-dev-services
 	rm -rf \
 		.next \
 		cdk.out \
 		dist/ \
 		node_modules/ \
 		screenshots/
+
+.PHONY: clean-dev-services
+clean-dev-services: dev-services-down
+	${DOCKER} volume rm gm-screen_dynamodb gm-screen_s3
 
 # --- DEV ---
 
