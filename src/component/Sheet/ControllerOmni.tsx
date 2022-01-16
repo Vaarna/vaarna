@@ -1,10 +1,10 @@
-import { ItemOmni, SheetItemAction } from "type/sheet";
+import { ItemEvaluated, ItemOmni, SheetItemAction } from "type/sheet";
 import { Mode } from "./common";
 import { Display, Edit, EditTemplate } from "./modes";
 
 export type ControllerOmniProps = {
   mode: Mode;
-  state: ItemOmni & { valueEvaluated: string };
+  state: ItemEvaluated<ItemOmni>;
   groups: string[];
   dispatch: React.Dispatch<SheetItemAction>;
 };

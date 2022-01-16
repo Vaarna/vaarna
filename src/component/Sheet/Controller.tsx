@@ -1,4 +1,4 @@
-import { Item, SheetItemAction } from "type/sheet";
+import { Item, ItemEvaluated, SheetItemAction } from "type/sheet";
 import { Mode } from "./common";
 import { ControllerOmni } from "./ControllerOmni";
 import { ControllerCheckbox } from "./ControllerCheckbox";
@@ -6,7 +6,7 @@ import { ControllerRange } from "./ControllerRange";
 
 export type ControllerProps = {
   mode: Mode;
-  state: Item & { valueEvaluated: string; minEvaluated: string; maxEvaluated: string };
+  state: ItemEvaluated<Item>;
   groups: string[];
   dispatch: React.Dispatch<SheetItemAction>;
 };

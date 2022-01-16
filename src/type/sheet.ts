@@ -54,7 +54,7 @@ export type ItemRange = z.infer<typeof ItemRange>;
 export const Item = z.union([ItemOmni, ItemBoolean, ItemRange]);
 export type Item = z.infer<typeof Item>;
 
-export type ItemEvaluated = Item & {
+export type ItemEvaluated<T> = T & {
   valueEvaluated: string;
   minEvaluated: string;
   maxEvaluated: string;
@@ -361,7 +361,7 @@ export const sheetStateReducer = (
 
 // ---
 
-const evaluateItems = (items: Item[]): ItemEvaluated[] => {
+const evaluateItems = (items: Item[]): ItemEvaluated<Item>[] => {
   const env = items.flatMap(itemToKeyValues);
   return items.map((item) => ({
     ...item,
@@ -372,7 +372,7 @@ const evaluateItems = (items: Item[]): ItemEvaluated[] => {
 };
 
 export type SheetGroupedItems = Group & {
-  items: ItemEvaluated[];
+  items: ItemEvaluated<Item>[];
 };
 
 const defaultGroup: Group = {
@@ -419,7 +419,7 @@ const evaluateAndGroupItems = (sheet: SheetState): SheetGroupedItems[] => {
 
 const itemCompare =
   (ks: ("sortKey" | "key" | "name" | "valueEvaluated")[]) =>
-  (a: ItemEvaluated, b: ItemEvaluated): number => {
+  (a: ItemEvaluated<Item>, b: ItemEvaluated<Item>): number => {
     for (const k of ks) {
       if (a[k] !== b[k]) return a[k].localeCompare(b[k], undefined, { numeric: true });
     }

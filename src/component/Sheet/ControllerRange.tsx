@@ -1,15 +1,11 @@
-import { ItemRange, SheetItemAction } from "type/sheet";
+import { ItemEvaluated, ItemRange, SheetItemAction } from "type/sheet";
 import { Mode } from "./common";
 import { Display, Edit, EditTemplate } from "./modes";
 import { FieldString } from "./modes/Field";
 
 export type ControllerRangeProps = {
   mode: Mode;
-  state: ItemRange & {
-    valueEvaluated: string;
-    minEvaluated: string;
-    maxEvaluated: string;
-  };
+  state: ItemEvaluated<ItemRange>;
   groups: string[];
   dispatch: React.Dispatch<SheetItemAction>;
 };
