@@ -5,11 +5,13 @@ import { Display, Edit, EditTemplate } from "./modes";
 export type ControllerCheckboxProps = {
   mode: Mode;
   state: ItemBoolean & { valueEvaluated: string };
+  groups: string[];
   dispatch: React.Dispatch<SheetItemAction>;
 };
 
 export const ControllerCheckbox: React.FC<ControllerCheckboxProps> = ({
   mode,
+  groups,
   state,
   dispatch,
 }: ControllerCheckboxProps) => {
@@ -41,6 +43,6 @@ export const ControllerCheckbox: React.FC<ControllerCheckboxProps> = ({
       );
 
     case "edit_template":
-      return <EditTemplate state={state} dispatch={dispatch} />;
+      return <EditTemplate state={state} groups={groups} dispatch={dispatch} />;
   }
 };

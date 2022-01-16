@@ -7,22 +7,40 @@ import { ControllerRange } from "./ControllerRange";
 export type ControllerProps = {
   mode: Mode;
   state: Item & { valueEvaluated: string; minEvaluated: string; maxEvaluated: string };
+  groups: string[];
   dispatch: React.Dispatch<SheetItemAction>;
 };
 
 export const Controller: React.FC<ControllerProps> = ({
   mode,
   state,
+  groups,
   dispatch,
 }: ControllerProps) => {
   switch (state.type) {
     case "omni":
-      return <ControllerOmni mode={mode} state={state} dispatch={dispatch} />;
+      return (
+        <ControllerOmni mode={mode} state={state} groups={groups} dispatch={dispatch} />
+      );
 
     case "boolean":
-      return <ControllerCheckbox mode={mode} state={state} dispatch={dispatch} />;
+      return (
+        <ControllerCheckbox
+          mode={mode}
+          state={state}
+          groups={groups}
+          dispatch={dispatch}
+        />
+      );
 
     case "range":
-      return <ControllerRange mode={mode} state={state} dispatch={dispatch} />;
+      return (
+        <ControllerRange
+          mode={mode}
+          state={state}
+          groups={groups}
+          dispatch={dispatch}
+        />
+      );
   }
 };

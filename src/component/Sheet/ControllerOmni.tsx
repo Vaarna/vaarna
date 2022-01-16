@@ -5,12 +5,14 @@ import { Display, Edit, EditTemplate } from "./modes";
 export type ControllerOmniProps = {
   mode: Mode;
   state: ItemOmni & { valueEvaluated: string };
+  groups: string[];
   dispatch: React.Dispatch<SheetItemAction>;
 };
 
 export const ControllerOmni: React.FC<ControllerOmniProps> = ({
   mode,
   state,
+  groups,
   dispatch,
 }: ControllerOmniProps) => {
   switch (mode) {
@@ -35,6 +37,6 @@ export const ControllerOmni: React.FC<ControllerOmniProps> = ({
       );
 
     case "edit_template":
-      return <EditTemplate state={state} dispatch={dispatch} />;
+      return <EditTemplate state={state} groups={groups} dispatch={dispatch} />;
   }
 };

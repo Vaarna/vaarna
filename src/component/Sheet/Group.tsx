@@ -17,6 +17,7 @@ import { callIfParsed, unionMembers } from "util/zod";
 export type GroupProps = {
   mode: Mode;
   group: SheetGroupedItems;
+  groups: string[];
   dispatch: React.Dispatch<SheetAction>;
   groupDispatch: React.Dispatch<SheetGroupAction>;
 };
@@ -24,6 +25,7 @@ export type GroupProps = {
 export const Group: React.FC<GroupProps> = ({
   mode,
   group: { id, items, key, name, sortKey, sortBy, sortOrder, display },
+  groups,
   dispatch,
   groupDispatch,
 }: GroupProps) => {
@@ -99,6 +101,7 @@ export const Group: React.FC<GroupProps> = ({
           <Controller
             key={item.id}
             mode={mode}
+            groups={groups}
             state={item}
             dispatch={(v: SheetItemAction) => dispatch({ ...v, id: item.id })}
           />

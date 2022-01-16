@@ -22,6 +22,8 @@ export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => 
     setDisplay();
   };
 
+  const [groupName, setGroupName] = useState("");
+
   const groups = groupItems(state);
 
   return (
@@ -57,6 +59,7 @@ export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => 
             key={group.id}
             mode={mode}
             group={group}
+            groups={state.groups.map((group) => group.key)}
             dispatch={dispatch}
             groupDispatch={(v: SheetGroupAction) => dispatch({ ...v, id: group.id })}
           />
@@ -72,6 +75,22 @@ export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => 
             >
               New Item
             </button>
+            <div>
+              <input
+                type="text"
+                value={groupName}
+                onChange={(ev) => setGroupName(ev.target.value)}
+              />
+              <button
+                className={styles.newItem}
+                onClick={() => {
+                  dispatch({ action: "SHEET.NEW_GROUP", key: groupName });
+                  setGroupName("");
+                }}
+              >
+                New Group
+              </button>
+            </div>
           </div>
         )}
       </div>
