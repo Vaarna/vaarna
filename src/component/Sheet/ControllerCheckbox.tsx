@@ -31,7 +31,10 @@ export const ControllerCheckbox: React.FC<ControllerCheckboxProps> = ({
             type="checkbox"
             checked={valueEvaluatedBool}
             onChange={(ev) =>
-              dispatch({ action: "SET_VALUE", value: ev.target.checked ? "1" : "0" })
+              dispatch({
+                action: "ITEM.SET_VALUE",
+                value: ev.target.checked ? "1" : "0",
+              })
             }
           />
         </Edit>

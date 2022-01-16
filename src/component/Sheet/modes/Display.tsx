@@ -19,7 +19,7 @@ export const Display: React.FC<DisplayProps> = ({
     })}
     onClick={
       onclickEnabled
-        ? () => dispatch({ action: "CLICK" })
+        ? () => dispatch({ action: "ITEM.CLICK" })
         : () => {
             return;
           }

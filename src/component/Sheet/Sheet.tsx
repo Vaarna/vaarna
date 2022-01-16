@@ -33,7 +33,7 @@ export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => 
           <input
             value={state.name}
             onChange={(ev) =>
-              dispatch({ action: "SET_SHEET_NAME", name: ev.target.value })
+              dispatch({ action: "SHEET.SET_NAME", name: ev.target.value })
             }
           />
         )}
@@ -54,24 +54,25 @@ export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => 
       <div className={classNames({ [styles.body]: true, [styles.hidden]: hidden })}>
         {groups.map((group) => (
           <Group
-            key={group.key}
+            key={group.id}
             mode={mode}
             group={group}
             dispatch={dispatch}
-            groupDispatch={(v: SheetGroupAction) => dispatch({ ...v, key: group.key })}
+            groupDispatch={(v: SheetGroupAction) => dispatch({ ...v, id: group.id })}
           />
         ))}
 
         {mode !== "edit_template" ? null : (
-          <button
-            className={styles.newItem}
-            onClick={() => {
-              setEditTemplate();
-              dispatch({ action: "APPEND_ITEM" });
-            }}
-          >
-            New Item
-          </button>
+          <div className={styles.editButtons}>
+            <button
+              className={styles.newItem}
+              onClick={() => {
+                dispatch({ action: "SHEET.NEW_ITEM" });
+              }}
+            >
+              New Item
+            </button>
+          </div>
         )}
       </div>
     </div>

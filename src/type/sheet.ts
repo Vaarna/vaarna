@@ -22,7 +22,8 @@ const ItemType = {
   boolean: z.literal("boolean"),
   range: z.literal("range"),
 };
-const ItemTypeUnion = z.union([ItemType.omni, ItemType.boolean, ItemType.range]);
+
+export const ItemTypeUnion = z.union([ItemType.omni, ItemType.boolean, ItemType.range]);
 
 export const ItemOmni = ItemShared.merge(
   z.object({
@@ -70,53 +71,79 @@ export const itemToKeyValues = (item: Item): [string, string][] => {
   return out;
 };
 
-export const GroupConfig = z
+const display = {
+  rows: z.literal("rows"),
+  columns: z.literal("columns"),
+};
+
+export const DisplayUnion = z.union([display.rows, display.columns]);
+
+const sortBy = {
+  sortKey: z.literal("sortKey"),
+  key: z.literal("key"),
+  name: z.literal("name"),
+  valueEvaluated: z.literal("valueEvaluated"),
+};
+
+export const SortByUnion = z.union([
+  sortBy.sortKey,
+  sortBy.key,
+  sortBy.name,
+  sortBy.valueEvaluated,
+]);
+
+const sortOrder = {
+  asc: z.literal("asc"),
+  desc: z.literal("desc"),
+};
+
+export const SortOrderUnion = z.union([sortOrder.asc, sortOrder.desc]);
+
+export const Group = z
   .object({
     name: z.string(),
     sortKey: z.string(),
-    display: z.union([z.literal("rows"), z.literal("columns")]),
-    sortBy: z.array(
-      z.union([
-        z.literal("sortKey"),
-        z.literal("key"),
-        z.literal("name"),
-        z.literal("valueEvaluated"),
-      ])
-    ),
-    sortOrder: z.union([z.literal("asc"), z.literal("desc")]),
+    display: DisplayUnion,
+    sortBy: z.array(SortByUnion),
+    sortOrder: SortOrderUnion,
   })
-  .partial();
+  .partial()
+  .merge(
+    z.object({
+      id: z.union([z.literal(""), z.string().uuid()]),
+      key: z.string(),
+    })
+  );
 
-export type GroupConfig = z.infer<typeof GroupConfig>;
+export type Group = z.infer<typeof Group>;
 
 // --- Sheet state and dispatch types ---
 
 export const SheetState = z.object({
   id: z.string().uuid(),
   name: z.string(),
-  groups: z.record(GroupConfig),
+  groups: z.array(Group),
   items: z.array(Item),
 });
 
 export type SheetState = z.infer<typeof SheetState>;
 
 type ActionWithId<T> = T & { id: string };
-type ActionWithKey<T> = T & { key: string };
 
 export type SheetItemAction =
-  | { action: "SET_GROUP"; group: string }
-  | { action: "SET_KEY"; key: string }
-  | { action: "SET_SORTKEY"; sortKey: string }
-  | { action: "SET_NAME"; name: string }
-  | { action: "SET_VALUE"; value: string }
-  | { action: "SET_READONLY"; readOnly: boolean }
-  | { action: "SET_TYPE"; type: string }
-  | { action: "SET_MINMAX"; min?: string; max?: string }
-  | { action: "COPY_ITEM" }
-  | { action: "REMOVE_ITEM" }
-  | { action: "SET_ONCLICK_ENABLED"; enabled: boolean }
-  | { action: "SET_ONCLICK"; value: string }
-  | { action: "CLICK" };
+  | { action: "ITEM.SET_GROUP"; group: Item["group"] }
+  | { action: "ITEM.SET_KEY"; key: Item["key"] }
+  | { action: "ITEM.SET_SORTKEY"; sortKey: Item["sortKey"] }
+  | { action: "ITEM.SET_NAME"; name: Item["name"] }
+  | { action: "ITEM.SET_VALUE"; value: Item["value"] }
+  | { action: "ITEM.SET_READONLY"; readOnly: Item["readOnly"] }
+  | { action: "ITEM.SET_TYPE"; type: Item["type"] }
+  | { action: "ITEM.SET_MINMAX"; min: ItemRange["min"]; max: ItemRange["max"] }
+  | { action: "ITEM.COPY" }
+  | { action: "ITEM.REMOVE" }
+  | { action: "ITEM.SET_ONCLICK_ENABLED"; onclickEnabled: Item["onclickEnabled"] }
+  | { action: "ITEM.SET_ONCLICK"; onclick: Item["onclick"] }
+  | { action: "ITEM.CLICK" };
 
 const sheetItemReducer = (
   state: SheetState["items"],
@@ -124,43 +151,43 @@ const sheetItemReducer = (
 ): SheetState["items"] =>
   produce(state, (draft) => {
     switch (action.action) {
-      case "SET_GROUP":
+      case "ITEM.SET_GROUP":
         draft.forEach((item) => {
           if (item.id === action.id) item.group = action.group;
         });
         break;
 
-      case "SET_KEY":
+      case "ITEM.SET_KEY":
         draft.forEach((item) => {
           if (item.id === action.id) item.key = action.key;
         });
         break;
 
-      case "SET_SORTKEY":
+      case "ITEM.SET_SORTKEY":
         draft.forEach((item) => {
           if (item.id === action.id) item.sortKey = action.sortKey;
         });
         break;
 
-      case "SET_NAME":
+      case "ITEM.SET_NAME":
         draft.forEach((item) => {
           if (item.id === action.id) item.name = action.name;
         });
         break;
 
-      case "SET_VALUE":
+      case "ITEM.SET_VALUE":
         draft.forEach((item) => {
           if (item.id === action.id) item.value = action.value;
         });
         break;
 
-      case "SET_READONLY":
+      case "ITEM.SET_READONLY":
         draft.forEach((item) => {
           if (item.id === action.id) item.readOnly = action.readOnly;
         });
         break;
 
-      case "SET_TYPE": {
+      case "ITEM.SET_TYPE": {
         const parsedType = ItemTypeUnion.safeParse(action.type);
         if (parsedType.success) {
           draft.forEach((item) => {
@@ -170,7 +197,7 @@ const sheetItemReducer = (
         break;
       }
 
-      case "SET_MINMAX":
+      case "ITEM.SET_MINMAX":
         draft.forEach((item) => {
           if (item.id === action.id) {
             if (item.type !== "range") {
@@ -183,19 +210,19 @@ const sheetItemReducer = (
         });
         break;
 
-      case "SET_ONCLICK_ENABLED":
+      case "ITEM.SET_ONCLICK_ENABLED":
         draft.forEach((item) => {
-          if (item.id === action.id) item.onclickEnabled = action.enabled;
+          if (item.id === action.id) item.onclickEnabled = action.onclickEnabled;
         });
         break;
 
-      case "SET_ONCLICK":
+      case "ITEM.SET_ONCLICK":
         draft.forEach((item) => {
-          if (item.id === action.id) item.onclick = action.value;
+          if (item.id === action.id) item.onclick = action.onclick;
         });
         break;
 
-      case "CLICK":
+      case "ITEM.CLICK":
         // TODO: actually do something useful here...
         draft
           .filter((item) => item.id === action.id && item.onclickEnabled)
@@ -213,30 +240,14 @@ const sheetItemReducer = (
           });
         break;
 
-      case "APPEND_ITEM":
-        // TODO: generate uuid on the server side
-        draft.push({
-          id: uuid(),
-          group: "",
-          key: "",
-          sortKey: "",
-          name: "",
-          type: "omni",
-          value: "0",
-          readOnly: false,
-          onclickEnabled: false,
-          onclick: "",
-        });
-        break;
-
-      case "COPY_ITEM": {
+      case "ITEM.COPY": {
         // TODO: generate uuid on the server side
         const item = draft.find((item) => item.id === action.id);
         if (item !== undefined) draft.push({ ...item, id: uuid() });
         break;
       }
 
-      case "REMOVE_ITEM": {
+      case "ITEM.REMOVE": {
         const i = draft.findIndex((item) => item.id === action.id);
         if (i >= 0) draft.splice(i, 1);
         break;
@@ -244,28 +255,13 @@ const sheetItemReducer = (
     }
   });
 
-type SheetGroupActionPrefix = "GROUP.";
 export type SheetGroupAction =
-  | {
-      action: `${SheetGroupActionPrefix}SET_NAME`;
-      name: GroupConfig["name"];
-    }
-  | {
-      action: `${SheetGroupActionPrefix}SET_DISPLAY`;
-      display: GroupConfig["display"];
-    }
-  | {
-      action: `${SheetGroupActionPrefix}SET_SORTBY`;
-      sortBy: GroupConfig["sortBy"];
-    }
-  | {
-      action: `${SheetGroupActionPrefix}SET_SORTORDER`;
-      sortOrder: GroupConfig["sortOrder"];
-    }
-  | {
-      action: `${SheetGroupActionPrefix}SET_SORTKEY`;
-      sortKey: GroupConfig["sortKey"];
-    };
+  | { action: "GROUP.SET_KEY"; key: Group["key"] }
+  | { action: "GROUP.SET_NAME"; name: Group["name"] }
+  | { action: "GROUP.SET_DISPLAY"; display: Group["display"] }
+  | { action: "GROUP.SET_SORTBY"; sortBy: Group["sortBy"] }
+  | { action: "GROUP.SET_SORTORDER"; sortOrder: Group["sortOrder"] }
+  | { action: "GROUP.SET_SORTKEY"; sortKey: Group["sortKey"] };
 
 const sheetGroupReducer = (
   state: SheetState["groups"],
@@ -274,37 +270,48 @@ const sheetGroupReducer = (
   produce(state, (draft) => {
     switch (action.action) {
       case "GROUP.SET_NAME":
-        if (!(action.key in state)) draft[action.key] = {};
-        draft[action.key].name = action.name;
+        if (action.id === "") break;
+        draft.forEach((group) => {
+          if (group.id === action.id) group.name = action.name;
+        });
         break;
 
       case "GROUP.SET_DISPLAY":
-        if (!(action.key in state)) draft[action.key] = {};
-        draft[action.key].display = action.display;
+        if (action.id === "") break;
+        draft.forEach((group) => {
+          if (group.id === action.id) group.display = action.display;
+        });
         break;
 
       case "GROUP.SET_SORTBY":
-        if (!(action.key in state)) draft[action.key] = {};
-        draft[action.key].sortBy = action.sortBy;
+        if (action.id === "") break;
+        draft.forEach((group) => {
+          if (group.id === action.id) group.sortBy = action.sortBy;
+        });
         break;
 
       case "GROUP.SET_SORTORDER":
-        if (!(action.key in state)) draft[action.key] = {};
-        draft[action.key].sortOrder = action.sortOrder;
+        if (action.id === "") break;
+        draft.forEach((group) => {
+          if (group.id === action.id) group.sortOrder = action.sortOrder;
+        });
         break;
 
       case "GROUP.SET_SORTKEY":
-        if (!(action.key in state)) draft[action.key] = {};
-        draft[action.key].sortKey = action.sortKey;
+        if (action.id === "") break;
+        draft.forEach((group) => {
+          if (group.id === action.id) group.sortKey = action.sortKey;
+        });
         break;
     }
   });
 
 export type SheetAction =
   | ActionWithId<SheetItemAction>
-  | ActionWithKey<SheetGroupAction>
-  | { action: "SET_SHEET_NAME"; name: string }
-  | { action: "APPEND_ITEM" };
+  | ActionWithId<SheetGroupAction>
+  | { action: "SHEET.SET_NAME"; name: SheetState["name"] }
+  | { action: "SHEET.NEW_ITEM" }
+  | { action: "SHEET.NEW_GROUP"; key: Group["key"] };
 
 // --- Sheet state and dispatch logic ---
 
@@ -313,8 +320,35 @@ export const sheetStateReducer = (
   action: SheetAction
 ): SheetState => {
   switch (action.action) {
-    case "SET_SHEET_NAME":
+    case "SHEET.SET_NAME":
       return { ...state, name: action.name };
+
+    case "SHEET.NEW_ITEM":
+      // TODO: generate item on the server side
+      return {
+        ...state,
+        items: [
+          ...state.items,
+          {
+            id: uuid(),
+            group: "",
+            key: "",
+            sortKey: "",
+            name: "",
+            type: "omni",
+            value: "0",
+            readOnly: false,
+            onclickEnabled: false,
+            onclick: "",
+          },
+        ],
+      };
+
+    case "SHEET.NEW_GROUP":
+      return {
+        ...state,
+        groups: [...state.groups, { id: uuid(), name: "", key: action.key }],
+      };
 
     default:
       return {
@@ -337,15 +371,22 @@ const evaluateItems = (items: Item[]): ItemEvaluated[] => {
   }));
 };
 
-export type SheetGroupedItems = {
-  key: string;
-  config: GroupConfig;
+export type SheetGroupedItems = Group & {
   items: ItemEvaluated[];
+};
+
+const defaultGroup: Group = {
+  id: "",
+  key: "",
 };
 
 const evaluateAndGroupItems = (sheet: SheetState): SheetGroupedItems[] => {
   const out: SheetGroupedItems[] = [
-    { key: "", config: sheet.groups[""] ?? {}, items: [] },
+    {
+      id: "",
+      key: "",
+      items: [],
+    },
   ];
 
   const sortedItems = [...sheet.items];
@@ -360,8 +401,7 @@ const evaluateAndGroupItems = (sheet: SheetState): SheetGroupedItems[] => {
       out[out.length - 1].items.push(e);
     } else {
       out.push({
-        key: e.group,
-        config: sheet.groups[e.group] ?? {},
+        ...(sheet.groups.find((group) => group.key === e.group) ?? defaultGroup),
         items: [e],
       });
       prevGroup = e.group;
@@ -381,9 +421,9 @@ const itemCompare =
   };
 
 const sortGroup = (group: SheetGroupedItems): SheetGroupedItems => {
-  const sortOrder = group.config.sortBy ?? ["sortKey", "key", "name"];
-  const items = [...group.items].sort(itemCompare(sortOrder));
-  if (group.config.sortOrder === "asc") items.reverse();
+  const sortBy = group.sortBy ?? ["sortKey", "key", "name"];
+  const items = [...group.items].sort(itemCompare(sortBy));
+  if (group.sortOrder === "asc") items.reverse();
 
   return { ...group, items };
 };
@@ -392,7 +432,7 @@ export const groupItems = (sheet: SheetState): SheetGroupedItems[] =>
   evaluateAndGroupItems(sheet)
     .map((group) => sortGroup(group))
     .sort((a, b) =>
-      (a.config?.sortKey ?? "").localeCompare(b.config?.sortKey ?? "", undefined, {
+      (a?.sortKey ?? "").localeCompare(b?.sortKey ?? "", undefined, {
         numeric: true,
       })
     );

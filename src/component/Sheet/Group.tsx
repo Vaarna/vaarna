@@ -4,11 +4,15 @@ import {
   SheetAction,
   SheetGroupAction,
   SheetItemAction,
+  SortByUnion,
+  SortOrderUnion,
+  DisplayUnion,
 } from "type/sheet";
 import classNames from "classnames";
 import { Controller } from "./Controller";
 import { Mode } from "./common";
 import { Fields, FieldSelect, FieldString } from "./modes/Field";
+import { callIfParsed, unionMembers } from "util/zod";
 
 export type GroupProps = {
   mode: Mode;
@@ -19,7 +23,7 @@ export type GroupProps = {
 
 export const Group: React.FC<GroupProps> = ({
   mode,
-  group: { config, items, key },
+  group: { id, items, key, name, sortKey, sortBy, sortOrder, display },
   dispatch,
   groupDispatch,
 }: GroupProps) => {
@@ -28,9 +32,9 @@ export const Group: React.FC<GroupProps> = ({
     case "display":
     case "edit":
       GroupHeader =
-        config.name === "" ? null : (
+        name === "" ? null : (
           <div className={styles.name}>
-            <span>{config.name}</span>
+            <span>{name}</span>
           </div>
         );
       break;
@@ -43,57 +47,39 @@ export const Group: React.FC<GroupProps> = ({
           </div>
           <FieldString
             name="Group Name"
-            value={config.name ?? ""}
+            value={name ?? ""}
             onChange={(name) => groupDispatch({ action: "GROUP.SET_NAME", name })}
           />
           <FieldString
             name="Sort Key"
-            value={config.sortKey ?? ""}
+            value={sortKey ?? ""}
             onChange={(sortKey) =>
               groupDispatch({ action: "GROUP.SET_SORTKEY", sortKey })
             }
           />
           <FieldSelect
             name="Sort By"
-            value={config.sortBy?.[0] ?? "sortKey"}
-            options={["sortKey", "key", "valueEvaluated", "name"]}
-            onChange={(v) => {
-              let sortBy:
-                | ("sortKey" | "key" | "valueEvaluated" | "name")[]
-                | undefined = undefined;
-              if (
-                v === "sortKey" ||
-                v === "key" ||
-                v === "valueEvaluated" ||
-                v === "name"
-              )
-                sortBy = [v];
-              groupDispatch({
-                action: "GROUP.SET_SORTBY",
-                sortBy,
-              });
-            }}
+            value={sortBy?.[0] ?? ""}
+            options={unionMembers(SortByUnion)}
+            onChange={callIfParsed(SortByUnion, (sortBy) =>
+              groupDispatch({ action: "GROUP.SET_SORTBY", sortBy: [sortBy] })
+            )}
           />
           <FieldSelect
             name="Sort Order"
-            value={config.sortOrder ?? "desc"}
-            options={["asc", "desc"]}
-            onChange={(v) => {
-              let sortOrder: "asc" | "desc" | undefined = undefined;
-              if (v === "asc") sortOrder = v;
-              if (v === "desc") sortOrder = v;
-              groupDispatch({ action: "GROUP.SET_SORTORDER", sortOrder });
-            }}
+            value={sortOrder ?? ""}
+            options={unionMembers(SortOrderUnion)}
+            onChange={callIfParsed(SortOrderUnion, (sortOrder) =>
+              groupDispatch({ action: "GROUP.SET_SORTORDER", sortOrder })
+            )}
           />
           <FieldSelect
             name="Display"
-            value={config.display ?? ""}
-            options={["rows", "columns"]}
-            onChange={(v) => {
-              let display: "rows" | "columns" | undefined = undefined;
-              if (v === "rows" || v === "columns") display = v;
-              groupDispatch({ action: "GROUP.SET_DISPLAY", display });
-            }}
+            value={display ?? ""}
+            options={unionMembers(DisplayUnion)}
+            onChange={callIfParsed(DisplayUnion, (display) =>
+              groupDispatch({ action: "GROUP.SET_DISPLAY", display })
+            )}
           />
         </Fields>
       );
@@ -101,12 +87,12 @@ export const Group: React.FC<GroupProps> = ({
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>{GroupHeader}</div>
+      {id === "" ? null : <div className={styles.title}>{GroupHeader}</div>}
       <div
         className={classNames({
           [styles.items]: true,
-          [styles.configRows]: config.display === "rows",
-          [styles.configColumns]: config.display === "columns",
+          [styles.configRows]: display === "rows",
+          [styles.configColumns]: display === "columns",
         })}
       >
         {items.map((item) => (

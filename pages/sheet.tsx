@@ -16,13 +16,26 @@ const itemBase = () => ({
 const collectionInitialState: SheetState = {
   id: "",
   name: "Pepe",
-  groups: {
-    skill: {
+  groups: [
+    {
+      id: uuid(),
+      key: "attr",
+      name: "",
+    },
+    {
+      id: uuid(),
+      key: "attr_rel",
+      name: "",
+    },
+    {
+      id: uuid(),
+      key: "skills",
       name: "Skills",
       display: "rows",
       sortOrder: "desc",
     },
-  },
+  ],
+
   items: [
     {
       ...itemBase(),
@@ -105,7 +118,7 @@ const collectionInitialState: SheetState = {
     {
       ...itemBase(),
       type: "boolean",
-      group: "skill",
+      group: "skills",
       key: "athletics",
       name: "Athletics",
       value: "0",
@@ -115,7 +128,7 @@ const collectionInitialState: SheetState = {
     {
       ...itemBase(),
       type: "boolean",
-      group: "skill",
+      group: "skills",
       key: "athletics",
       name: "Athletics",
       value: "0",
@@ -125,7 +138,7 @@ const collectionInitialState: SheetState = {
     {
       ...itemBase(),
       type: "range",
-      group: "skill",
+      group: "skills",
       key: "jump",
       name: "Jump",
       value: "37",

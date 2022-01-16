@@ -50,7 +50,7 @@ export const ControllerRange: React.FC<ControllerRangeProps> = ({
               max={state.maxEvaluated}
               value={state.valueEvaluated}
               onChange={(ev) =>
-                dispatch({ action: "SET_VALUE", value: ev.target.value })
+                dispatch({ action: "ITEM.SET_VALUE", value: ev.target.value })
               }
             />
             {!state.maxEvaluated ? null : (
@@ -66,12 +66,16 @@ export const ControllerRange: React.FC<ControllerRangeProps> = ({
           <FieldString
             name="Min"
             value={state.minEvaluated}
-            onChange={(v) => dispatch({ action: "SET_MINMAX", min: v })}
+            onChange={(v) =>
+              dispatch({ action: "ITEM.SET_MINMAX", min: v, max: state.max })
+            }
           />
           <FieldString
             name="Max"
             value={state.maxEvaluated}
-            onChange={(v) => dispatch({ action: "SET_MINMAX", max: v })}
+            onChange={(v) =>
+              dispatch({ action: "ITEM.SET_MINMAX", min: state.min, max: v })
+            }
           />
         </EditTemplate>
       );
