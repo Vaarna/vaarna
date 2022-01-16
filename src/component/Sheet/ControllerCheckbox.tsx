@@ -1,10 +1,10 @@
-import { ItemBoolean, SheetItemAction } from "type/sheet";
+import { ItemBoolean, ItemEvaluated, SheetItemAction } from "type/sheet";
 import { Mode } from "./common";
 import { Display, Edit, EditTemplate } from "./modes";
 
 export type ControllerCheckboxProps = {
   mode: Mode;
-  state: ItemBoolean & { valueEvaluated: string };
+  state: ItemEvaluated<ItemBoolean>;
   groups: string[];
   dispatch: React.Dispatch<SheetItemAction>;
 };
