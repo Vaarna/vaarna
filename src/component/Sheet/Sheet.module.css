@@ -24,6 +24,12 @@
   display: none;
 }
 
+.editButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
 .newItem {
   width: fit-content;
 }

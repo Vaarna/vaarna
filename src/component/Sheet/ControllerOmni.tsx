@@ -27,7 +27,9 @@ export const ControllerOmni: React.FC<ControllerOmniProps> = ({
           <span>{state.valueEvaluated}</span>
           <input
             value={state.value}
-            onChange={(ev) => dispatch({ action: "SET_VALUE", value: ev.target.value })}
+            onChange={(ev) =>
+              dispatch({ action: "ITEM.SET_VALUE", value: ev.target.value })
+            }
           />
         </Edit>
       );

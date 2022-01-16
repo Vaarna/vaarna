@@ -1,4 +1,5 @@
-import { Item, SheetItemAction } from "type/sheet";
+import { Item, ItemTypeUnion, SheetItemAction } from "type/sheet";
+import { callIfParsed, unionMembers } from "util/zod";
 import { Fields, FieldString, FieldCheckbox, FieldSelect } from "./Field";
 
 export type EditTemplateProps = {
@@ -16,54 +17,58 @@ export const EditTemplate: React.FC<EditTemplateProps> = ({
       <FieldString
         name="Group"
         value={group}
-        onChange={(v) => dispatch({ action: "SET_GROUP", group: v })}
+        onChange={(v) => dispatch({ action: "ITEM.SET_GROUP", group: v })}
       />
       <FieldString
         name="Key"
         value={key}
-        onChange={(v) => dispatch({ action: "SET_KEY", key: v })}
+        onChange={(v) => dispatch({ action: "ITEM.SET_KEY", key: v })}
       />
       <FieldString
         name="Sort Key"
         value={sortKey}
-        onChange={(v) => dispatch({ action: "SET_SORTKEY", sortKey: v })}
+        onChange={(v) => dispatch({ action: "ITEM.SET_SORTKEY", sortKey: v })}
       />
       <FieldString
         name="Name"
         value={name}
-        onChange={(v) => dispatch({ action: "SET_NAME", name: v })}
+        onChange={(v) => dispatch({ action: "ITEM.SET_NAME", name: v })}
       />
       <FieldSelect
         name="Type"
         value={type}
-        options={["omni", "boolean", "range"]}
-        onChange={(v) => dispatch({ action: "SET_TYPE", type: v })}
+        options={unionMembers(ItemTypeUnion)}
+        onChange={callIfParsed(ItemTypeUnion, (type) =>
+          dispatch({ action: "ITEM.SET_TYPE", type })
+        )}
       />
       <FieldCheckbox
         name="Readonly"
         value={readOnly}
-        onChange={(v) => dispatch({ action: "SET_READONLY", readOnly: v })}
+        onChange={(v) => dispatch({ action: "ITEM.SET_READONLY", readOnly: v })}
       />
       <FieldString
         name="Value"
         value={value}
-        onChange={(v) => dispatch({ action: "SET_VALUE", value: v })}
+        onChange={(v) => dispatch({ action: "ITEM.SET_VALUE", value: v })}
       />
       <FieldCheckbox
         name="Click Enabled"
         value={onclickEnabled}
-        onChange={(v) => dispatch({ action: "SET_ONCLICK_ENABLED", enabled: v })}
+        onChange={(v) =>
+          dispatch({ action: "ITEM.SET_ONCLICK_ENABLED", onclickEnabled: v })
+        }
       />
       <FieldString
         name="Click"
         value={onclick}
-        onChange={(v) => dispatch({ action: "SET_ONCLICK", value: v })}
+        onChange={(v) => dispatch({ action: "ITEM.SET_ONCLICK", onclick: v })}
       />
 
       {children}
 
-      <button onClick={() => dispatch({ action: "COPY_ITEM" })}>Copy</button>
-      <button onClick={() => dispatch({ action: "REMOVE_ITEM" })}>Remove</button>
+      <button onClick={() => dispatch({ action: "ITEM.COPY" })}>Copy</button>
+      <button onClick={() => dispatch({ action: "ITEM.REMOVE" })}>Remove</button>
     </Fields>
   );
 };
