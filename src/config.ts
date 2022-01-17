@@ -28,18 +28,12 @@ const envGetBool = (name: string, def?: boolean): boolean => {
 const config = {
   BASE_URL: envGet("BASE_URL"),
 
-  GOOGLE_CLIENT_ID: envGet("GOOGLE_CLIENT_ID"),
-  GOOGLE_CLIENT_SECRET: envGet("GOOGLE_CLIENT_SECRET"),
-
   S3_ENDPOINT: process.env.S3_ENDPOINT,
   S3_FORCE_PATH_STYLE: envGetBool("S3_FORCE_PATH_STYLE", false),
   DYNAMODB_ENDPOINT: process.env.DYNAMODB_ENDPOINT,
 
   ASSET_BUCKET: envGet("ASSET_BUCKET"),
-
-  LOG_TABLE: envGet("LOG_TABLE"),
-  SPACE_TABLE: envGet("SPACE_TABLE"),
-  USER_TABLE: envGet("USER_TABLE"),
+  TABLE_NAME: envGet("TABLE_NAME"),
 };
 
 export default config;

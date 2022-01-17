@@ -2,10 +2,11 @@ import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { dynamoDbConfig, Service, ServiceParams } from "./common";
 import { v4 as uuidv4 } from "uuid";
 import { marshall } from "@aws-sdk/util-dynamodb";
-import { roll } from "dice-roller";
 import { LogEvent, LogItem, LogItems } from "type/log";
 import { getItemsFromTable } from "util/dynamodb";
 import config from "config";
+import { roll } from "render";
+import { WithPKSK } from "type/dynamo";
 
 type LogServiceParams = ServiceParams;
 
@@ -15,17 +16,17 @@ export class LogService extends Service {
   private readonly db: DynamoDBClient;
 
   constructor(params: LogServiceParams) {
-    super(params, { tableName: config.LOG_TABLE });
+    super(params, { tableName: config.TABLE_NAME });
 
-    this.tableName = config.LOG_TABLE;
+    this.tableName = config.TABLE_NAME;
     this.db = new DynamoDBClient(dynamoDbConfig(this.logger));
   }
 
   async get(spaceId: string): Promise<LogItems> {
     const items = await getItemsFromTable(this.db, {
       tableName: this.tableName,
-      partition: { key: "spaceId", value: spaceId },
-      sort: { key: "messageId", value: undefined },
+      pk: { prefix: "space:", value: spaceId },
+      sk: { value: null },
     });
 
     return LogItems.parse(items);
@@ -33,15 +34,16 @@ export class LogService extends Service {
 
   async event(event: LogEvent): Promise<LogItem> {
     const now = new Date().getTime();
-    const messageId = uuidv4();
+    const logId = uuidv4();
 
-    let message: LogItem;
-    // eslint-disable-next-line default-case
+    let message: WithPKSK<LogItem>;
     switch (event.type) {
       case "MESSAGE":
         message = {
+          pk: `space:${event.spaceId}`,
+          sk: `log:${logId}`,
           spaceId: event.spaceId,
-          messageId,
+          logId,
           t: now,
           msg: event.msg,
         };
@@ -49,13 +51,13 @@ export class LogService extends Service {
 
       case "ROLL":
         message = {
+          pk: `space:${event.spaceId}`,
+          sk: `log:${logId}`,
           spaceId: event.spaceId,
-          messageId,
+          logId,
           t: now,
-          msg: roll(event.expr)
-            .map((v) => v.toString())
-            .join("\n"),
           expr: event.expr,
+          msg: roll(event.expr, []).output,
         };
         break;
     }

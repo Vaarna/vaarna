@@ -227,16 +227,11 @@ const sheetItemReducer = (
         draft
           .filter((item) => item.id === action.id && item.onclickEnabled)
           .forEach((item) => {
-            try {
-              console.log(
-                roll(item.onclick, [
-                  ["self", item.value],
-                  ...draft.map((item): [string, string] => [item.key, item.value]),
-                ]).output
-              );
-            } catch (err) {
-              console.error(err);
-            }
+            const res = roll(item.onclick, [
+              ...draft.flatMap((item) => itemToKeyValues(item)),
+              ["self", item.value],
+            ]);
+            console.log("roll:", res === "#ERROR?" ? res : res.output);
           });
         break;
 
@@ -362,7 +357,7 @@ export const sheetStateReducer = (
 // ---
 
 const evaluateItems = (items: Item[]): ItemEvaluated<Item>[] => {
-  const env = items.flatMap(itemToKeyValues);
+  const env = items.flatMap((item) => itemToKeyValues(item));
   return items.map((item) => ({
     ...item,
     valueEvaluated: evaluate(item.value, env),

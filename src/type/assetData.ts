@@ -5,7 +5,6 @@ export type Kind = z.infer<typeof Kind>;
 
 export const AssetData = z.object({
   spaceId: z.string().uuid(),
-  sk: z.string(),
   assetId: z.string().uuid(),
   size: z.number().int(),
   contentType: z.string(),
@@ -24,7 +23,6 @@ export const GetAssetDataQuery = z.object({
 export type GetAssetDataQuery = z.infer<typeof GetAssetDataQuery>;
 
 export function getKind(contentType: string): AssetData["kind"] {
-  // eslint-disable-next-line default-case
   switch (contentType) {
     case "application/pdf":
       return "pdf";
@@ -35,7 +33,7 @@ export function getKind(contentType: string): AssetData["kind"] {
   if (split.length !== 2) return "other";
 
   const [lhs, _rhs] = split;
-  // eslint-disable-next-line default-case
+
   switch (lhs) {
     case "audio":
     case "video":
