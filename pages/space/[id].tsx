@@ -74,7 +74,7 @@ const collectionInitialState: SheetState = {
       name: "Proficiency Bonus",
       value: "3",
       onclickEnabled: true,
-      onclick: "=d20 + {{self}}",
+      onclick: "={{#output}}d20 + {{self}}{{/output}}",
     },
     {
       ...itemBase(),
@@ -85,7 +85,7 @@ const collectionInitialState: SheetState = {
       value: "={{#total}}floor(({{str}}-10)/2){{/total}}",
       readOnly: true,
       onclickEnabled: true,
-      onclick: "=d20 + {{self}} + {{prof}}",
+      onclick: "={{#output}}d20 + {{self}} + {{prof}}{{/output}}",
     },
     {
       ...itemBase(),
@@ -105,7 +105,7 @@ const collectionInitialState: SheetState = {
       name: "Hit Die",
       value: "10",
       onclickEnabled: true,
-      onclick: "=d{{self}} + {{prof}}",
+      onclick: "={{#output}}d{{self}} + {{prof}}{{/output}}",
     },
     {
       ...itemBase(),
@@ -116,7 +116,7 @@ const collectionInitialState: SheetState = {
       value: "={{#total}}floor(({{con}}-10)/2){{/total}}",
       readOnly: true,
       onclickEnabled: true,
-      onclick: "=d20 + {{self}} + {{prof}}",
+      onclick: "={{#output}}d20 + {{self}} + {{prof}}{{/output}}",
     },
     {
       ...itemBase(),
@@ -126,7 +126,7 @@ const collectionInitialState: SheetState = {
       name: "Athletics",
       value: "0",
       onclickEnabled: true,
-      onclick: "=d20 + {{str_mod}} + {{self}} * {{prof}}",
+      onclick: "={{#output}}d20 + {{str_mod}} + {{self}} * {{prof}}{{/output}}",
     },
     {
       ...itemBase(),
@@ -136,7 +136,7 @@ const collectionInitialState: SheetState = {
       name: "Athletics",
       value: "0",
       onclickEnabled: true,
-      onclick: "=d20 + {{str_mod}} + {{self}} * {{prof}}",
+      onclick: "={{#output}}d20 + {{str_mod}} + {{self}} * {{prof}}{{/output}}",
     },
     {
       ...itemBase(),
@@ -148,7 +148,7 @@ const collectionInitialState: SheetState = {
       min: "1",
       max: "",
       onclickEnabled: true,
-      onclick: "=d100<={{self}}",
+      onclick: "={{#output}}d100<={{self}}{{/output}}",
     },
     {
       ...itemBase(),
@@ -158,7 +158,7 @@ const collectionInitialState: SheetState = {
       name: "Damage Bonus",
       value: "d4",
       onclickEnabled: true,
-      onclick: "={{self}}",
+      onclick: "={{#output}}{{self}}{{/output}}",
     },
   ],
 };

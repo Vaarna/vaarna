@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { produce } from "immer";
 import { v4 as uuid } from "uuid";
-import { evaluate, roll } from "../render";
+import { evaluate } from "../render";
 
 export const ItemShared = z.object({
   id: z.string().uuid(),
@@ -227,11 +227,11 @@ const sheetItemReducer = (
         draft
           .filter((item) => item.id === action.id && item.onclickEnabled)
           .forEach((item) => {
-            const res = roll(item.onclick, [
+            const res = evaluate(item.onclick, [
               ...draft.flatMap((item) => itemToKeyValues(item)),
               ["self", item.value],
             ]);
-            console.log("roll:", res === "#ERROR?" ? res : res.output);
+            console.log("click:", res);
           });
         break;
 
