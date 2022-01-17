@@ -11,11 +11,10 @@ type MustacheCalc = () => string;
 type MustacheFunction = () => (text: string, render: (v: string) => string) => string;
 type MustacheValue = MustacheCalc | MustacheFunction | string;
 
-const mTotal: MustacheFunction = () => (text, render) =>
+const total: MustacheFunction = () => (text, render) =>
   _r(render(text)).total.toString();
 
-const mOutput: MustacheFunction = () => (text, render) =>
-  _r(render(text)).output.toString();
+const output: MustacheFunction = () => (text, render) => _r(render(text)).output;
 
 const unescape = (template: string): [string, boolean] => {
   if (template.startsWith("=")) return [template.substring(1), true];
@@ -27,7 +26,7 @@ const render = (template: string, env: [string, MustacheValue][]): string => {
   const [unescaped, isTemplate] = unescape(template);
   if (!isTemplate) return unescaped;
 
-  const view = { ...Object.fromEntries(env), total: mTotal, output: mOutput };
+  const view = { ...Object.fromEntries(env), total, output };
 
   return Mustache.render(unescaped, view, undefined, {
     escape: (text) => text,
