@@ -33,7 +33,6 @@ async function asset(req: RequestWithLogger, res: NextApiResponse): Promise<void
     return Object.fromEntries(out);
   }
 
-  // eslint-disable-next-line default-case
   switch (req.method) {
     case "HEAD": {
       const { query } = parseRequest(req, {

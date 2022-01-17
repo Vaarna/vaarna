@@ -1,186 +1,194 @@
-import { evaluate, render } from "./render";
+import fc from "fast-check";
+import { evaluate } from "./render";
 
-describe("rendering", () => {
-  test("an empty string renders to an empty string", () => {
-    expect(render("", [])).toEqual("");
+const numberWithNDecimals = (n: number) =>
+  fc
+    .tuple(fc.integer(), fc.nat(Math.pow(10, n) - 1))
+    .map(([a, b]) => Number(`${a}.${b}`));
+
+describe("evaluating", () => {
+  it("an empty string returns an empty string", () => {
+    expect(evaluate("", [])).toEqual("");
   });
 
-  test("an empty template renders to an empty string", () => {
-    expect(render("=", [])).toEqual("");
+  it("an empty expression returns an empty string", () => {
+    expect(evaluate("=", [])).toEqual("");
   });
 
-  test("a template with unclosed variable return #ERROR?", () => {
-    expect(render("={{", [])).toEqual("#ERROR?");
-  });
-
-  test("a template with no env", () => {
-    expect(render("hi", [])).toEqual("hi");
-  });
-
-  test("a template with simple env", () => {
-    expect(render("hi {{name}}", [["name", "world"]])).toEqual("hi {{name}}");
-    expect(render("=hi {{name}}", [["name", "world"]])).toEqual("hi world");
-  });
-
-  test("a template with simple env", () => {
-    expect(render("hi {{name}}", [["name", "world"]])).toEqual("hi {{name}}");
-    expect(render("=hi {{name}}", [["name", "world"]])).toEqual("hi world");
-  });
-
-  test("a template with = in the start can be escaped with '", () => {
-    expect(render("'=end", [])).toEqual("=end");
-  });
-
-  test("does not escape anything", () => {
-    expect(render("</>&'={}", [])).toEqual("</>&'={}");
-    expect(render("=</>&'={}", [])).toEqual("</>&'={}");
-  });
-
-  test("a template that refers to another template", () => {
+  it("a cyclic reference returns #CYCLIC?", () => {
     expect(
-      render("=hi {{name}}", [
-        ["name", "={{other}}"],
-        ["other", "world"],
-      ])
-    ).toEqual("hi world");
-
-    expect(
-      render("=hi {{name}}", [
-        ["name", "={{other}}"],
-        ["other", "={{second}}"],
-        ["second", "world"],
-      ])
-    ).toEqual("hi world");
-  });
-
-  test("a template does not do any calculations", () => {
-    expect(render("=2 + {{res}}", [["res", "2"]])).toEqual("2 + 2");
-
-    expect(
-      render("=2 + {{res}}", [
-        ["res", "={{other}}"],
-        ["other", "={{second}}"],
-        ["second", "2"],
-      ])
-    ).toEqual("2 + 2");
-  });
-
-  test("a cyclic template returns #CYCLIC?", () => {
-    expect(render("={{res}}", [["res", "={{res}}"]])).toEqual("#CYCLIC?");
-
-    expect(
-      render("={{res}}", [
-        ["res", "={{other}}"],
-        ["other", "={{second}}"],
-        ["second", "={{res}}"],
+      evaluate("={{other}}", [
+        ["other", "={{a}}"],
+        ["a", "={{other}}"],
       ])
     ).toEqual("#CYCLIC?");
   });
 
-  test("each cyclic references returns #CYCLIC?", () => {
-    expect(render("={{res}} {{res}}", [["res", "={{res}}"]])).toEqual(
-      "#CYCLIC? #CYCLIC?"
+  it("only whitespace returns itself", () => {
+    expect(evaluate(" ", [])).toEqual(" ");
+    expect(evaluate("\t", [])).toEqual("\t");
+    expect(evaluate("\n", [])).toEqual("\n");
+    expect(evaluate("  ", [])).toEqual("  ");
+    expect(evaluate("\t\t", [])).toEqual("\t\t");
+    expect(evaluate("\n\n", [])).toEqual("\n\n");
+    expect(evaluate(" \t\n", [])).toEqual(" \t\n");
+    expect(evaluate(" \t\n \t\n", [])).toEqual(" \t\n \t\n");
+  });
+
+  it("whitespace is trimmed after variable expansion", () => {
+    expect(evaluate(" {{a}} {{b}} ")).toEqual(" {{a}} {{b}} ");
+    expect(evaluate("= {{a}} {{b}} ")).toEqual("");
+  });
+
+  it("a string returns that string", () => {
+    fc.assert(
+      fc.property(fc.string(), (s) => {
+        fc.pre(!s.startsWith("="));
+        fc.pre(!s.startsWith("'="));
+        return evaluate(s, []) === s;
+      })
     );
-
-    expect(
-      render("={{res}} {{other}} {{second}}", [
-        ["res", "={{other}}"],
-        ["other", "={{second}}"],
-        ["second", "={{res}}"],
-      ])
-    ).toEqual("#CYCLIC? #CYCLIC? #CYCLIC?");
-  });
-});
-
-const rollTotal = (template: string, env: [string, string][]): string =>
-  evaluate(template, env);
-
-describe("when evaluating", () => {
-  test("an empty string, it returns an empty string", () => {
-    expect(rollTotal("", [])).toEqual("");
   });
 
-  test("an empty template, it returns an empty string", () => {
-    expect(rollTotal("=", [])).toEqual("");
+  it("a string that starts with '= starts with = and does not use parameters", () => {
+    fc.assert(
+      fc.property(fc.string(), (s) => {
+        return evaluate(`'=${s} {{other}}`, [["other", "wrong"]]) === `=${s} {{other}}`;
+      })
+    );
   });
 
-  test("an invalid template returns #ERROR?", () => {
-    expect(rollTotal("=f", [])).toEqual("#ERROR?");
+  it("an equation looking template returns it as string without calculation", () => {
+    fc.assert(
+      fc.property(numberWithNDecimals(3), numberWithNDecimals(3), (a, b) => {
+        return evaluate(`=${a} + {{other}}`, [["other", `${b}`]]) === `${a} + ${b}`;
+      })
+    );
   });
 
-  test("a number returns that number", () => {
-    expect(rollTotal("1", [])).toEqual("1");
-    expect(rollTotal("-1", [])).toEqual("-1");
-    expect(rollTotal("1.5", [])).toEqual("1.5");
-    expect(rollTotal("-1.5", [])).toEqual("-1.5");
+  it("expression with only whitespace returns an empty string", () => {
+    expect(evaluate("= ", [])).toEqual("");
+    expect(evaluate("=\t", [])).toEqual("");
+    expect(evaluate("=\n", [])).toEqual("");
+    expect(evaluate("=  ", [])).toEqual("");
+    expect(evaluate("=\t\t", [])).toEqual("");
+    expect(evaluate("=\n\n", [])).toEqual("");
+    expect(evaluate("= \t\n", [])).toEqual("");
+    expect(evaluate("= \t\n \t\n", [])).toEqual("");
   });
 
-  test("simple functions can be used", () => {
-    expect(rollTotal("floor(-5.5)", [])).toEqual("-6");
-    expect(rollTotal("ceil(-5.5)", [])).toEqual("-5");
-    expect(rollTotal("round(-5.5)", [])).toEqual("-6");
-    expect(rollTotal("abs(-5.5)", [])).toEqual("5.5");
+  it("a number expression returns that number", () => {
+    expect(evaluate("={{#total}}1{{/total}}", [])).toEqual("1");
+    expect(evaluate("={{#total}}-1{{/total}}", [])).toEqual("-1");
+    expect(evaluate("={{#total}}1.5{{/total}}", [])).toEqual("1.5");
+    expect(evaluate("={{#total}}-1.5{{/total}}", [])).toEqual("-1.5");
   });
 
-  test("math can be used", () => {
-    expect(rollTotal("1 + 1", [])).toEqual("2");
-    expect(rollTotal("(1 + 1) * 13", [])).toEqual("26");
+  it.each([
+    ["floor", 0, 0],
+    ["floor", 0.5, 0],
+    ["floor", 1, 1],
+    ["floor", 1.5, 1],
+    ["floor", -0.5, -1],
+    ["floor", -1, -1],
+    ["floor", -1.5, -2],
+    ["ceil", 0, 0],
+    ["ceil", 0.5, 1],
+    ["ceil", 1, 1],
+    ["ceil", 1.5, 2],
+    ["ceil", -0.5, 0],
+    ["ceil", -1, -1],
+    ["ceil", -1.5, -1],
+    ["round", 0, 0],
+    ["round", 0.5, 1],
+    ["round", 1, 1],
+    ["round", 1.5, 2],
+    ["round", 2.5, 3],
+    ["round", -0.5, -1],
+    ["round", -1, -1],
+    ["round", -1.5, -2],
+    ["round", -2.5, -3],
+    ["abs", 0, 0],
+    ["abs", 0.5, 0.5],
+    ["abs", 1, 1],
+    ["abs", 1.5, 1.5],
+    ["abs", -0.5, 0.5],
+    ["abs", -1, 1],
+    ["abs", -1.5, 1.5],
+  ])("%s of %d equals %d", (fn, v, actual) => {
+    expect(evaluate(`={{#total}}${fn}(${v}){{/total}}`)).toEqual(actual.toString());
   });
 
-  test("dice notation can be used", () => {
-    const res = Number(rollTotal("d4", []));
+  it("math can be used", () => {
+    expect(evaluate("={{#total}}1 + 1{{/total}}", [])).toEqual("2");
+    expect(evaluate("={{#total}}(1 + 1) * 13{{/total}}", [])).toEqual("26");
+  });
+
+  it("dice notation works", () => {
+    const res = Number(evaluate("={{#total}}d4{{/total}}", []));
     expect(res).toBeGreaterThanOrEqual(1);
     expect(res).toBeLessThanOrEqual(4);
   });
 
-  test.each([
-    ["d1", 1, 1],
-    ["d1+1", 2, 2],
-    ["d1-1", 0, 0],
-    ["d6", 1, 6],
-    ["2d6", 2, 12],
-  ])("result of rolling %s is between %s and %s", (v, low, high) => {
+  it.each([
+    ["={{#total}}d1{{/total}}", 1, 1],
+    ["={{#total}}d1+1{{/total}}", 2, 2],
+    ["={{#total}}d1-1{{/total}}", 0, 0],
+    ["={{#total}}d6{{/total}}", 1, 6],
+    ["={{#total}}2d6{{/total}}", 2, 12],
+  ])("%s is between %s and %s", (v, low, high) => {
     for (let i = 0; i < 10; i++) {
-      const res = Number(rollTotal(v, []));
+      const res = Number(evaluate(v, []));
       expect(res).toBeGreaterThanOrEqual(low);
       expect(res).toBeLessThanOrEqual(high);
     }
   });
 
-  test("a template with no variables works", () => {
-    expect(rollTotal("=42", [])).toEqual("42");
+  it.each([["d1"], ["d1+1"], ["d1-1"], ["d6"], ["2d6"]])("%s equals itself", (v) => {
+    expect(evaluate(v, [])).toEqual(v);
   });
 
-  test("a template with that uses env with numbers works", () => {
-    expect(rollTotal("=1 + {{other}}", [["other", "1"]])).toEqual("2");
+  it("a template with no variables works", () => {
+    expect(evaluate("=42", [])).toEqual("42");
   });
 
-  test("a template with that uses env with dice notation works", () => {
-    const res = Number(rollTotal("=1 + {{other}}", [["other", "d4"]]));
+  it("a template with that uses env with numbers works", () => {
+    expect(evaluate("={{#total}}1 + {{other}}{{/total}}", [["other", "1"]])).toEqual(
+      "2"
+    );
+  });
+
+  it("a template with that uses env with dice notation works", () => {
+    const res = Number(
+      evaluate("={{#total}}1 + {{other}}{{/total}}", [["other", "d4"]])
+    );
     expect(res).toBeGreaterThanOrEqual(2);
     expect(res).toBeLessThanOrEqual(5);
   });
 
-  test("wacky string concat stuff can not be done", () => {
-    expect(render("=fl{{other}}2)", [["other", "oor(4"]])).toEqual("floor(42)");
-    expect(rollTotal("=fl{{other}}2)", [["other", "oor(4"]])).toEqual("#ERROR?");
+  test("wacky string concat stuff can be done with", () => {
+    expect(evaluate("=fl{{other}}2)", [["other", "oor(4"]])).toEqual("floor(42)");
   });
 });
 
-test("_#-* can be used in variable names", () => {
-  expect(render("={{hp#min}}", [["hp#min", "0"]])).toEqual("0");
-  expect(render("={{hp_min}}", [["hp_min", "0"]])).toEqual("0");
-  expect(render("={{hp-min}}", [["hp-min", "0"]])).toEqual("0");
-  expect(render("={{hp*min}}", [["hp*min", "0"]])).toEqual("0");
+test("_#-*$ can be used in variable names", () => {
+  expect(evaluate("={{hp#min}}", [["hp#min", "0"]])).toEqual("0");
+  expect(evaluate("={{hp_min}}", [["hp_min", "0"]])).toEqual("0");
+  expect(evaluate("={{hp-min}}", [["hp-min", "0"]])).toEqual("0");
+  expect(evaluate("={{hp*min}}", [["hp*min", "0"]])).toEqual("0");
+  expect(evaluate("={{hp$min}}", [["hp$min", "0"]])).toEqual("0");
 });
 
 test("d&d hp calculation from stats", () => {
-  const res = rollTotal("={{level}} * (ceil(({{hit_die}} + 1) / 2) + {{con_mod}})", [
-    ["level", "3"],
-    ["hit_die", "10"],
-    ["con_mod", "=floor( ({{con}} - 10) / 2 )"],
-    ["con", "13"],
-  ]);
+  const res = evaluate(
+    "={{#total}}{{level}} * (ceil(({{hit_die}} + 1) / 2) + {{con_mod}}){{/total}}",
+    [
+      ["level", "3"],
+      ["hit_die", "10"],
+      ["con_mod", "={{#total}}floor( ({{con}} - 10) / 2 ){{/total}}"],
+      ["con", "13"],
+    ]
+  );
 
   const level = 3;
   const hitDie = 10;

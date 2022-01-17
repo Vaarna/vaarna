@@ -18,7 +18,7 @@ export type LogEvent = z.infer<typeof LogEvent>;
 
 export const LogItem = z.object({
   spaceId: z.string().uuid(),
-  messageId: z.string().uuid(),
+  logId: z.string().uuid(),
   t: z.number(),
   msg: z.string(),
   expr: z.string().optional(),

@@ -1,7 +1,10 @@
-import { useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { SheetState, sheetStateReducer } from "type/sheet";
 import { Sheet } from "component/Sheet";
+import { Upload } from "component/Upload";
+import { useRouter } from "next/router";
+import { z } from "zod";
 
 const itemBase = () => ({
   id: uuid(),
@@ -61,7 +64,7 @@ const collectionInitialState: SheetState = {
       name: "HP",
       value: "22",
       min: "0",
-      max: "={{level}} * (ceil(({{hit_die}} + 1) / 2) + {{con_mod}})",
+      max: "={{#total}}{{level}} * (ceil(({{hit_die}} + 1) / 2) + {{con_mod}}){{/total}}",
     },
     {
       ...itemBase(),
@@ -79,7 +82,7 @@ const collectionInitialState: SheetState = {
       group: "attr",
       key: "str_mod",
       name: "Strength Modifier",
-      value: "=floor(({{str}}-10)/2)",
+      value: "={{#total}}floor(({{str}}-10)/2){{/total}}",
       readOnly: true,
       onclickEnabled: true,
       onclick: "=d20 + {{self}} + {{prof}}",
@@ -110,7 +113,7 @@ const collectionInitialState: SheetState = {
       group: "attr",
       key: "con_mod",
       name: "Constitution Modifier",
-      value: "=floor(({{con}}-10)/2)",
+      value: "={{#total}}floor(({{con}}-10)/2){{/total}}",
       readOnly: true,
       onclickEnabled: true,
       onclick: "=d20 + {{self}} + {{prof}}",
@@ -147,14 +150,36 @@ const collectionInitialState: SheetState = {
       onclickEnabled: true,
       onclick: "=d100<={{self}}",
     },
+    {
+      ...itemBase(),
+      type: "omni",
+      group: "",
+      key: "db",
+      name: "Damage Bonus",
+      value: "d4",
+      onclickEnabled: true,
+      onclick: "={{self}}",
+    },
   ],
 };
 
 export default function Space(): React.ReactNode {
   const [state, dispatch] = useReducer(sheetStateReducer, collectionInitialState);
+
+  const [spaceId, setSpaceId] = useState<string | null>(null);
+  const router = useRouter();
+  useEffect(() => {
+    const parsed = z.string().safeParse(router.query.id);
+    if (parsed.success) setSpaceId(parsed.data);
+  }, [router]);
+
+  if (spaceId === null) return <span>redirecting...</span>;
+
   return (
-    <div style={{ margin: "1rem" }}>
-      <Sheet {...{ state, dispatch }} />
-    </div>
+    <Upload url="/api/asset" params={{ spaceId }}>
+      <div style={{ margin: "1rem" }}>
+        <Sheet {...{ state, dispatch }} />
+      </div>
+    </Upload>
   );
 }

@@ -11,8 +11,8 @@ const logger = rootLogger.child({ module: "dynamodb" });
 
 type GetItemsSingleParameters = {
   tableName: string;
-  partition: { key: string; value: string };
-  sort: { key: string; value: string };
+  pk: string;
+  sk: string;
 };
 
 async function getItemsSingle(
@@ -22,8 +22,8 @@ async function getItemsSingle(
   const cmd = new GetItemCommand({
     TableName: params.tableName,
     Key: marshall({
-      [params.partition.key]: params.partition.value,
-      [params.sort.key]: params.sort.value,
+      pk: params.pk,
+      sk: params.sk,
     }),
   });
 
@@ -39,8 +39,8 @@ async function getItemsSingle(
 
 type GetItemsMultipleParameters = {
   tableName: string;
-  partition: { key: string; value: string };
-  sort: { key: string; value: string[] };
+  pk: string;
+  sk: string[];
 };
 
 async function getItemsMultiple(
@@ -50,16 +50,16 @@ async function getItemsMultiple(
   // TODO when requesting more than 100 items, batch the requests
   // TODO when the response returns UnprocessedKeys also get those
 
-  if (params.sort.value.length > 100)
+  if (params.sk.length > 100)
     logger.error(params, "requesting more than 100 items, request should be batched");
 
   const cmd = new BatchGetItemCommand({
     RequestItems: {
       [params.tableName]: {
-        Keys: params.sort.value.map((v) =>
+        Keys: params.sk.map((v) =>
           marshall({
-            [params.partition.key]: params.partition.value,
-            [params.sort.key]: v,
+            pk: params.pk,
+            sk: v,
           })
         ),
       },
@@ -84,8 +84,7 @@ async function getItemsMultiple(
 
 type GetItemsAllParameters = {
   tableName: string;
-  partition: { key: string; value: string };
-  sort: { key: string };
+  pk: string;
 };
 
 async function getItemsAll(
@@ -94,9 +93,9 @@ async function getItemsAll(
 ): Promise<unknown[]> {
   const cmdArgs = {
     TableName: params.tableName,
-    KeyConditionExpression: `${params.partition.key} = :v`,
+    KeyConditionExpression: `pk = :v`,
     ExpressionAttributeValues: {
-      ":v": { S: params.partition.value },
+      ":v": { S: params.pk },
     },
   };
 
@@ -127,32 +126,32 @@ async function getItemsAll(
 
 type GetItemsParameters = {
   tableName: string;
-  partition: { key: string; value: string };
-  sort: { key: string; prefix?: string; value: string[] | string | undefined };
+  pk: { prefix?: string; value: string };
+  sk: { prefix?: string; value: string[] | string | null };
 };
 
 export async function getItemsFromTable(
   db: DynamoDBClient,
   params: GetItemsParameters
 ): Promise<unknown[]> {
-  const prefix = params.sort.prefix ?? "";
-  const sortValue = params.sort.value;
+  const { tableName } = params;
+  const pk = `${params.pk.prefix ?? ""}${params.pk.value}`;
+  const skPrefix = params.sk.prefix ?? "";
+  const skValue = params.sk.value;
 
   let items;
-  if (typeof sortValue === "undefined") {
-    logger.info("get all items from table %s", params.tableName);
-    items = await getItemsAll(db, params);
-  } else if (typeof sortValue === "string") {
-    logger.info("get single item from table %s", params.tableName);
-    items = await getItemsSingle(db, {
-      ...params,
-      sort: { ...params.sort, value: `${prefix}${sortValue}` },
-    });
+  if (skValue === null) {
+    logger.info("get all items from table %s", tableName);
+    items = await getItemsAll(db, { tableName, pk });
+  } else if (typeof skValue === "string") {
+    logger.info("get single item from table %s", tableName);
+    items = await getItemsSingle(db, { tableName, pk, sk: `${skPrefix}${skValue}` });
   } else {
-    logger.info("get multiple items from table %s", params.tableName);
+    logger.info("get multiple items from table %s", tableName);
     items = await getItemsMultiple(db, {
-      ...params,
-      sort: { ...params.sort, value: sortValue.map((v) => `${prefix}${v}`) },
+      tableName,
+      pk,
+      sk: skValue.map((v) => `${skPrefix}${v}`),
     });
   }
 

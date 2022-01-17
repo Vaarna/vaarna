@@ -13,10 +13,11 @@ import config from "config";
 import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
+import { WithPKSK } from "type/dynamo";
 import { GetAssetHeaders, GetAssetQuery } from "type/asset";
 import { AssetData, AssetDatas, GetAssetDataQuery, getKind } from "type/assetData";
 import { ApiInternalServerError } from "type/error";
-import { SpaceItem } from "type/space";
+import { Asset } from "type/space";
 import { getItemsFromTable } from "util/dynamodb";
 import { z } from "zod";
 import { dynamoDbConfig, s3Config, Service, ServiceParams } from "./common";
@@ -65,11 +66,11 @@ export class AssetService extends Service {
   constructor(params: AssetServiceParams) {
     super(params, {
       bucket: config.ASSET_BUCKET,
-      tableName: config.SPACE_TABLE,
+      tableName: config.TABLE_NAME,
     });
 
     this.bucket = config.ASSET_BUCKET;
-    this.tableName = config.SPACE_TABLE;
+    this.tableName = config.TABLE_NAME;
     if (params.maxAge) this.maxAge = params.maxAge;
 
     this.s3 = new S3Client(s3Config(this.logger));
@@ -175,7 +176,7 @@ export class AssetService extends Service {
 
   async uploadAsset(
     body: Exclude<PutObjectCommandInput["Body"], undefined>,
-    params: Omit<AssetData, "kind" | "sk">
+    params: Omit<AssetData, "kind">
   ): Promise<void> {
     const cmd = new PutObjectCommand({
       Bucket: this.bucket,
@@ -193,7 +194,12 @@ export class AssetService extends Service {
     await this.s3.send(cmd);
 
     const kind = getKind(params.contentType);
-    const item: AssetData = { ...params, sk: `asset:${params.assetId}`, kind };
+    const item: WithPKSK<AssetData> = {
+      ...params,
+      kind,
+      pk: `space:${params.spaceId}`,
+      sk: `asset:${params.assetId}`,
+    };
     const dbCmd = new PutItemCommand({
       TableName: this.tableName,
       Item: marshall(item),
@@ -205,12 +211,12 @@ export class AssetService extends Service {
   async getAssetData(query: GetAssetDataQuery): Promise<AssetDatas> {
     const data = await getItemsFromTable(this.db, {
       tableName: this.tableName,
-      partition: { key: "spaceId", value: query.spaceId },
-      sort: { key: "sk", prefix: "asset:", value: query.assetId },
+      pk: { prefix: "space:", value: query.spaceId },
+      sk: { prefix: "asset:", value: query.assetId ?? null },
     });
 
     return AssetDatas.parse(
-      data.map((v) => SpaceItem.parse(v)).filter((v) => v.sk.startsWith("asset:"))
+      data.map((v) => Asset.parse(v)).filter((v) => v.sk.startsWith("asset:"))
     );
   }
 }
