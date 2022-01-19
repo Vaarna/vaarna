@@ -9,6 +9,30 @@ import { RequestWithLogger } from "./withDefaults";
 
 export { ApiError };
 
+export const parseQuery = <T>(req: RequestWithLogger, query: z.ZodType<T>): T => {
+  const parsedQuery = query.safeParse(req.query);
+  if (!parsedQuery.success) {
+    throw new ApiParseQueryError(parsedQuery.error, req.requestId);
+  }
+  return parsedQuery.data;
+};
+
+export const parseHeaders = <T>(req: RequestWithLogger, headers: z.ZodType<T>): T => {
+  const parsedHeaders = headers.safeParse(req.headers);
+  if (!parsedHeaders.success) {
+    throw new ApiParseHeadersError(parsedHeaders.error, req.requestId);
+  }
+  return parsedHeaders.data;
+};
+
+export const parseBody = <T>(req: RequestWithLogger, body: z.ZodType<T>): T => {
+  const parsedBody = body.safeParse(req.body);
+  if (!parsedBody.success) {
+    throw new ApiParseBodyError(parsedBody.error, req.requestId);
+  }
+  return parsedBody.data;
+};
+
 export const parseRequest = <
   Query,
   Headers,
@@ -17,46 +41,13 @@ export const parseRequest = <
     query: z.ZodType<Query>;
     headers: z.ZodType<Headers>;
     body: z.ZodType<Body>;
-  }>,
-  Out extends {
-    [k in keyof Parser]: Parser[k] extends z.ZodType<
-      infer Output,
-      infer _Def,
-      infer _Input
-    >
-      ? Output
-      : never;
-  }
+  }>
 >(
   req: RequestWithLogger,
   parser: Parser
-): Out => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const out: any = {};
-
-  if (parser.query !== undefined) {
-    const parsedQuery = parser.query.safeParse(req.query);
-    if (!parsedQuery.success) {
-      throw new ApiParseQueryError(parsedQuery.error, req.requestId);
-    }
-    out.query = parsedQuery.data;
-  }
-
-  if (parser.headers !== undefined) {
-    const parsedHeaders = parser.headers.safeParse(req.headers);
-    if (!parsedHeaders.success) {
-      throw new ApiParseHeadersError(parsedHeaders.error, req.requestId);
-    }
-    out.headers = parsedHeaders.data;
-  }
-
-  if (parser.body !== undefined) {
-    const parsedBody = parser.body.safeParse(req.body);
-    if (!parsedBody.success) {
-      throw new ApiParseBodyError(parsedBody.error, req.requestId);
-    }
-    out.body = parsedBody.data;
-  }
-
-  return out;
-};
+): { [k in keyof Parser]: Parser[k] extends z.ZodType<infer O> ? O : never } =>
+  Object.fromEntries([
+    ["query", parser.query === undefined ? [] : parseQuery(req, parser.query)],
+    ["headers", parser.headers === undefined ? [] : parseHeaders(req, parser.headers)],
+    ["body", parser.body === undefined ? [] : parseBody(req, parser.body)],
+  ]);
