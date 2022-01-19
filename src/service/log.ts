@@ -5,7 +5,7 @@ import { marshall } from "@aws-sdk/util-dynamodb";
 import { LogEvent, LogItem, LogItems } from "type/log";
 import { getItemsFromTable } from "util/dynamodb";
 import config from "config";
-import { roll } from "render";
+import { evaluate } from "render";
 import { WithPKSK } from "type/dynamo";
 
 type LogServiceParams = ServiceParams;
@@ -57,7 +57,7 @@ export class LogService extends Service {
           logId,
           t: now,
           expr: event.expr,
-          msg: roll(event.expr, []).output,
+          msg: evaluate(event.expr, []),
         };
         break;
     }
