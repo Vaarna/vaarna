@@ -1,0 +1,80 @@
+.container {
+  width: 100%;
+  height: calc(100% - 64px);
+  display: flex;
+  flex-direction: row;
+}
+
+.left > *:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+.left {
+  width: calc(100% * (2 / 3));
+  flex-grow: 2;
+  overflow-y: scroll;
+  padding: 0.5rem;
+}
+
+.right {
+  width: calc(100% / 3);
+  flex-grow: 1;
+}
+
+.left.showLeft {
+  width: 100%;
+}
+
+.right.showRight {
+  display: none;
+}
+
+@media only screen and (max-width: 801px) {
+  .left.showLeft {
+    width: 100%;
+  }
+  .right.showLeft {
+    display: none;
+  }
+
+  .left.showRight {
+    display: none;
+  }
+  .right.showRight {
+    display: revert;
+    width: 100%;
+  }
+}
+
+/* --- log items --- */
+
+.logItems {
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  height: calc(100% - 64px);
+}
+
+.logItems > *:nth-child(odd) {
+  background-color: lightgray;
+}
+
+.send {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0.5rem;
+  font-size: large;
+
+  height: 64px;
+}
+
+.sendInput {
+  width: 100%;
+}
+
+.sendButton {
+  margin-left: 0.5rem;
+  padding: 0 0.5rem;
+}

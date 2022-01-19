@@ -1,9 +1,11 @@
 .container {
+  height: 64px;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: baseline;
-  padding: 1rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid black;
 }
 
 .title {

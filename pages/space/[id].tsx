@@ -5,6 +5,9 @@ import { Sheet } from "component/Sheet";
 import { Upload } from "component/Upload";
 import { useRouter } from "next/router";
 import { z } from "zod";
+import { SideBySide } from "component/SideBySide";
+import { Header } from "component/Header";
+import Link from "next/link";
 
 const itemBase = () => ({
   id: uuid(),
@@ -164,7 +167,13 @@ const collectionInitialState: SheetState = {
 };
 
 export default function Space(): React.ReactNode {
-  const [state, dispatch] = useReducer(sheetStateReducer, collectionInitialState);
+  const [logItems, setLogItems] = useState<string[]>([]);
+  const addLogItem = (item: string) => setLogItems((prev) => [...prev, item]);
+
+  const [state, dispatch] = useReducer(
+    sheetStateReducer({ addLogItem }),
+    collectionInitialState
+  );
 
   const [spaceId, setSpaceId] = useState<string | null>(null);
   const router = useRouter();
@@ -173,13 +182,33 @@ export default function Space(): React.ReactNode {
     if (parsed.success) setSpaceId(parsed.data);
   }, [router]);
 
+  const [showRight, setShowRight] = useState(true);
+  const send = (v: string) => Promise.resolve(addLogItem(v));
+
   if (spaceId === null) return <span>redirecting...</span>;
 
   return (
     <Upload url="/api/asset" params={{ spaceId }}>
-      <div style={{ margin: "1rem" }}>
-        <Sheet {...{ state, dispatch }} />
-      </div>
+      <Header>
+        <Link href="/space/dd43fbda-40f0-49e7-8012-9485168262c1">
+          <a>Sheet</a>
+        </Link>
+        <button onClick={() => setShowRight((prev) => !prev)}>
+          {showRight ? "hide log" : "show log"}
+        </button>
+      </Header>
+      <SideBySide showRight={showRight} send={send}>
+        <>
+          <Sheet {...{ state, dispatch, addLogItem }} />
+          <Sheet {...{ state, dispatch, addLogItem }} />
+          <Sheet {...{ state, dispatch, addLogItem }} />
+        </>
+        <>
+          {logItems.map((v, i) => (
+            <div key={i}>{v}</div>
+          ))}
+        </>
+      </SideBySide>
     </Upload>
   );
 }
