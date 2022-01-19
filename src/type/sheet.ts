@@ -139,116 +139,115 @@ export type SheetItemAction =
   | { action: "ITEM.SET_READONLY"; readOnly: Item["readOnly"] }
   | { action: "ITEM.SET_TYPE"; type: Item["type"] }
   | { action: "ITEM.SET_MINMAX"; min: ItemRange["min"]; max: ItemRange["max"] }
-  | { action: "ITEM.COPY" }
+  | { action: "ITEM.COPY"; item: Item }
   | { action: "ITEM.REMOVE" }
   | { action: "ITEM.SET_ONCLICK_ENABLED"; onclickEnabled: Item["onclickEnabled"] }
   | { action: "ITEM.SET_ONCLICK"; onclick: Item["onclick"] }
   | { action: "ITEM.CLICK" };
 
-const sheetItemReducer = (
-  state: SheetState["items"],
-  action: SheetAction
-): SheetState["items"] =>
-  produce(state, (draft) => {
-    switch (action.action) {
-      case "ITEM.SET_GROUP":
-        draft.forEach((item) => {
-          if (item.id === action.id) item.group = action.group;
-        });
-        break;
-
-      case "ITEM.SET_KEY":
-        draft.forEach((item) => {
-          if (item.id === action.id) item.key = action.key;
-        });
-        break;
-
-      case "ITEM.SET_SORTKEY":
-        draft.forEach((item) => {
-          if (item.id === action.id) item.sortKey = action.sortKey;
-        });
-        break;
-
-      case "ITEM.SET_NAME":
-        draft.forEach((item) => {
-          if (item.id === action.id) item.name = action.name;
-        });
-        break;
-
-      case "ITEM.SET_VALUE":
-        draft.forEach((item) => {
-          if (item.id === action.id) item.value = action.value;
-        });
-        break;
-
-      case "ITEM.SET_READONLY":
-        draft.forEach((item) => {
-          if (item.id === action.id) item.readOnly = action.readOnly;
-        });
-        break;
-
-      case "ITEM.SET_TYPE": {
-        const parsedType = ItemTypeUnion.safeParse(action.type);
-        if (parsedType.success) {
+const sheetItemReducer =
+  ({ addLogItem }: SheetStateReducerParams) =>
+  (state: SheetState["items"], action: SheetAction): SheetState["items"] =>
+    produce(state, (draft) => {
+      switch (action.action) {
+        case "ITEM.SET_GROUP":
           draft.forEach((item) => {
-            if (item.id === action.id) item.type = parsedType.data;
+            if (item.id === action.id) item.group = action.group;
           });
-        }
-        break;
-      }
+          break;
 
-      case "ITEM.SET_MINMAX":
-        draft.forEach((item) => {
-          if (item.id === action.id) {
-            if (item.type !== "range") {
-              console.error(`tried to set min/max of item with type ${item.type}`);
-            } else {
-              item.min = action.min ?? item.min;
-              item.max = action.max ?? item.max;
-            }
+        case "ITEM.SET_KEY":
+          draft.forEach((item) => {
+            if (item.id === action.id) item.key = action.key;
+          });
+          break;
+
+        case "ITEM.SET_SORTKEY":
+          draft.forEach((item) => {
+            if (item.id === action.id) item.sortKey = action.sortKey;
+          });
+          break;
+
+        case "ITEM.SET_NAME":
+          draft.forEach((item) => {
+            if (item.id === action.id) item.name = action.name;
+          });
+          break;
+
+        case "ITEM.SET_VALUE":
+          draft.forEach((item) => {
+            if (item.id === action.id) item.value = action.value;
+          });
+          break;
+
+        case "ITEM.SET_READONLY":
+          draft.forEach((item) => {
+            if (item.id === action.id) item.readOnly = action.readOnly;
+          });
+          break;
+
+        case "ITEM.SET_TYPE": {
+          const parsedType = ItemTypeUnion.safeParse(action.type);
+          if (parsedType.success) {
+            draft.forEach((item) => {
+              if (item.id === action.id) item.type = parsedType.data;
+            });
           }
-        });
-        break;
+          break;
+        }
 
-      case "ITEM.SET_ONCLICK_ENABLED":
-        draft.forEach((item) => {
-          if (item.id === action.id) item.onclickEnabled = action.onclickEnabled;
-        });
-        break;
-
-      case "ITEM.SET_ONCLICK":
-        draft.forEach((item) => {
-          if (item.id === action.id) item.onclick = action.onclick;
-        });
-        break;
-
-      case "ITEM.CLICK":
-        // TODO: actually do something useful here...
-        draft
-          .filter((item) => item.id === action.id && item.onclickEnabled)
-          .forEach((item) => {
-            const res = evaluate(item.onclick, [
-              ...draft.flatMap((item) => itemToKeyValues(item)),
-              ["self", item.value],
-            ]);
-            console.log("click:", res);
+        case "ITEM.SET_MINMAX":
+          draft.forEach((item) => {
+            if (item.id === action.id) {
+              if (item.type !== "range") {
+                console.error(`tried to set min/max of item with type ${item.type}`);
+              } else {
+                item.min = action.min ?? item.min;
+                item.max = action.max ?? item.max;
+              }
+            }
           });
-        break;
+          break;
 
-      case "ITEM.COPY": {
-        // TODO: generate uuid on the server side
-        const item = draft.find((item) => item.id === action.id);
-        if (item !== undefined) draft.push({ ...item, id: uuid() });
-        break;
-      }
+        case "ITEM.SET_ONCLICK_ENABLED":
+          draft.forEach((item) => {
+            if (item.id === action.id) item.onclickEnabled = action.onclickEnabled;
+          });
+          break;
 
-      case "ITEM.REMOVE": {
-        const i = draft.findIndex((item) => item.id === action.id);
-        if (i >= 0) draft.splice(i, 1);
-        break;
+        case "ITEM.SET_ONCLICK":
+          draft.forEach((item) => {
+            if (item.id === action.id) item.onclick = action.onclick;
+          });
+          break;
+
+        case "ITEM.CLICK":
+          // TODO: actually do something useful here...
+          draft
+            .filter((item) => item.id === action.id && item.onclickEnabled)
+            .forEach((item) => {
+              const res = evaluate(item.onclick, [
+                ...draft.flatMap((item) => itemToKeyValues(item)),
+                ["self", item.value],
+              ]);
+              addLogItem(`click: ${res}`);
+            });
+          break;
+
+        case "ITEM.COPY": {
+          // TODO: generate uuid on the server side
+          const item = draft.find((item) => item.id === action.id);
+          if (item !== undefined) draft.push({ ...item, id: uuid() });
+          break;
+        }
+
+        case "ITEM.REMOVE": {
+          const i = draft.findIndex((item) => item.id === action.id);
+          if (i >= 0) draft.splice(i, 1);
+          break;
+        }
       }
-    }
-  });
+    });
 
 export type SheetGroupAction =
   | { action: "GROUP.SET_KEY"; key: Group["key"] }
@@ -258,48 +257,47 @@ export type SheetGroupAction =
   | { action: "GROUP.SET_SORTORDER"; sortOrder: Group["sortOrder"] }
   | { action: "GROUP.SET_SORTKEY"; sortKey: Group["sortKey"] };
 
-const sheetGroupReducer = (
-  state: SheetState["groups"],
-  action: SheetAction
-): SheetState["groups"] =>
-  produce(state, (draft) => {
-    switch (action.action) {
-      case "GROUP.SET_NAME":
-        if (action.id === "") break;
-        draft.forEach((group) => {
-          if (group.id === action.id) group.name = action.name;
-        });
-        break;
+const sheetGroupReducer =
+  (_params: SheetStateReducerParams) =>
+  (state: SheetState["groups"], action: SheetAction): SheetState["groups"] =>
+    produce(state, (draft) => {
+      switch (action.action) {
+        case "GROUP.SET_NAME":
+          if (action.id === "") break;
+          draft.forEach((group) => {
+            if (group.id === action.id) group.name = action.name;
+          });
+          break;
 
-      case "GROUP.SET_DISPLAY":
-        if (action.id === "") break;
-        draft.forEach((group) => {
-          if (group.id === action.id) group.display = action.display;
-        });
-        break;
+        case "GROUP.SET_DISPLAY":
+          if (action.id === "") break;
+          draft.forEach((group) => {
+            if (group.id === action.id) group.display = action.display;
+          });
+          break;
 
-      case "GROUP.SET_SORTBY":
-        if (action.id === "") break;
-        draft.forEach((group) => {
-          if (group.id === action.id) group.sortBy = action.sortBy;
-        });
-        break;
+        case "GROUP.SET_SORTBY":
+          if (action.id === "") break;
+          draft.forEach((group) => {
+            if (group.id === action.id) group.sortBy = action.sortBy;
+          });
+          break;
 
-      case "GROUP.SET_SORTORDER":
-        if (action.id === "") break;
-        draft.forEach((group) => {
-          if (group.id === action.id) group.sortOrder = action.sortOrder;
-        });
-        break;
+        case "GROUP.SET_SORTORDER":
+          if (action.id === "") break;
+          draft.forEach((group) => {
+            if (group.id === action.id) group.sortOrder = action.sortOrder;
+          });
+          break;
 
-      case "GROUP.SET_SORTKEY":
-        if (action.id === "") break;
-        draft.forEach((group) => {
-          if (group.id === action.id) group.sortKey = action.sortKey;
-        });
-        break;
-    }
-  });
+        case "GROUP.SET_SORTKEY":
+          if (action.id === "") break;
+          draft.forEach((group) => {
+            if (group.id === action.id) group.sortKey = action.sortKey;
+          });
+          break;
+      }
+    });
 
 export type SheetAction =
   | ActionWithId<SheetItemAction>
@@ -310,49 +308,52 @@ export type SheetAction =
 
 // --- Sheet state and dispatch logic ---
 
-export const sheetStateReducer = (
-  state: SheetState,
-  action: SheetAction
-): SheetState => {
-  switch (action.action) {
-    case "SHEET.SET_NAME":
-      return { ...state, name: action.name };
-
-    case "SHEET.NEW_ITEM":
-      // TODO: generate item on the server side
-      return {
-        ...state,
-        items: [
-          ...state.items,
-          {
-            id: uuid(),
-            group: "",
-            key: "",
-            sortKey: "",
-            name: "",
-            type: "omni",
-            value: "0",
-            readOnly: false,
-            onclickEnabled: false,
-            onclick: "",
-          },
-        ],
-      };
-
-    case "SHEET.NEW_GROUP":
-      return {
-        ...state,
-        groups: [...state.groups, { id: uuid(), name: "", key: action.key }],
-      };
-
-    default:
-      return {
-        ...state,
-        groups: sheetGroupReducer(state.groups, action),
-        items: sheetItemReducer(state.items, action),
-      };
-  }
+export type SheetStateReducerParams = {
+  addLogItem: (item: string) => void;
 };
+
+export const sheetStateReducer =
+  (params: SheetStateReducerParams) =>
+  (state: SheetState, action: SheetAction): SheetState => {
+    switch (action.action) {
+      case "SHEET.SET_NAME":
+        return { ...state, name: action.name };
+
+      case "SHEET.NEW_ITEM":
+        // TODO: generate item on the server side
+        return {
+          ...state,
+          items: [
+            ...state.items,
+            {
+              id: uuid(),
+              group: "",
+              key: "",
+              sortKey: "",
+              name: "",
+              type: "omni",
+              value: "0",
+              readOnly: false,
+              onclickEnabled: false,
+              onclick: "",
+            },
+          ],
+        };
+
+      case "SHEET.NEW_GROUP":
+        return {
+          ...state,
+          groups: [...state.groups, { id: uuid(), name: "", key: action.key }],
+        };
+
+      default:
+        return {
+          ...state,
+          groups: sheetGroupReducer(params)(state.groups, action),
+          items: sheetItemReducer(params)(state.items, action),
+        };
+    }
+  };
 
 // ---
 
