@@ -168,7 +168,9 @@ const collectionInitialState: SheetState = {
 
 export default function Space(): React.ReactNode {
   const [logItems, setLogItems] = useState<string[]>([]);
-  const addLogItem = (item: string) => setLogItems((prev) => [...prev, item]);
+  const addLogItem = (item: string) => {
+    setLogItems((prev) => [...prev, item]);
+  };
 
   const [state, dispatch] = useReducer(
     sheetStateReducer({ addLogItem }),
@@ -178,7 +180,7 @@ export default function Space(): React.ReactNode {
   const [spaceId, setSpaceId] = useState<string | null>(null);
   const router = useRouter();
   useEffect(() => {
-    const parsed = z.string().safeParse(router.query.id);
+    const parsed = z.string().safeParse(router.query.spaceId);
     if (parsed.success) setSpaceId(parsed.data);
   }, [router]);
 
