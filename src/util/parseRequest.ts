@@ -45,7 +45,11 @@ export const parseRequest = <
 >(
   req: RequestWithLogger,
   parser: Parser
-): { [k in keyof Parser]: Parser[k] extends z.ZodType<infer O> ? O : never } =>
+): {
+  [k in keyof Parser]: Parser[k] extends z.ZodType<infer O, infer _D, infer _I>
+    ? O
+    : never;
+} =>
   Object.fromEntries([
     ["query", parser.query === undefined ? [] : parseQuery(req, parser.query)],
     ["headers", parser.headers === undefined ? [] : parseHeaders(req, parser.headers)],
