@@ -21,7 +21,7 @@ help:
 
 .PHONY: init
 init:
-	${YARN}
+	${YARN} install --frozen-lockfile
 
 .PHONY: clean
 clean: clean-dev-services
