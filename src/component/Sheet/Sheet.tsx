@@ -1,16 +1,22 @@
 import styles from "./Sheet.module.css";
 import { useState } from "react";
-import { SheetState, SheetAction, groupItems, SheetGroupAction } from "type/sheet";
+import { SheetState, groupItems } from "util/evalItems";
 import { Mode } from "./common";
 import { Group } from "./Group";
 import classNames from "classnames";
+import { setSheetParameters } from "reducer/sheets";
+import { useAppDispatch } from "hooks";
+import { newItem } from "reducer/items";
+import { newGroup } from "reducer/groups";
 
 export type SheetProps = {
   state: SheetState;
-  dispatch: React.Dispatch<SheetAction>;
 };
 
-export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => {
+export const Sheet: React.FC<SheetProps> = ({ state }: SheetProps) => {
+  const dispatch = useAppDispatch();
+  const { sheetId } = state;
+
   const [mode, setMode] = useState<Mode>("display");
   const setDisplay = () => setMode("display");
   const setEdit = () => setMode("edit");
@@ -35,7 +41,7 @@ export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => 
           <input
             value={state.name}
             onChange={(ev) =>
-              dispatch({ action: "SHEET.SET_NAME", name: ev.target.value })
+              dispatch(setSheetParameters({ sheetId, name: ev.target.value }))
             }
           />
         )}
@@ -56,12 +62,10 @@ export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => 
       <div className={classNames({ [styles.body]: true, [styles.hidden]: hidden })}>
         {groups.map((group) => (
           <Group
-            key={group.id}
+            key={group.groupId}
             mode={mode}
             group={group}
             groups={state.groups.map((group) => group.key)}
-            dispatch={dispatch}
-            groupDispatch={(v: SheetGroupAction) => dispatch({ ...v, id: group.id })}
           />
         ))}
 
@@ -70,7 +74,7 @@ export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => 
             <button
               className={styles.newItem}
               onClick={() => {
-                dispatch({ action: "SHEET.NEW_ITEM" });
+                dispatch(newItem({ sheetId }));
               }}
             >
               New Item
@@ -84,7 +88,7 @@ export const Sheet: React.FC<SheetProps> = ({ state, dispatch }: SheetProps) => 
               <button
                 className={styles.newItem}
                 onClick={() => {
-                  dispatch({ action: "SHEET.NEW_GROUP", key: groupName });
+                  dispatch(newGroup({ sheetId, key: groupName }));
                   setGroupName("");
                 }}
               >

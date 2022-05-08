@@ -2,12 +2,12 @@ import "normalize.css/normalize.css";
 import "../styles/reset.css";
 import "../styles/master.css";
 
-import type { AppProps } from "next/app";
+import React, { FC } from "react";
+import { AppProps } from "next/app";
+import { wrapper } from "store";
 
-export default function App({ Component, pageProps }: AppProps): React.ReactNode {
-  return (
-    <>
-      <Component {...pageProps} />
-    </>
-  );
-}
+const WrappedApp: FC<AppProps> = ({ Component, pageProps }) => (
+  <Component {...pageProps} />
+);
+
+export default wrapper.withRedux(WrappedApp);

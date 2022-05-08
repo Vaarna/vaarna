@@ -1,77 +1,88 @@
-import { Item, ItemTypeUnion, SheetItemAction } from "type/sheet";
+import { useAppDispatch } from "hooks";
+import { copyItem, removeItem, setItemParameters, setItemType } from "reducer";
+import { Item, ItemType } from "type/sheet";
 import { callIfParsed, unionMembers } from "util/zod";
 import { Fields, FieldString, FieldCheckbox, FieldSelect } from "./Field";
 
 export type EditTemplateProps = {
   state: Item;
   groups: string[];
-  dispatch: React.Dispatch<SheetItemAction>;
 };
 
 export const EditTemplate: React.FC<EditTemplateProps> = ({
-  state: { key, sortKey, group, value, name, onclickEnabled, onclick, readOnly, type },
+  state: {
+    itemId,
+    key,
+    sortKey,
+    group,
+    value,
+    name,
+    onclickEnabled,
+    onclick,
+    readOnly,
+    type,
+  },
   groups,
-  dispatch,
   children,
 }: React.PropsWithChildren<EditTemplateProps>) => {
+  const dispatch = useAppDispatch();
+
   return (
     <Fields>
       <FieldSelect
         name="Group"
         value={group}
         options={groups}
-        onChange={(v) => dispatch({ action: "ITEM.SET_GROUP", group: v })}
+        onChange={(v) => dispatch(setItemParameters({ itemId, group: v }))}
       />
       <FieldString
         name="Key"
         value={key}
-        onChange={(v) => dispatch({ action: "ITEM.SET_KEY", key: v })}
+        onChange={(v) => dispatch(setItemParameters({ itemId, key: v }))}
       />
       <FieldString
         name="Sort Key"
         value={sortKey}
-        onChange={(v) => dispatch({ action: "ITEM.SET_SORTKEY", sortKey: v })}
+        onChange={(v) => dispatch(setItemParameters({ itemId, sortKey: v }))}
       />
       <FieldString
         name="Name"
         value={name}
-        onChange={(v) => dispatch({ action: "ITEM.SET_NAME", name: v })}
+        onChange={(v) => dispatch(setItemParameters({ itemId, name: v }))}
       />
       <FieldSelect
         name="Type"
         value={type}
-        options={unionMembers(ItemTypeUnion)}
-        onChange={callIfParsed(ItemTypeUnion, (type) =>
-          dispatch({ action: "ITEM.SET_TYPE", type })
+        options={unionMembers(ItemType)}
+        onChange={callIfParsed(ItemType, (type) =>
+          dispatch(setItemType({ itemId, type }))
         )}
       />
       <FieldCheckbox
         name="Readonly"
         value={readOnly}
-        onChange={(v) => dispatch({ action: "ITEM.SET_READONLY", readOnly: v })}
+        onChange={(v) => dispatch(setItemParameters({ itemId, readOnly: v }))}
       />
       <FieldString
         name="Value"
         value={value}
-        onChange={(v) => dispatch({ action: "ITEM.SET_VALUE", value: v })}
+        onChange={(v) => dispatch(setItemParameters({ itemId, value: v }))}
       />
       <FieldCheckbox
         name="Click Enabled"
         value={onclickEnabled}
-        onChange={(v) =>
-          dispatch({ action: "ITEM.SET_ONCLICK_ENABLED", onclickEnabled: v })
-        }
+        onChange={(v) => dispatch(setItemParameters({ itemId, onclickEnabled: v }))}
       />
       <FieldString
         name="Click"
         value={onclick}
-        onChange={(v) => dispatch({ action: "ITEM.SET_ONCLICK", onclick: v })}
+        onChange={(v) => dispatch(setItemParameters({ itemId, onclick: v }))}
       />
 
       {children}
 
-      <button onClick={() => dispatch({ action: "ITEM.COPY" })}>Copy</button>
-      <button onClick={() => dispatch({ action: "ITEM.REMOVE" })}>Remove</button>
+      <button onClick={() => dispatch(copyItem(itemId))}>Copy</button>
+      <button onClick={() => dispatch(removeItem(itemId))}>Remove</button>
     </Fields>
   );
 };

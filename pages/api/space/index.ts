@@ -1,13 +1,13 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { NextApiResponse } from "next";
 import { dynamoDbConfig } from "service/common";
-import { SpaceItem } from "type/space";
+import { Item } from "type/space";
 import { getItemsFromTable } from "util/dynamodb";
 import { parseQuery } from "util/parseRequest";
 import { RequestWithLogger, withDefaults } from "util/withDefaults";
 import { z } from "zod";
 
-// return assets, sheets, and logs in given space
+// return assets, sheets, items, and groups in given space
 
 const GetSpace = z.object({ spaceId: z.string().uuid() });
 
@@ -19,7 +19,7 @@ async function space(req: RequestWithLogger, res: NextApiResponse): Promise<void
       tableName: "Data",
       pk: { prefix: "space:", value: spaceId },
       sk: { value: null },
-    }).then(z.array(SpaceItem).parseAsync);
+    }).then(z.array(Item).parseAsync);
 
     return res.json(data);
   }

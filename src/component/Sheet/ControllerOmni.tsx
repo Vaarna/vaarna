@@ -1,4 +1,7 @@
-import { ItemEvaluated, ItemOmni, SheetItemAction } from "type/sheet";
+import { useAppDispatch } from "hooks";
+import { setItemParameters } from "reducer";
+import { ItemOmni } from "type/sheet";
+import { ItemEvaluated } from "util/evalItems";
 import { Mode } from "./common";
 import { Display, Edit, EditTemplate } from "./modes";
 
@@ -6,22 +9,19 @@ export type ControllerOmniProps = {
   mode: Mode;
   state: ItemEvaluated<ItemOmni>;
   groups: string[];
-  dispatch: React.Dispatch<SheetItemAction>;
 };
 
 export const ControllerOmni: React.FC<ControllerOmniProps> = ({
   mode,
   state,
   groups,
-  dispatch,
 }: ControllerOmniProps) => {
+  const dispatch = useAppDispatch();
+  const { itemId } = state;
+
   switch (mode) {
     case "display":
-      return (
-        <Display state={state} dispatch={dispatch}>
-          {state.valueEvaluated}
-        </Display>
-      );
+      return <Display state={state}>{state.valueEvaluated}</Display>;
 
     case "edit":
       return (
@@ -30,13 +30,13 @@ export const ControllerOmni: React.FC<ControllerOmniProps> = ({
           <input
             value={state.value}
             onChange={(ev) =>
-              dispatch({ action: "ITEM.SET_VALUE", value: ev.target.value })
+              dispatch(setItemParameters({ itemId, value: ev.target.value }))
             }
           />
         </Edit>
       );
 
     case "edit_template":
-      return <EditTemplate state={state} groups={groups} dispatch={dispatch} />;
+      return <EditTemplate state={state} groups={groups} />;
   }
 };

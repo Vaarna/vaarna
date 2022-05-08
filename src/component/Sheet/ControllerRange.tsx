@@ -1,4 +1,7 @@
-import { ItemEvaluated, ItemRange, SheetItemAction } from "type/sheet";
+import { useAppDispatch } from "hooks";
+import { setItemMinMax, setItemParameters } from "reducer";
+import { ItemRange } from "type/sheet";
+import { ItemEvaluated } from "util/evalItems";
 import { Mode } from "./common";
 import { Display, Edit, EditTemplate } from "./modes";
 import { FieldString } from "./modes/Field";
@@ -7,20 +10,21 @@ export type ControllerRangeProps = {
   mode: Mode;
   state: ItemEvaluated<ItemRange>;
   groups: string[];
-  dispatch: React.Dispatch<SheetItemAction>;
 };
 
 export const ControllerRange: React.FC<ControllerRangeProps> = ({
   mode,
   state,
   groups,
-  dispatch,
 }: ControllerRangeProps) => {
+  const dispatch = useAppDispatch();
+  const { itemId } = state;
+
   const leftPadStyle = { paddingLeft: "0.5rem" };
   switch (mode) {
     case "display":
       return (
-        <Display state={state} dispatch={dispatch}>
+        <Display state={state}>
           {state.valueEvaluated}
           {!state.maxEvaluated ? null : ` / ${state.maxEvaluated}`}
         </Display>
@@ -48,7 +52,7 @@ export const ControllerRange: React.FC<ControllerRangeProps> = ({
               max={state.maxEvaluated}
               value={state.valueEvaluated}
               onChange={(ev) =>
-                dispatch({ action: "ITEM.SET_VALUE", value: ev.target.value })
+                dispatch(setItemParameters({ itemId, value: ev.target.value }))
               }
             />
             {!state.maxEvaluated ? null : (
@@ -60,20 +64,16 @@ export const ControllerRange: React.FC<ControllerRangeProps> = ({
 
     case "edit_template":
       return (
-        <EditTemplate state={state} groups={groups} dispatch={dispatch}>
+        <EditTemplate state={state} groups={groups}>
           <FieldString
             name="Min"
-            value={state.min}
-            onChange={(v) =>
-              dispatch({ action: "ITEM.SET_MINMAX", min: v, max: state.max })
-            }
+            value={state.min ?? ""}
+            onChange={(v) => dispatch(setItemMinMax({ itemId, min: v }))}
           />
           <FieldString
             name="Max"
-            value={state.max}
-            onChange={(v) =>
-              dispatch({ action: "ITEM.SET_MINMAX", min: state.min, max: v })
-            }
+            value={state.max ?? ""}
+            onChange={(v) => dispatch(setItemMinMax({ itemId, max: v }))}
           />
         </EditTemplate>
       );

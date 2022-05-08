@@ -1,4 +1,7 @@
-import { ItemBoolean, ItemEvaluated, SheetItemAction } from "type/sheet";
+import { useAppDispatch } from "hooks";
+import { setItemParameters } from "reducer";
+import { ItemBoolean } from "type/sheet";
+import { ItemEvaluated } from "util/evalItems";
 import { Mode } from "./common";
 import { Display, Edit, EditTemplate } from "./modes";
 
@@ -6,21 +9,22 @@ export type ControllerCheckboxProps = {
   mode: Mode;
   state: ItemEvaluated<ItemBoolean>;
   groups: string[];
-  dispatch: React.Dispatch<SheetItemAction>;
 };
 
 export const ControllerCheckbox: React.FC<ControllerCheckboxProps> = ({
   mode,
   groups,
   state,
-  dispatch,
 }: ControllerCheckboxProps) => {
+  const dispatch = useAppDispatch();
+  const { itemId } = state;
+
   const valueEvaluatedBool = parseFloat(state.valueEvaluated) !== 0;
 
   switch (mode) {
     case "display":
       return (
-        <Display state={state} dispatch={dispatch}>
+        <Display state={state}>
           <input type="checkbox" checked={valueEvaluatedBool} disabled />
         </Display>
       );
@@ -33,16 +37,15 @@ export const ControllerCheckbox: React.FC<ControllerCheckboxProps> = ({
             type="checkbox"
             checked={valueEvaluatedBool}
             onChange={(ev) =>
-              dispatch({
-                action: "ITEM.SET_VALUE",
-                value: ev.target.checked ? "1" : "0",
-              })
+              dispatch(
+                setItemParameters({ itemId, value: ev.target.checked ? "1" : "0" })
+              )
             }
           />
         </Edit>
       );
 
     case "edit_template":
-      return <EditTemplate state={state} groups={groups} dispatch={dispatch} />;
+      return <EditTemplate state={state} groups={groups} />;
   }
 };
