@@ -1,34 +1,27 @@
 import styles from "./Group.module.css";
-import {
-  SheetGroupedItems,
-  SheetAction,
-  SheetGroupAction,
-  SheetItemAction,
-  SortByUnion,
-  SortOrderUnion,
-  DisplayUnion,
-} from "type/sheet";
+import { setGroupParameters } from "reducer";
+import { GroupDisplay, GroupSortBy, GroupSortOrder } from "type/sheet";
+import { SheetGroupedItems } from "util/evalItems";
 import classNames from "classnames";
 import { Controller } from "./Controller";
 import { Mode } from "./common";
 import { Fields, FieldSelect, FieldString } from "./modes/Field";
 import { callIfParsed, unionMembers } from "util/zod";
+import { useAppDispatch } from "hooks";
 
 export type GroupProps = {
   mode: Mode;
   group: SheetGroupedItems;
   groups: string[];
-  dispatch: React.Dispatch<SheetAction>;
-  groupDispatch: React.Dispatch<SheetGroupAction>;
 };
 
 export const Group: React.FC<GroupProps> = ({
   mode,
-  group: { id, items, key, name, sortKey, sortBy, sortOrder, display },
+  group: { groupId, items, key, name, sortKey, sortBy, sortOrder, display },
   groups,
-  dispatch,
-  groupDispatch,
 }: GroupProps) => {
+  const dispatch = useAppDispatch();
+
   let GroupHeader: React.ReactNode = null;
   switch (mode) {
     case "display":
@@ -50,37 +43,35 @@ export const Group: React.FC<GroupProps> = ({
           <FieldString
             name="Group Name"
             value={name ?? ""}
-            onChange={(name) => groupDispatch({ action: "GROUP.SET_NAME", name })}
+            onChange={(name) => dispatch(setGroupParameters({ groupId, name }))}
           />
           <FieldString
             name="Sort Key"
             value={sortKey ?? ""}
-            onChange={(sortKey) =>
-              groupDispatch({ action: "GROUP.SET_SORTKEY", sortKey })
-            }
+            onChange={(sortKey) => dispatch(setGroupParameters({ groupId, sortKey }))}
           />
           <FieldSelect
             name="Sort By"
             value={sortBy?.[0] ?? ""}
-            options={unionMembers(SortByUnion)}
-            onChange={callIfParsed(SortByUnion, (sortBy) =>
-              groupDispatch({ action: "GROUP.SET_SORTBY", sortBy: [sortBy] })
+            options={unionMembers(GroupSortBy)}
+            onChange={callIfParsed(GroupSortBy, (sortBy) =>
+              dispatch(setGroupParameters({ groupId, sortBy: [sortBy] }))
             )}
           />
           <FieldSelect
             name="Sort Order"
             value={sortOrder ?? ""}
-            options={unionMembers(SortOrderUnion)}
-            onChange={callIfParsed(SortOrderUnion, (sortOrder) =>
-              groupDispatch({ action: "GROUP.SET_SORTORDER", sortOrder })
+            options={unionMembers(GroupSortOrder)}
+            onChange={callIfParsed(GroupSortOrder, (sortOrder) =>
+              dispatch(setGroupParameters({ groupId, sortOrder }))
             )}
           />
           <FieldSelect
             name="Display"
             value={display ?? ""}
-            options={unionMembers(DisplayUnion)}
-            onChange={callIfParsed(DisplayUnion, (display) =>
-              groupDispatch({ action: "GROUP.SET_DISPLAY", display })
+            options={unionMembers(GroupDisplay)}
+            onChange={callIfParsed(GroupDisplay, (display) =>
+              dispatch(setGroupParameters({ groupId, display }))
             )}
           />
         </Fields>
@@ -89,7 +80,7 @@ export const Group: React.FC<GroupProps> = ({
 
   return (
     <div className={styles.container}>
-      {id === "" ? null : <div className={styles.title}>{GroupHeader}</div>}
+      {groupId === "" ? null : <div className={styles.title}>{GroupHeader}</div>}
       <div
         className={classNames({
           [styles.items]: true,
@@ -98,13 +89,7 @@ export const Group: React.FC<GroupProps> = ({
         })}
       >
         {items.map((item) => (
-          <Controller
-            key={item.id}
-            mode={mode}
-            groups={groups}
-            state={item}
-            dispatch={(v: SheetItemAction) => dispatch({ ...v, id: item.id })}
-          />
+          <Controller key={item.itemId} mode={mode} groups={groups} state={item} />
         ))}
       </div>
     </div>

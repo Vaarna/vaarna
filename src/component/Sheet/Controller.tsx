@@ -1,4 +1,5 @@
-import { Item, ItemEvaluated, SheetItemAction } from "type/sheet";
+import { Item } from "type/sheet";
+import { ItemEvaluated } from "util/evalItems";
 import { Mode } from "./common";
 import { ControllerOmni } from "./ControllerOmni";
 import { ControllerCheckbox } from "./ControllerCheckbox";
@@ -8,39 +9,21 @@ export type ControllerProps = {
   mode: Mode;
   state: ItemEvaluated<Item>;
   groups: string[];
-  dispatch: React.Dispatch<SheetItemAction>;
 };
 
 export const Controller: React.FC<ControllerProps> = ({
   mode,
   state,
   groups,
-  dispatch,
 }: ControllerProps) => {
   switch (state.type) {
     case "omni":
-      return (
-        <ControllerOmni mode={mode} state={state} groups={groups} dispatch={dispatch} />
-      );
+      return <ControllerOmni mode={mode} state={state} groups={groups} />;
 
     case "boolean":
-      return (
-        <ControllerCheckbox
-          mode={mode}
-          state={state}
-          groups={groups}
-          dispatch={dispatch}
-        />
-      );
+      return <ControllerCheckbox mode={mode} state={state} groups={groups} />;
 
     case "range":
-      return (
-        <ControllerRange
-          mode={mode}
-          state={state}
-          groups={groups}
-          dispatch={dispatch}
-        />
-      );
+      return <ControllerRange mode={mode} state={state} groups={groups} />;
   }
 };
