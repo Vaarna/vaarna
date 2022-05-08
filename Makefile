@@ -14,12 +14,6 @@ ESLINT := ${BIN}/eslint
 PRETTIER := ${BIN}/prettier
 
 JEST := NODE_OPTIONS=--experimental-vm-modules ${BIN}/jest
-TESTCAFE := ${BIN}/testcafe
-
-TESTCAFE_APP_INIT_DELAY := 1000
-TESTCAFE_BROWSERS := firefox
-DOMAIN = http://localhost:3000
-export DOMAIN
 
 .PHONY: help
 help:
@@ -31,12 +25,7 @@ init:
 
 .PHONY: clean
 clean: clean-dev-services
-	rm -rf \
-		.next \
-		cdk.out \
-		dist/ \
-		node_modules/ \
-		screenshots/
+	rm -rf .next/ dist/ node_modules/
 
 .PHONY: clean-dev-services
 clean-dev-services: dev-services-down
@@ -95,33 +84,3 @@ test-jest:
 .PHONY: test-jest-watch
 test-jest-watch: JEST_PARAMS += --watch
 test-jest-watch: test-jest
-
-.PHONY: test-testcafe
-test-testcafe:
-	${TESTCAFE} \
-		-a "${NEXT} dev" \
-		--app-init-delay ${TESTCAFE_APP_INIT_DELAY} \
-		${TESTCAFE_PARAMS} \
-		${TESTCAFE_BROWSERS}
-
-.PHONY: test-testcafe-watch
-test-testcafe-watch: TESTCAFE_PARAMS += --live
-test-testcafe-watch: test-testcafe
-
-.PHONY: test-testcafe-staging
-test-testcafe-staging: DOMAIN = http://staging.gm-screen.net
-test-testcafe-staging:
-	@echo wake up the heroku dyno before running tests
-	curl http://staging.gm-screen.net > /dev/null
-	${TESTCAFE} \
-		--app-init-delay 0 \
-		${TESTCAFE_PARAMS} \
-		${TESTCAFE_BROWSERS}
-
-.PHONY: test-testcafe-production
-test-testcafe-production: DOMAIN = http://gm-screen.net
-test-testcafe-production:
-	${TESTCAFE} \
-		--app-init-delay 0 \
-		${TESTCAFE_PARAMS} \
-		${TESTCAFE_BROWSERS}
