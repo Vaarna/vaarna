@@ -35,7 +35,11 @@ export function requestLogger(
 ): [P.Logger, string] {
   const t0 = process.hrtime.bigint();
 
-  const requestId = v4uuid();
+  const xRequestId = req.headers["x-request-id"];
+  let requestId;
+  if (typeof xRequestId === "string") requestId = xRequestId;
+  else requestId = v4uuid();
+
   const out = rootLogger.child({
     requestId,
   });
