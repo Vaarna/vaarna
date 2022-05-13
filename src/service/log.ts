@@ -1,6 +1,6 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { dynamoDbConfig, Service, ServiceParams } from "./common";
-import { v4 as uuidv4 } from "uuid";
+import { uuid } from "util/uuid";
 import { marshall } from "@aws-sdk/util-dynamodb";
 import { LogEvent, LogItem, LogItems } from "type/log";
 import { getItemsFromTable } from "util/dynamodb";
@@ -34,7 +34,7 @@ export class LogService extends Service {
 
   async event(event: LogEvent): Promise<LogItem> {
     const now = new Date().getTime();
-    const logId = uuidv4();
+    const logId = uuid();
 
     let message: WithPKSK<LogItem>;
     switch (event.type) {
