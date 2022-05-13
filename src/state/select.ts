@@ -1,18 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { createSelector } from "@reduxjs/toolkit";
-import { selectSheet, selectSheets } from "reducer";
-import type { RootState } from "store";
-import { Sheet } from "type/sheet";
 import { SheetState } from "util/evalItems";
-
-export const selectGroupInSheet = (state: RootState, sheetId: Sheet["sheetId"]) =>
-  Object.values(state.groups).filter((group) => group.sheetId === sheetId);
-export const selectItemInSheet = (state: RootState, sheetId: Sheet["sheetId"]) =>
-  Object.values(state.items).filter((item) => item.sheetId === sheetId);
+import { selectSheet, selectSheets } from "./sheets";
+import { selectGroups, selectGroupsInSheet } from "./groups";
+import { selectItems, selectItemsInSheet } from "./items";
 
 export const selectSheetState = createSelector(
-  [selectGroupInSheet, selectItemInSheet, selectSheet],
-  (groups, items, sheet): SheetState | undefined => {
+  [selectSheet, selectGroupsInSheet, selectItemsInSheet],
+  (sheet, groups, items): SheetState | undefined => {
     if (!sheet) return;
 
     const out: SheetState = { ...sheet, groups: [], items: [] };
@@ -28,9 +23,6 @@ export const selectSheetState = createSelector(
     return out;
   }
 );
-
-export const selectGroups = (state: RootState) => state.groups;
-export const selectItems = (state: RootState) => state.items;
 
 export const selectSheetStateAll = createSelector(
   [selectSheets, selectGroups, selectItems],

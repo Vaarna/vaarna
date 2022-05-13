@@ -1,5 +1,5 @@
-import { useAppDispatch } from "hooks";
-import { setItemParameters } from "reducer";
+import { useAppDispatch } from "state/hooks";
+import { setItemParameters } from "state/items";
 import { ItemOmni } from "type/sheet";
 import { ItemEvaluated } from "util/evalItems";
 import { Mode } from "./common";

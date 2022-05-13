@@ -1,5 +1,5 @@
 import styles from "./Group.module.css";
-import { setGroupParameters } from "reducer";
+import { setGroupParameters } from "state/groups";
 import { GroupDisplay, GroupSortBy, GroupSortOrder } from "type/sheet";
 import { SheetGroupedItems } from "util/evalItems";
 import classNames from "classnames";
@@ -7,7 +7,7 @@ import { Controller } from "./Controller";
 import { Mode } from "./common";
 import { Fields, FieldSelect, FieldString } from "./modes/Field";
 import { callIfParsed, unionMembers } from "util/zod";
-import { useAppDispatch } from "hooks";
+import { useAppDispatch } from "state/hooks";
 
 export type GroupProps = {
   mode: Mode;

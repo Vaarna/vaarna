@@ -1,5 +1,5 @@
-import { useAppDispatch } from "hooks";
-import { setItemMinMax, setItemParameters } from "reducer";
+import { useAppDispatch } from "state/hooks";
+import { setItemMinMax, setItemParameters } from "state/items";
 import { ItemRange } from "type/sheet";
 import { ItemEvaluated } from "util/evalItems";
 import { Mode } from "./common";

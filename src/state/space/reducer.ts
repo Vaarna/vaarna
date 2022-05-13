@@ -1,5 +1,4 @@
 import { createAction, createSlice } from "@reduxjs/toolkit";
-import type { RootState } from "store";
 
 const setSpaceId = createAction<SpaceState["spaceId"]>("setSpaceId");
 
@@ -22,5 +21,3 @@ const spaceId = createSlice({
 
 export default spaceId.reducer;
 export { setSpaceId };
-
-export const selectSpaceId = (state: RootState): string | null => state.space.spaceId;

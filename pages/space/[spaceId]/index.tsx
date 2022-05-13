@@ -5,10 +5,10 @@ import { useRouter } from "next/router";
 import { z } from "zod";
 import { SideBySide } from "component/SideBySide";
 import { Header } from "component/Header";
-import { selectSheetStateAll } from "select";
-import { useAppDispatch, useAppSelector } from "hooks";
-import { selectSpaceId, setSpaceId } from "reducer/space";
-import { newSheet } from "reducer";
+import { selectSheetStateAll } from "state/select";
+import { useAppDispatch, useAppSelector } from "state/hooks";
+import { selectSpaceId, setSpaceId } from "state/space";
+import { newSheet } from "state/sheets";
 
 export default function Space(): React.ReactNode {
   const router = useRouter();
