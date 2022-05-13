@@ -1,6 +1,6 @@
 import { createReadStream } from "fs";
 import { unlink } from "fs/promises";
-import { v4 as v4uuid } from "uuid";
+import { uuid } from "util/uuid";
 import { NextApiResponse } from "next";
 import { GetAssetHeaders, GetAssetQuery, PostAssetQuery } from "type/asset";
 import { parseRequest } from "util/parseRequest";
@@ -15,7 +15,7 @@ async function asset(req: RequestWithLogger, res: NextApiResponse): Promise<void
   async function post(query: PostAssetQuery, body: ParsedMultipartBody) {
     const out = await Promise.all(
       Object.entries(body.files).map(async ([field, file]) => {
-        const assetId = v4uuid();
+        const assetId = uuid();
         const s = createReadStream(file.path);
         const data = {
           assetId,

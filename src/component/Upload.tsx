@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { useState } from "react";
-import { v4 as v4uuid } from "uuid";
+import { uuid } from "util/uuid";
 import { useFileUpload } from "hook/useFileUpload";
 import { UploadContext, UploadProgress } from "context/UploadProgress";
 import axios from "axios";
@@ -49,7 +49,7 @@ export const Upload: React.FC<UploadProps> = ({
   useFileUpload((files) => {
     Promise.all(
       files.map((file) => {
-        const id = v4uuid();
+        const id = uuid();
         const fd = new FormData();
         fd.append("file", file, file.name);
 

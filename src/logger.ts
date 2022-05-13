@@ -1,4 +1,4 @@
-import { v4 as v4uuid } from "uuid";
+import { uuid } from "util/uuid";
 import { NextApiRequest, NextApiResponse } from "next";
 import P from "pino";
 
@@ -38,7 +38,7 @@ export function requestLogger(
   const xRequestId = req.headers["x-request-id"];
   let requestId;
   if (typeof xRequestId === "string") requestId = xRequestId;
-  else requestId = v4uuid();
+  else requestId = uuid();
 
   const out = rootLogger.child({
     requestId,
