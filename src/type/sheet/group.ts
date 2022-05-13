@@ -47,5 +47,15 @@ export const Group = z
       key: z.string(),
     })
   );
-
 export type Group = z.infer<typeof Group>;
+
+export const CreateGroup = Group.omit({ groupId: true });
+export type CreateGroup = z.infer<typeof CreateGroup>;
+
+export const UpdateGroup = Group.pick({ groupId: true }).and(
+  Group.omit({ sheetId: true }).partial()
+);
+export type UpdateGroup = z.infer<typeof UpdateGroup>;
+
+export const RemoveGroup = Group.pick({ groupId: true });
+export type RemoveGroup = z.infer<typeof RemoveGroup>;
