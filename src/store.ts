@@ -18,4 +18,6 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-export const wrapper = createWrapper<Store<RootState>>(() => store, { debug: true });
+export const wrapper = createWrapper<Store<RootState>>(() => store, {
+  debug: process.env.NODE_ENV === "development",
+});
