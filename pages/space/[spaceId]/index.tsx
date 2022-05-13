@@ -5,9 +5,9 @@ import { useRouter } from "next/router";
 import { z } from "zod";
 import { SideBySide } from "component/SideBySide";
 import { Header } from "component/Header";
-import { selectSpaceId, selectSheetStateAll } from "select";
+import { selectSheetStateAll } from "select";
 import { useAppDispatch, useAppSelector } from "hooks";
-import { setSpaceId } from "reducer/space";
+import { selectSpaceId, setSpaceId } from "reducer/space";
 import { newSheet } from "reducer";
 
 export default function Space(): React.ReactNode {
@@ -36,7 +36,7 @@ export default function Space(): React.ReactNode {
   return (
     <Upload url="/api/asset" params={{ spaceId }}>
       <Header>
-        <button onClick={() => dispatch(newSheet())}>New Sheet</button>
+        <button onClick={() => dispatch(newSheet({ name: "" }))}>New Sheet</button>
         <button onClick={() => setShowRight((prev) => !prev)}>
           {showRight ? "hide log" : "show log"}
         </button>
