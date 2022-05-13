@@ -4,10 +4,10 @@ import { SheetState, groupItems } from "util/evalItems";
 import { Mode } from "./common";
 import { Group } from "./Group";
 import classNames from "classnames";
-import { setSheetParameters } from "reducer/sheets";
-import { useAppDispatch } from "hooks";
-import { newItem } from "reducer/items";
-import { newGroup } from "reducer/groups";
+import { setSheetParameters } from "state/sheets";
+import { useAppDispatch } from "state/hooks";
+import { newItem } from "state/items";
+import { newGroup } from "state/groups";
 
 export type SheetProps = {
   state: SheetState;

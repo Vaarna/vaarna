@@ -4,7 +4,7 @@ import "../styles/master.css";
 
 import React from "react";
 import { AppProps } from "next/app";
-import { wrapper } from "store";
+import { wrapper } from "state/store";
 
 const WrappedApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

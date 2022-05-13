@@ -1,23 +1,40 @@
-import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createEntityAdapter,
+  createSlice,
+  nanoid,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import { Item, ItemBase, ItemRange, ItemType } from "type/sheet";
-import { setSpaceId } from "./space";
+import { setSpaceId } from "state/space";
 
-type ItemsState = Record<string, Item>;
+export const itemData = createEntityAdapter<Item>({
+  selectId: (model) => model.itemId,
+  sortComparer: (a, b) => {
+    if (a.name === b.name) return a.itemId.localeCompare(b.itemId);
+    return a.name.localeCompare(b.name);
+  },
+});
 
-const initialState: ItemsState = {};
+type ItemsState = {
+  newItemInProgress: boolean;
+} & ReturnType<typeof itemData.getInitialState>;
+
+const initialState: ItemsState = itemData.getInitialState({
+  newItemInProgress: false,
+});
 
 const items = createSlice({
   name: "items",
   initialState,
   extraReducers: (b) => {
     b.addCase(setSpaceId, (state) => {
-      for (const key of Object.keys(state)) delete state[key];
+      itemData.removeAll(state);
     });
   },
   reducers: {
     newItem(state, { payload: { sheetId } }: PayloadAction<{ sheetId: string }>) {
       const itemId = nanoid();
-      state[itemId] = {
+      itemData.addOne(state, {
         sheetId,
         itemId,
         type: "omni",
@@ -29,7 +46,7 @@ const items = createSlice({
         readOnly: false,
         onclickEnabled: false,
         onclick: "",
-      };
+      });
     },
 
     setItemParameters(
@@ -40,8 +57,7 @@ const items = createSlice({
         { itemId: Item["itemId"] } & Partial<Omit<ItemBase, "sheetId" | "itemId">>
       >
     ) {
-      const item = state[payload.itemId];
-      state[payload.itemId] = { ...item, ...payload };
+      itemData.updateOne(state, { id: payload.itemId, changes: payload });
     },
 
     setItemType(
@@ -50,7 +66,7 @@ const items = createSlice({
         payload: { itemId, type },
       }: PayloadAction<{ itemId: Item["itemId"]; type: ItemType }>
     ) {
-      state[itemId].type = type;
+      itemData.updateOne(state, { id: itemId, changes: { type } });
     },
 
     setItemMinMax(
@@ -63,22 +79,30 @@ const items = createSlice({
         max?: ItemRange["max"];
       }>
     ) {
-      const item = state[itemId];
+      const changes: { min?: ItemRange["min"]; max?: ItemRange["max"] } = {};
+
+      if (min !== undefined) changes.min = min;
+      if (max !== undefined) changes.max = max;
+
+      // TODO: check item.type before changing anything
+      const item = state.entities[itemId];
+      if (item === undefined) return;
       if (item.type !== "range")
         return console.error("tried to set min/max of non-range item");
 
-      if (min !== undefined) item.min = min;
-      if (max !== undefined) item.max = max;
+      itemData.updateOne(state, { id: itemId, changes });
     },
 
     removeItem(state, action: PayloadAction<Item["itemId"]>) {
-      delete state[action.payload];
+      itemData.removeOne(state, action.payload);
     },
 
     copyItem(state, action: PayloadAction<Item["itemId"]>) {
-      const item = state[action.payload];
+      const item = state.entities[action.payload];
+      if (item === undefined) return;
+
       const itemId = nanoid();
-      state[itemId] = { ...item, itemId };
+      itemData.addOne(state, { ...item, itemId });
     },
   },
 });
