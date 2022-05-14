@@ -4,8 +4,11 @@ import {
   nanoid,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { Item, ItemBase, ItemRange, ItemType } from "type/sheet";
-import { setSpaceId } from "state/space";
+import { Group, Item, ItemBase, ItemRange, ItemType, Sheet } from "type/space";
+import { setSpaceId } from "state/slice";
+import { RootState } from "state/store";
+
+// --- REDUCER ---
 
 export const itemData = createEntityAdapter<Item>({
   selectId: (model) => model.itemId,
@@ -116,3 +119,18 @@ export const {
   removeItem,
   copyItem,
 } = items.actions;
+
+// --- SELECT ---
+
+const itemsSelectors = itemData.getSelectors<RootState>((state) => state.items);
+
+export const selectItem = itemsSelectors.selectById;
+export const selectItems = itemsSelectors.selectAll;
+
+export const selectItemsInSheet = (
+  state: RootState,
+  sheetId: Sheet["sheetId"]
+): Item[] => selectItems(state).filter((group) => group.sheetId === sheetId);
+
+export const selectItemsInGroup = (state: RootState, groupKey: Group["key"]): Item[] =>
+  selectItems(state).filter((group) => group.group === groupKey);

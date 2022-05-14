@@ -1,6 +1,6 @@
-import { useAppDispatch } from "state/hooks";
-import { setItemParameters } from "state/items";
-import { ItemBoolean } from "type/sheet";
+import { useAppDispatch } from "state/hook";
+import { setItemParameters } from "state/slice";
+import { ItemBoolean } from "type/space";
 import { ItemEvaluated } from "util/evalItems";
 import { Mode } from "./common";
 import { Display, Edit, EditTemplate } from "./modes";

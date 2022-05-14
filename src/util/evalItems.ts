@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { evaluate } from "../render";
-import { Item, Group, Sheet } from "type/sheet";
+import { Item, Group, Sheet } from "type/space";
 
 export type ItemEvaluated<T> = T & {
   valueEvaluated: string;

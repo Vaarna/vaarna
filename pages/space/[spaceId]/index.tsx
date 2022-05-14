@@ -6,9 +6,13 @@ import { z } from "zod";
 import { SideBySide } from "component/SideBySide";
 import { Header } from "component/Header";
 import { selectSheetStateAll } from "state/select";
-import { useAppDispatch, useAppSelector } from "state/hooks";
-import { selectSpaceId, setSpaceId } from "state/space";
-import { newSheet } from "state/sheets";
+import { useAppDispatch, useAppSelector } from "state/hook";
+import {
+  selectSheetCreateInProgress,
+  selectSpaceId,
+  setSpaceId,
+  createSheet,
+} from "state/slice";
 
 export default function Space(): React.ReactNode {
   const router = useRouter();
@@ -21,6 +25,7 @@ export default function Space(): React.ReactNode {
     if (parsed.success) dispatch(setSpaceId(parsed.data));
   }, [router, dispatch]);
 
+  const createSheetInProgress = useAppSelector(selectSheetCreateInProgress);
   const sheets = useAppSelector((state) => selectSheetStateAll(state));
 
   const [logItems, setLogItems] = useState<string[]>([]);
@@ -36,7 +41,12 @@ export default function Space(): React.ReactNode {
   return (
     <Upload url="/api/asset" params={{ spaceId }}>
       <Header>
-        <button onClick={() => dispatch(newSheet({ name: "" }))}>New Sheet</button>
+        <button
+          disabled={createSheetInProgress}
+          onClick={() => dispatch(createSheet({ name: "" }))}
+        >
+          New Sheet
+        </button>
         <button onClick={() => setShowRight((prev) => !prev)}>
           {showRight ? "hide log" : "show log"}
         </button>

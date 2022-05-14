@@ -127,7 +127,9 @@ async function getItemsAll(
 type GetItemsParameters = {
   tableName: string;
   pk: { prefix?: string; value: string };
-  sk: { prefix?: string; value: string[] | string | null };
+  sk:
+    | { prefix: string; value: string[] | string }
+    | { value: string[] | string | null };
 };
 
 export async function getItemsFromTable(
@@ -136,7 +138,7 @@ export async function getItemsFromTable(
 ): Promise<unknown[]> {
   const { tableName } = params;
   const pk = `${params.pk.prefix ?? ""}${params.pk.value}`;
-  const skPrefix = params.sk.prefix ?? "";
+  const skPrefix = "prefix" in params.sk ? params.sk.prefix ?? "" : "";
   const skValue = params.sk.value;
 
   let items;

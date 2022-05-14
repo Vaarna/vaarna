@@ -1,4 +1,5 @@
 import z from "zod";
+import { Sheet } from "./sheet";
 
 const display = {
   rows: z.literal("rows"),
@@ -43,7 +44,7 @@ export const Group = z
   .merge(
     z.object({
       groupId: z.union([z.literal(""), z.string().uuid()]),
-      sheetId: z.string().uuid(),
+      sheetId: Sheet.shape.sheetId,
       key: z.string(),
     })
   );

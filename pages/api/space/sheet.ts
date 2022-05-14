@@ -1,41 +1,54 @@
 import { NextApiResponse } from "next";
-import { CreateSheet } from "type/sheet";
+import { CreateSheet, Space } from "type/space";
 import { parseRequest } from "util/parseRequest";
-import { uuid } from "util/uuid";
 import { RequestWithLogger, withDefaults } from "util/withDefaults";
 import { z } from "zod";
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
-import { marshall } from "@aws-sdk/util-dynamodb";
-import { dynamoDbConfig } from "service/common";
+import { SpaceService } from "service/space";
+import { QueryParameterStringUuid } from "type/query";
 
-async function space(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
+async function sheet(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
+  const svc = new SpaceService(req);
+
+  if (req.method === "GET") {
+    // TODO: find out why this does not work
+    // const { spaceId, sheetId } = parseQuery(
+    //   req,
+    //   z.object({
+    //     spaceId: Space.shape.spaceId,
+    //     sheetId: QueryParameterStringUuid,
+    //   })
+    // );
+
+    const {
+      query: { spaceId, sheetId },
+    } = parseRequest(req, {
+      query: z.object({
+        spaceId: Space.shape.spaceId,
+        sheetId: QueryParameterStringUuid,
+      }),
+    });
+
+    const sheet = await svc.getSheet(spaceId, sheetId);
+
+    return res.json({ sheet });
+  }
+
   if (req.method === "POST") {
-    const db = new DynamoDBClient(dynamoDbConfig(req.logger));
-
     const {
       query: { spaceId },
       body,
     } = parseRequest(req, {
-      query: z.object({ spaceId: z.string().uuid() }),
+      query: z.object({ spaceId: Space.shape.spaceId }),
       body: CreateSheet,
     });
 
-    const sheetId = uuid();
+    const sheet = await svc.createSheet(spaceId, body);
 
-    const cmd = new PutItemCommand({
-      TableName: "Data",
-      Item: marshall({
-        ...body,
-        sheetId,
-        pk: `space:${spaceId}`,
-        sk: `sheet:${sheetId}`,
-      }),
-    });
-
-    await db.send(cmd);
-
-    return res.json({ spaceId, sheet: { ...body, sheetId } });
+    return res.json({ sheet });
   }
+
+  // TODO: implement PATCH
+  // TODO: implement DELETE
 }
 
-export default withDefaults(["POST"], space);
+export default withDefaults(["POST"], sheet);

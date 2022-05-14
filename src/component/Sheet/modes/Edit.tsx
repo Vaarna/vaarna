@@ -1,5 +1,5 @@
 import styles from "./Display.module.css";
-import { Item } from "type/sheet";
+import { Item } from "type/space";
 import { PropsWithExactlyTwoChildren } from "util/react";
 
 export type EditProps = PropsWithExactlyTwoChildren<{
