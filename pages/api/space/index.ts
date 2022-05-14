@@ -1,27 +1,18 @@
 import { NextApiResponse } from "next";
-import { CreateSpace, Space } from "type/space";
-import { parseBody, parseQuery } from "util/parseRequest";
 import { RequestWithLogger, withDefaults } from "util/withDefaults";
-import { z } from "zod";
-import { SpaceService } from "service/space";
+import { backend } from "api";
 
 async function space(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
-  const svc = new SpaceService(req);
+  const conf = backend.dynamoDbConfigFromRequest(req);
 
   if (req.method === "GET") {
-    const { spaceId } = parseQuery(req, z.object({ spaceId: Space.shape.spaceId }));
-
-    const space = await svc.getSpace(spaceId);
-
-    return res.json(space);
+    const data = await backend.getSpace(req, conf);
+    return res.json(data);
   }
 
   if (req.method === "POST") {
-    const body = parseBody(req, CreateSpace);
-
-    const space = await svc.createSpace(body);
-
-    return res.json(space);
+    const data = await backend.createSpace(req, conf);
+    return res.json(data);
   }
 
   // TODO: implement PATCH

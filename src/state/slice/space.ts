@@ -1,5 +1,5 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import api from "api";
+import { frontend } from "api";
 import type { RootState } from "state/store";
 import { CreateSpace, Space } from "type/space";
 
@@ -49,9 +49,9 @@ export const setSpaceId = createAction<SpaceState["spaceId"]>("setSpaceId");
 export const createSpace = createAsyncThunk<Space, CreateSpace, { state: RootState }>(
   "space/create",
   async (space, thunkApi) => {
-    return api.createSpace(space, thunkApi);
+    return frontend.createSpace(space, thunkApi);
   },
   {
-    condition: (_state, { getState }) => !getState().space.createInProgress,
+    condition: (_state, { getState }) => !selectSpaceCreateInProgress(getState()),
   }
 );

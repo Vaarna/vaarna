@@ -1,54 +1,22 @@
 import { NextApiResponse } from "next";
-import { CreateSheet, Space } from "type/space";
-import { parseRequest } from "util/parseRequest";
 import { RequestWithLogger, withDefaults } from "util/withDefaults";
-import { z } from "zod";
-import { SpaceService } from "service/space";
-import { QueryParameterStringUuid } from "type/query";
+import { backend } from "api";
 
 async function sheet(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
-  const svc = new SpaceService(req);
+  const conf = backend.dynamoDbConfigFromRequest(req);
 
   if (req.method === "GET") {
-    // TODO: find out why this does not work
-    // const { spaceId, sheetId } = parseQuery(
-    //   req,
-    //   z.object({
-    //     spaceId: Space.shape.spaceId,
-    //     sheetId: QueryParameterStringUuid,
-    //   })
-    // );
-
-    const {
-      query: { spaceId, sheetId },
-    } = parseRequest(req, {
-      query: z.object({
-        spaceId: Space.shape.spaceId,
-        sheetId: QueryParameterStringUuid,
-      }),
-    });
-
-    const sheet = await svc.getSheet(spaceId, sheetId);
-
-    return res.json({ sheet });
+    const data = await backend.getSheet(req, conf);
+    return res.json(data);
   }
 
   if (req.method === "POST") {
-    const {
-      query: { spaceId },
-      body,
-    } = parseRequest(req, {
-      query: z.object({ spaceId: Space.shape.spaceId }),
-      body: CreateSheet,
-    });
-
-    const sheet = await svc.createSheet(spaceId, body);
-
-    return res.json({ sheet });
+    const data = await backend.createSheet(req, conf);
+    return res.json(data);
   }
 
   // TODO: implement PATCH
   // TODO: implement DELETE
 }
 
-export default withDefaults(["POST"], sheet);
+export default withDefaults(["GET", "POST"], sheet);

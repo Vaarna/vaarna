@@ -33,8 +33,7 @@ async function getItemsSingle(
     return [];
   }
 
-  const item = unmarshall(res.Item);
-  return [item];
+  return [unmarshall(res.Item)];
 }
 
 type GetItemsMultipleParameters = {
@@ -124,17 +123,22 @@ async function getItemsAll(
   return items;
 }
 
-type GetItemsParameters = {
+type GetItemsBase = {
   tableName: string;
   pk: { prefix?: string; value: string };
-  sk:
-    | { prefix: string; value: string[] | string }
-    | { value: string[] | string | null };
+};
+
+type GetAllItems = GetItemsBase & {
+  sk: { value: null };
+};
+
+type GetSingleItemOrMultiple = GetItemsBase & {
+  sk: { prefix?: string; value: string[] | string };
 };
 
 export async function getItemsFromTable(
   db: DynamoDBClient,
-  params: GetItemsParameters
+  params: GetAllItems | GetSingleItemOrMultiple
 ): Promise<unknown[]> {
   const { tableName } = params;
   const pk = `${params.pk.prefix ?? ""}${params.pk.value}`;
@@ -147,7 +151,11 @@ export async function getItemsFromTable(
     items = await getItemsAll(db, { tableName, pk });
   } else if (typeof skValue === "string") {
     logger.info("get single item from table %s", tableName);
-    items = await getItemsSingle(db, { tableName, pk, sk: `${skPrefix}${skValue}` });
+    items = await getItemsSingle(db, {
+      tableName,
+      pk,
+      sk: `${skPrefix}${skValue}`,
+    });
   } else {
     logger.info("get multiple items from table %s", tableName);
     items = await getItemsMultiple(db, {

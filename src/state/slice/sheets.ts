@@ -4,7 +4,7 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import api from "api";
+import { frontend } from "api";
 import { setSpaceId, selectSpaceId } from "state/slice";
 import { RootState } from "state/store";
 import { CreateSheet, Sheet } from "type/space";
@@ -78,7 +78,9 @@ export const createSheet = createAsyncThunk<Sheet, CreateSheet, { state: RootSta
   async (sheet, { getState, signal, requestId }) => {
     const spaceId = selectSpaceId(getState());
     if (spaceId === null) throw new Error("spaceId is not set");
-    return api.createSheet({ spaceId, sheet }, { signal, requestId });
+
+    const res = await frontend.createSheet({ spaceId, sheet }, { signal, requestId });
+    return res.sheet;
   },
   {
     condition: (_state, { getState }) => !selectSheetCreateInProgress(getState()),
