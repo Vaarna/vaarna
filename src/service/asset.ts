@@ -220,7 +220,7 @@ export class AssetService extends Service {
 
   async getAssetData(query: {
     spaceId: Space["spaceId"];
-    assetId: AssetData["assetId"][] | AssetData["assetId"] | null;
+    assetId: AssetData["assetId"][] | AssetData["assetId"];
   }): Promise<AssetData[]> {
     const data = await getItemsFromTable(this.db, {
       tableName: this.tableName,

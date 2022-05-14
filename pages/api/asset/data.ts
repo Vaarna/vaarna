@@ -1,6 +1,5 @@
 import { NextApiResponse } from "next";
 import { AssetService } from "service/asset";
-import { QueryParameterStringUuid } from "type/query";
 import { Space } from "type/space";
 import { parseRequest } from "util/parseRequest";
 import { RequestWithLogger, withDefaults } from "util/withDefaults";
@@ -12,7 +11,7 @@ async function assetData(req: RequestWithLogger, res: NextApiResponse): Promise<
   const { query } = parseRequest(req, {
     query: z.object({
       spaceId: Space.shape.spaceId,
-      assetId: QueryParameterStringUuid,
+      assetId: z.array(z.string()).or(z.string()),
     }),
   });
   return res.json({ data: await svc.getAssetData(query) });
