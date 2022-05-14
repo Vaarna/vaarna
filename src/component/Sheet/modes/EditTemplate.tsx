@@ -1,6 +1,6 @@
-import { useAppDispatch } from "state/hooks";
-import { copyItem, removeItem, setItemParameters, setItemType } from "state/items";
-import { Item, ItemType } from "type/sheet";
+import { useAppDispatch } from "state/hook";
+import { copyItem, removeItem, setItemParameters, setItemType } from "state/slice";
+import { Item, ItemType } from "type/space";
 import { callIfParsed, unionMembers } from "util/zod";
 import { Fields, FieldString, FieldCheckbox, FieldSelect } from "./Field";
 

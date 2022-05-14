@@ -4,8 +4,11 @@ import {
   nanoid,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { Group } from "type/sheet";
-import { setSpaceId } from "state/space";
+import type { Group, Sheet } from "type/space";
+import { setSpaceId } from "state/slice";
+import type { RootState } from "state/store";
+
+// --- REDUCER ---
 
 export const groupData = createEntityAdapter<Group>({
   selectId: (model) => model.groupId,
@@ -55,3 +58,15 @@ const groups = createSlice({
 
 export default groups.reducer;
 export const { newGroup, setGroupParameters } = groups.actions;
+
+// --- SELECT ---
+
+const groupsSelectors = groupData.getSelectors<RootState>((state) => state.groups);
+
+export const selectGroup = groupsSelectors.selectById;
+export const selectGroups = groupsSelectors.selectAll;
+
+export const selectGroupsInSheet = (
+  state: RootState,
+  sheetId: Sheet["sheetId"]
+): Group[] => selectGroups(state).filter((group) => group.sheetId === sheetId);

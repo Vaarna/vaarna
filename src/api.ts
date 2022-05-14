@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CreateSheet, Sheet, Space } from "type/sheet";
+import { CreateSheet, CreateSpace, Sheet, Space } from "type/space";
 
 type Options = {
   signal?: AbortSignal;
@@ -15,7 +15,16 @@ const headers = (o?: Options) =>
     [["X-Request-Id", o?.requestId]].filter((v) => v[1] !== undefined)
   );
 
-export const createSheet = async (
+const createSpace = async (sheet: CreateSpace, o?: Options): Promise<Space> => {
+  const res = await a.post("/space", sheet, {
+    headers: headers(o),
+    signal: o?.signal,
+  });
+
+  return Space.parse(res.data);
+};
+
+const createSheet = async (
   { spaceId, sheet }: { spaceId: Space["spaceId"]; sheet: CreateSheet },
   o?: Options
 ): Promise<Sheet> => {
@@ -27,3 +36,10 @@ export const createSheet = async (
 
   return Sheet.parse(res.data.sheet);
 };
+
+const defaults = {
+  createSpace,
+  createSheet,
+};
+
+export default defaults;

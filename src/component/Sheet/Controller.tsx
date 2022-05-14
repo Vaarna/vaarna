@@ -1,4 +1,4 @@
-import { Item } from "type/sheet";
+import { Item } from "type/space";
 import { ItemEvaluated } from "util/evalItems";
 import { Mode } from "./common";
 import { ControllerOmni } from "./ControllerOmni";

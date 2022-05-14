@@ -13,14 +13,21 @@ import config from "config";
 import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
-import { WithPKSK } from "type/dynamo";
-import { GetAssetHeaders, GetAssetQuery } from "type/asset";
-import { AssetData, AssetDatas, GetAssetDataQuery, getKind } from "type/assetData";
 import { ApiInternalServerError } from "type/error";
-import { Asset } from "type/space";
 import { getItemsFromTable } from "util/dynamodb";
 import { z } from "zod";
 import { dynamoDbConfig, s3Config, Service, ServiceParams } from "./common";
+import { AssetData, Space } from "type/space";
+import { getKind } from "util/getKind";
+
+export const GetAssetHeaders = z
+  .object({
+    range: z.string(),
+    "if-modified-since": z.string().transform((v) => new Date(v)),
+    "if-none-match": z.string(),
+  })
+  .partial();
+export type GetAssetHeaders = z.infer<typeof GetAssetHeaders>;
 
 type ApiHeaders = {
   name: string;
@@ -116,7 +123,7 @@ export class AssetService extends Service {
   }
 
   async headAsset(
-    query: GetAssetQuery,
+    query: { assetId: AssetData["assetId"] },
     override?: { status?: number }
   ): Promise<AssetResponse> {
     const cmd = new HeadObjectCommand({
@@ -134,7 +141,7 @@ export class AssetService extends Service {
   }
 
   async getAsset(
-    query: GetAssetQuery,
+    query: { assetId: AssetData["assetId"] },
     headers: GetAssetHeaders
   ): Promise<AssetResponse> {
     const cmd = new GetObjectCommand({
@@ -194,29 +201,33 @@ export class AssetService extends Service {
     await this.s3.send(cmd);
 
     const kind = getKind(params.contentType);
-    const item: WithPKSK<AssetData> = {
+    const item = {
       ...params,
       kind,
-      pk: `space:${params.spaceId}`,
-      sk: `asset:${params.assetId}`,
     };
+
     const dbCmd = new PutItemCommand({
       TableName: this.tableName,
-      Item: marshall(item),
+      Item: marshall({
+        ...item,
+        pk: `space:${params.spaceId}`,
+        sk: `assetData:${params.assetId}`,
+      }),
     });
 
     await this.db.send(dbCmd);
   }
 
-  async getAssetData(query: GetAssetDataQuery): Promise<AssetDatas> {
+  async getAssetData(query: {
+    spaceId: Space["spaceId"];
+    assetId: AssetData["assetId"][] | AssetData["assetId"] | null;
+  }): Promise<AssetData[]> {
     const data = await getItemsFromTable(this.db, {
       tableName: this.tableName,
       pk: { prefix: "space:", value: query.spaceId },
-      sk: { prefix: "asset:", value: query.assetId ?? null },
+      sk: { prefix: "assetData:", value: query.assetId },
     });
 
-    return AssetDatas.parse(
-      data.map((v) => Asset.parse(v)).filter((v) => v.sk.startsWith("asset:"))
-    );
+    return z.array(AssetData).parse(data);
   }
 }

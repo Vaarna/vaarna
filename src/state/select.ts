@@ -1,9 +1,14 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { createSelector } from "@reduxjs/toolkit";
 import { SheetState } from "util/evalItems";
-import { selectSheet, selectSheets } from "./sheets";
-import { selectGroups, selectGroupsInSheet } from "./groups";
-import { selectItems, selectItemsInSheet } from "./items";
+import {
+  selectGroups,
+  selectGroupsInSheet,
+  selectItems,
+  selectItemsInSheet,
+  selectSheet,
+  selectSheets,
+} from "./slice";
 
 export const selectSheetState = createSelector(
   [selectSheet, selectGroupsInSheet, selectItemsInSheet],

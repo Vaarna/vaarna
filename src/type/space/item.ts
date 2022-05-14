@@ -1,7 +1,8 @@
 import z from "zod";
+import { Sheet } from "./sheet";
 
 export const ItemBase = z.object({
-  sheetId: z.string().uuid(),
+  sheetId: Sheet.shape.sheetId,
   itemId: z.string().uuid(),
   group: z.string(),
   key: z.string(),

@@ -1,13 +1,13 @@
 import styles from "./Group.module.css";
-import { setGroupParameters } from "state/groups";
-import { GroupDisplay, GroupSortBy, GroupSortOrder } from "type/sheet";
+import { setGroupParameters } from "state/slice";
+import { GroupDisplay, GroupSortBy, GroupSortOrder } from "type/space";
 import { SheetGroupedItems } from "util/evalItems";
 import classNames from "classnames";
 import { Controller } from "./Controller";
 import { Mode } from "./common";
 import { Fields, FieldSelect, FieldString } from "./modes/Field";
 import { callIfParsed, unionMembers } from "util/zod";
-import { useAppDispatch } from "state/hooks";
+import { useAppDispatch } from "state/hook";
 
 export type GroupProps = {
   mode: Mode;

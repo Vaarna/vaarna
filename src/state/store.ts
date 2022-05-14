@@ -1,10 +1,10 @@
 import { configureStore, Store } from "@reduxjs/toolkit";
 import { createWrapper } from "next-redux-wrapper";
 
-import space from "./space/reducer";
-import sheets from "./sheets/reducer";
-import groups from "./groups/reducer";
-import items from "./items/reducer";
+import space from "./slice/space";
+import sheets from "./slice/sheets";
+import groups from "./slice/groups";
+import items from "./slice/items";
 
 export const store = configureStore({
   devTools: process.env.NODE_ENV === "development",
