@@ -46,7 +46,7 @@
     "@types/bytes": "^3.1.1",
     "@types/jest": "^27.0.3",
     "@types/lodash": "^4.14.170",
-    "@types/multiparty": "^0.0.32",
+    "@types/multiparty": "^0.0.33",
     "@types/mustache": "^4.1.2",
     "@types/node": "^16.11.11",
     "@types/pino": "^6.3.12",
