@@ -17,7 +17,7 @@
     "start": "NODE_ENV=production next start --port $PORT"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.16.0",
+    "@aws-sdk/client-dynamodb": "^3.87.0",
     "@aws-sdk/client-s3": "^3.19.0",
     "@aws-sdk/util-dynamodb": "^3.21.0",
     "@dice-roller/rpg-dice-roller": "^5.1.0",
