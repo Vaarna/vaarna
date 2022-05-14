@@ -911,10 +911,10 @@
     "@aws-sdk/types" "3.78.0"
     tslib "^2.3.1"
 
-"@aws-sdk/util-dynamodb@^3.21.0":
-  version "3.85.0"
-  resolved "https://registry.yarnpkg.com/@aws-sdk/util-dynamodb/-/util-dynamodb-3.85.0.tgz#d118f0389c186681b349c9f2e76c41019d4fda3c"
-  integrity sha512-ILG4WcFQ+3GNSrqR+rs1NiaJpSxnHjrIT279K/Ri+MqFqvkHzlNqIIn+NbRj1/5DGUVMD/VlpdREqWX8F3xq9A==
+"@aws-sdk/util-dynamodb@^3.87.0":
+  version "3.87.0"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/util-dynamodb/-/util-dynamodb-3.87.0.tgz#d1f2e05ecbefd762cb31315ad61228f56e7cd87c"
+  integrity sha512-Qh6bHZdVd8+y2h2eJmfYPa5BwNaY65Q135ZbHypQCjiR87Xy50qdVlfWvVmn0EedLqvDVZMPpBrrrcPXMaqvAg==
   dependencies:
     tslib "^2.3.1"
 
@@ -1880,13 +1880,6 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.1.tgz#20f18294f797f2209b5f65c8e3b5c8e8261d127c"
   integrity sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw==
-
-"@types/use-persisted-state@^0.3.0":
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/@types/use-persisted-state/-/use-persisted-state-0.3.1.tgz#a630fa77ed628ec12a80f0a597b6daf6a48f6237"
-  integrity sha512-GZtzdCPeR+KZfrzKrVLnbpRcHSCVDHaFCJ0QtkXDAmh5M+eUJqGquFtN+eUOvAMIjwLgTZ2zKq0/JL+e1/gf8g==
-  dependencies:
-    "@types/react" "*"
 
 "@types/use-sync-external-store@^0.0.3":
   version "0.0.3"
