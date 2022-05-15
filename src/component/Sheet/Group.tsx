@@ -37,21 +37,23 @@ export const Group: React.FC<GroupProps> = ({
     case "edit_template":
       GroupHeader = (
         <Fields className={styles.edit}>
-          <div className={styles.name}>
-            <span>{key}</span>
-          </div>
+          <FieldString
+            name="Group Key"
+            value={key ?? ""}
+            onChange={(key) => dispatch(setGroupParameters({ groupId, key }))}
+          />
           <FieldString
             name="Group Name"
             value={name ?? ""}
             onChange={(name) => dispatch(setGroupParameters({ groupId, name }))}
           />
           <FieldString
-            name="Sort Key"
+            name="Group Sort Key"
             value={sortKey ?? ""}
             onChange={(sortKey) => dispatch(setGroupParameters({ groupId, sortKey }))}
           />
           <FieldSelect
-            name="Sort By"
+            name="Group Sort By"
             value={sortBy?.[0] ?? ""}
             options={unionMembers(GroupSortBy)}
             onChange={callIfParsed(GroupSortBy, (sortBy) =>
@@ -59,7 +61,7 @@ export const Group: React.FC<GroupProps> = ({
             )}
           />
           <FieldSelect
-            name="Sort Order"
+            name="Group Sort Order"
             value={sortOrder ?? ""}
             options={unionMembers(GroupSortOrder)}
             onChange={callIfParsed(GroupSortOrder, (sortOrder) =>
@@ -67,7 +69,7 @@ export const Group: React.FC<GroupProps> = ({
             )}
           />
           <FieldSelect
-            name="Display"
+            name="Group Display"
             value={display ?? ""}
             options={unionMembers(GroupDisplay)}
             onChange={callIfParsed(GroupDisplay, (display) =>
@@ -79,17 +81,21 @@ export const Group: React.FC<GroupProps> = ({
   }
 
   return (
-    <div className={styles.container}>
+    <div
+      className={classNames(styles.container, { [styles.namedGroup]: groupId !== "" })}
+    >
       {groupId === "" ? null : <div className={styles.title}>{GroupHeader}</div>}
       <div
         className={classNames({
-          [styles.items]: true,
+          [styles.group]: true,
           [styles.configRows]: display === "rows",
           [styles.configColumns]: display === "columns",
         })}
       >
         {items.map((item) => (
-          <Controller key={item.itemId} mode={mode} groups={groups} state={item} />
+          <div className={styles.items} key={item.itemId}>
+            <Controller mode={mode} groups={groups} state={item} />
+          </div>
         ))}
       </div>
     </div>

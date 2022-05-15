@@ -37,6 +37,7 @@ export const Sheet: React.FC<SheetProps> = ({ state }: SheetProps) => {
           <h2>{state.name}</h2>
         ) : (
           <input
+            placeholder="Sheet Name"
             value={state.name}
             onChange={(ev) => dispatch(updateSheet({ sheetId, name: ev.target.value }))}
           />

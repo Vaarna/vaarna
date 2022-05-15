@@ -3,29 +3,26 @@
   flex-direction: column;
 }
 
+.namedGroup {
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
 .title {
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
   border-bottom: 1px solid black;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-.name {
-  font-size: larger;
-  padding-right: 2rem;
-}
-
-.edit {
-  padding-bottom: 1rem;
-}
-
-.items:not(:last-child) {
-  margin-bottom: 1rem;
 }
 
 .items {
+  padding: 0.5rem;
+}
+
+.groups {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .configRows {
