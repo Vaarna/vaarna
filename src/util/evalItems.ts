@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { evaluate } from "../render";
 import { Item, Group } from "type/space";
+import { sortBy } from "util/sortBy";
 
 export type ItemEvaluated<T> = T & {
   valueEvaluated: string;
@@ -100,42 +101,30 @@ const evaluateAndGroupItems = (sheet: SheetState): SheetGroupedItems[] => {
     group.items.push(item);
   });
 
-  // groups should be sorted by their sort keys
-  const sortedGroups = [...Object.values(groups)];
-  sortedGroups.sort((a, b) => {
-    const aSortKey = a.sortKey ?? "";
-    const bSortKey = b.sortKey ?? "";
-
-    if (aSortKey === bSortKey) return a.groupId.localeCompare(b.groupId);
-
-    return aSortKey.localeCompare(bSortKey, undefined, { numeric: true });
-  });
+  const sortedGroups = sortBy(Object.values(groups), [
+    { key: "sortKey", numeric: true },
+    { key: "key", numeric: true },
+    { key: "name", numeric: true },
+    "groupId",
+  ]);
 
   return [defaultGroup, ...sortedGroups];
 };
 
-const itemCompare =
-  (ks: ("sortKey" | "key" | "name" | "valueEvaluated")[]) =>
-  (a: ItemEvaluated<Item>, b: ItemEvaluated<Item>): number => {
-    for (const k of ks) {
-      if (a[k] !== b[k]) return a[k].localeCompare(b[k], undefined, { numeric: true });
-    }
-    return a.itemId.localeCompare(b.itemId);
-  };
+const sortGroupItems = (group: SheetGroupedItems): SheetGroupedItems => {
+  const sortOrder = [
+    ...(group.sortBy ?? ["sortKey", "key", "name"]).map((key) => ({
+      key,
+      numeric: true,
+    })),
+    "itemId",
+  ];
 
-const sortGroup = (group: SheetGroupedItems): SheetGroupedItems => {
-  const sortBy = group.sortBy ?? ["sortKey", "key", "name"];
-  const items = [...group.items].sort(itemCompare(sortBy));
+  const items = sortBy([...group.items], sortOrder);
   if (group.sortOrder === "asc") items.reverse();
 
   return { ...group, items };
 };
 
 export const groupItems = (sheet: SheetState): SheetGroupedItems[] =>
-  evaluateAndGroupItems(sheet)
-    .map((group) => sortGroup(group))
-    .sort((a, b) =>
-      (a?.sortKey ?? "").localeCompare(b?.sortKey ?? "", undefined, {
-        numeric: true,
-      })
-    );
+  evaluateAndGroupItems(sheet).map((group) => sortGroupItems(group));
