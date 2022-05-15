@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { evaluate } from "../render";
-import { Item, Group, Sheet } from "type/space";
+import { Item, Group } from "type/space";
 
 export type ItemEvaluated<T> = T & {
   valueEvaluated: string;
@@ -45,49 +45,73 @@ export type SheetGroupedItems = Group & {
   items: ItemEvaluated<Item>[];
 };
 
-const defaultGroup = (sheetId: Sheet["sheetId"]) => ({
-  sheetId,
-  groupId: "",
-  key: "",
-});
-
 const evaluateAndGroupItems = (sheet: SheetState): SheetGroupedItems[] => {
-  const out: SheetGroupedItems[] = [
-    {
-      sheetId: sheet.sheetId,
-      groupId: "",
-      key: "",
-      items: [],
-    },
-  ];
+  // find every group key used by items, skip all group keys with empty value
+  const allGroupKeys = new Set(
+    sheet.items.filter((item) => item.group.length > 0).map((item) => item.group)
+  );
 
-  const sortedItems = [...sheet.items];
-  sortedItems.sort((a, b) => a.group.localeCompare(b.group));
+  // find every group key which exists, skip all group keys with empty value
+  const allExistingGroups = new Set(
+    sheet.groups.filter((group) => group.key.length > 0).map((group) => group.key)
+  );
 
-  const evaluatedItems = evaluateItems(sortedItems);
+  // every key that is used by an item and has a group
+  const allUsedGroupKeys = new Set(
+    [...allGroupKeys].filter((x) => allExistingGroups.has(x))
+  );
 
-  let prevGroup = "";
-  sortedItems.forEach((_item, i) => {
-    const e = evaluatedItems[i];
-    if (prevGroup === e.group) {
-      out[out.length - 1].items.push(e);
-    } else {
-      out.push({
-        ...(sheet.groups.find((group) => group.key === e.group) ??
-          defaultGroup(sheet.sheetId)),
-        items: [e],
-      });
-      prevGroup = e.group;
+  const groupKeyToGroupId: Record<string, string | undefined> = Object.fromEntries(
+    [...allUsedGroupKeys].map((groupKey) => [
+      groupKey,
+      sheet.groups.find((group) => group.key === groupKey)?.groupId,
+    ])
+  );
+
+  // default group is used for items with empty group key
+  const defaultGroup: SheetGroupedItems = {
+    sheetId: sheet.sheetId,
+    groupId: "",
+    key: "",
+    items: [],
+  };
+
+  // mapping of groupId to group, includes every group
+  const groups: Record<string, SheetGroupedItems> = Object.fromEntries(
+    sheet.groups.map((group) => [group.groupId, { ...group, items: [] }])
+  );
+
+  // for every evaluated item,
+  // if the items group exists, add it to that group,
+  // otherwise add it to the default group
+  evaluateItems(sheet.items).forEach((item) => {
+    const groupId = groupKeyToGroupId[item.group];
+
+    if (groupId === undefined) return defaultGroup.items.push(item);
+
+    const group = groups[groupId];
+    if (group === undefined) {
+      console.error(
+        "invariant broken: could not find a group for an item which should have had a group"
+      );
+      return defaultGroup.items.push(item);
     }
+
+    group.items.push(item);
   });
 
-  // add groups that have zero items
-  const addedGroups = new Set(out.map((v) => v.key));
-  sheet.groups.forEach((group) => {
-    if (!addedGroups.has(group.key)) out.push({ items: [], ...group });
+  // groups should be sorted by their sort keys
+  const sortedGroups = [...Object.values(groups)];
+  sortedGroups.sort((a, b) => {
+    const aSortKey = a.sortKey ?? "";
+    const bSortKey = b.sortKey ?? "";
+
+    if (aSortKey === bSortKey) return a.groupId.localeCompare(b.groupId);
+
+    return aSortKey.localeCompare(bSortKey, undefined, { numeric: true });
   });
 
-  return out;
+  return [defaultGroup, ...sortedGroups];
 };
 
 const itemCompare =
