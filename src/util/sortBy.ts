@@ -1,12 +1,11 @@
-import { reverse } from "lodash";
-
 export const sortBy = <T extends Record<string, unknown>>(
   vs: T[],
   ks: (string | { key: string; numeric: boolean })[]
 ): T[] => {
   const out = [...vs];
 
-  for (const k of reverse(ks)) {
+  const reversedKs = [...ks].reverse();
+  for (const k of reversedKs) {
     const key = typeof k === "string" ? k : k.key;
     const opts = { numeric: false };
     if (typeof k !== "string") {
