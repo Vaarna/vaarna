@@ -15,8 +15,12 @@ async function sheet(req: RequestWithLogger, res: NextApiResponse): Promise<void
     return res.json(data);
   }
 
-  // TODO: implement PATCH
+  if (req.method === "PATCH") {
+    const data = await backend.updateSheet(req, conf);
+    return res.json(data);
+  }
+
   // TODO: implement DELETE
 }
 
-export default withDefaults(["GET", "POST"], sheet);
+export default withDefaults(["GET", "POST", "PATCH"], sheet);

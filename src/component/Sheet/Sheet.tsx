@@ -4,7 +4,7 @@ import { SheetState, groupItems } from "util/evalItems";
 import { Mode } from "./common";
 import { Group } from "./Group";
 import classNames from "classnames";
-import { setSheetParameters, newItem, newGroup } from "state/slice";
+import { updateSheet, newItem, newGroup } from "state/slice";
 import { useAppDispatch } from "state/hook";
 
 export type SheetProps = {
@@ -38,9 +38,7 @@ export const Sheet: React.FC<SheetProps> = ({ state }: SheetProps) => {
         ) : (
           <input
             value={state.name}
-            onChange={(ev) =>
-              dispatch(setSheetParameters({ sheetId, name: ev.target.value }))
-            }
+            onChange={(ev) => dispatch(updateSheet({ sheetId, name: ev.target.value }))}
           />
         )}
         <div>

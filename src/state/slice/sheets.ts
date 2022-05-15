@@ -1,12 +1,8 @@
-import {
-  createAsyncThunk,
-  createEntityAdapter,
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { frontend } from "api";
 import { setSpaceId, selectSpaceId } from "state/slice";
 import { RootState } from "state/store";
+import { CreateSheet, Sheet, UpdateSheet } from "type/space";
 import { getSpace } from "./getSpace";
 
 // --- REDUCER ---
@@ -50,21 +46,14 @@ const sheets = createSlice({
       sheetData.upsertMany(state, action.payload?.sheets ?? []);
     });
 
-  },
-  reducers: {
-    setSheetParameters(
-      state,
-      {
-        payload,
-      }: PayloadAction<{ sheetId: Sheet["sheetId"] } & Partial<Omit<Sheet, "sheetId">>>
-    ) {
+    b.addCase(updateSheet.fulfilled, (state, { payload }) => {
       sheetData.updateOne(state, { id: payload.sheetId, changes: payload });
-    },
+    });
   },
+  reducers: {},
 });
 
 export default sheets.reducer;
-export const { setSheetParameters } = sheets.actions;
 
 // --- SELECT ---
 
@@ -89,5 +78,16 @@ export const createSheet = createAsyncThunk<Sheet, CreateSheet, { state: RootSta
   },
   {
     condition: (_state, { getState }) => !selectSheetCreateInProgress(getState()),
+  }
+);
+
+export const updateSheet = createAsyncThunk<Sheet, UpdateSheet, { state: RootState }>(
+  "sheet/update",
+  async (sheet, { getState, signal, requestId }) => {
+    const spaceId = selectSpaceId(getState());
+    if (spaceId === null) throw new Error("spaceId is not set");
+
+    const res = await frontend.updateSheet({ spaceId, sheet }, { signal, requestId });
+    return res;
   }
 );

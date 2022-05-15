@@ -5,6 +5,7 @@ import getSpace from "./getSpace";
 
 import createSheet from "./createSheet";
 import getSheet from "./getSheet";
+import updateSheet from "./updateSheet";
 
 export const backend = {
   dynamoDbConfigFromRequest,
@@ -14,6 +15,7 @@ export const backend = {
 
   ...createSheet.backend,
   ...getSheet.backend,
+  ...updateSheet.backend,
 };
 
 export const frontend = {
@@ -22,4 +24,5 @@ export const frontend = {
 
   ...createSheet.frontend,
   ...getSheet.frontend,
+  ...updateSheet.frontend,
 };
