@@ -13,12 +13,24 @@ import {
   setSpaceId,
   createSheet,
 } from "state/slice";
+import { getSpace } from "state/slice/getSpace";
 
 export default function Space(): React.ReactNode {
   const router = useRouter();
 
   const dispatch = useAppDispatch();
   const spaceId = useAppSelector(selectSpaceId);
+
+  useEffect(() => {
+    let t: NodeJS.Timeout;
+    (function f() {
+      if (spaceId === null) return;
+      dispatch(getSpace(spaceId));
+      t = setTimeout(f, 5000);
+    })();
+
+    return () => clearInterval(t);
+  }, [dispatch, spaceId]);
 
   useEffect(() => {
     const parsed = z.string().safeParse(router.query.spaceId);

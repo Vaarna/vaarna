@@ -7,7 +7,7 @@ import {
 import { frontend } from "api";
 import { setSpaceId, selectSpaceId } from "state/slice";
 import { RootState } from "state/store";
-import { CreateSheet, Sheet } from "type/space";
+import { getSpace } from "./getSpace";
 
 // --- REDUCER ---
 
@@ -45,6 +45,11 @@ const sheets = createSlice({
     b.addCase(createSheet.rejected, (state) => {
       state.createInProgress = false;
     });
+
+    b.addCase(getSpace.fulfilled, (state, action) => {
+      sheetData.upsertMany(state, action.payload?.sheets ?? []);
+    });
+
   },
   reducers: {
     setSheetParameters(
@@ -74,7 +79,7 @@ export const selectSheetCreateInProgress = (state: RootState): boolean =>
 // --- ACTION ---
 
 export const createSheet = createAsyncThunk<Sheet, CreateSheet, { state: RootState }>(
-  "sheet/new",
+  "sheet/create",
   async (sheet, { getState, signal, requestId }) => {
     const spaceId = selectSpaceId(getState());
     if (spaceId === null) throw new Error("spaceId is not set");
