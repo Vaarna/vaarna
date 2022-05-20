@@ -1,3 +1,2 @@
-export { Display } from "./Display";
-export { Edit } from "./Edit";
+export { Display, Edit } from "./Display";
 export { EditTemplate } from "./EditTemplate";

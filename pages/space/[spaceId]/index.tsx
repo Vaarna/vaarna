@@ -26,7 +26,7 @@ export default function Space(): React.ReactNode {
     (function f() {
       if (spaceId === null) return;
       dispatch(getSpace(spaceId));
-      t = setTimeout(f, 5000);
+      // t = setTimeout(f, 5000);
     })();
 
     return () => clearInterval(t);

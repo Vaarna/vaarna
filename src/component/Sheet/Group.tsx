@@ -1,13 +1,55 @@
-import styles from "./Group.module.css";
 import { setGroupParameters } from "state/slice";
 import { GroupDisplay, GroupSortBy, GroupSortOrder } from "type/space";
 import { SheetGroupedItems } from "util/evalItems";
-import classNames from "classnames";
 import { Controller } from "./Controller";
 import { Mode } from "./common";
 import { Fields, FieldSelect, FieldString } from "./modes/Field";
 import { callIfParsed, unionMembers } from "util/zod";
 import { useAppDispatch } from "state/hook";
+import styled, { css } from "styled-components";
+
+type NamedGroup = { namedGroup: boolean };
+
+const Container = styled.div<NamedGroup>`
+  display: flex;
+  flex-direction: column;
+
+  ${(props) =>
+    props.namedGroup
+      ? css`
+          border: 1px solid black;
+          border-radius: 4px;
+        `
+      : ""}
+`;
+
+const Title = styled.div`
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 1rem;
+  border-bottom: 1px solid black;
+`;
+
+const Items = styled.div`
+  padding: 0.5rem;
+`;
+
+type Display = { display?: GroupDisplay };
+
+const GroupContent = styled.div<Display>`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  ${(props) =>
+    props.display === "columns"
+      ? css`
+          flex-direction: row;
+        `
+      : css`
+          flex-direction: column;
+        `}
+`;
 
 export type GroupProps = {
   mode: Mode;
@@ -28,7 +70,7 @@ export const Group: React.FC<GroupProps> = ({
     case "edit":
       GroupHeader =
         name === "" ? null : (
-          <div className={styles.name}>
+          <div>
             <span>{name}</span>
           </div>
         );
@@ -36,7 +78,7 @@ export const Group: React.FC<GroupProps> = ({
 
     case "edit_template":
       GroupHeader = (
-        <Fields className={styles.edit}>
+        <Fields>
           <FieldString
             name="Group Key"
             value={key ?? ""}
@@ -81,23 +123,15 @@ export const Group: React.FC<GroupProps> = ({
   }
 
   return (
-    <div
-      className={classNames(styles.container, { [styles.namedGroup]: groupId !== "" })}
-    >
-      {groupId === "" ? null : <div className={styles.title}>{GroupHeader}</div>}
-      <div
-        className={classNames({
-          [styles.group]: true,
-          [styles.configRows]: display === "rows",
-          [styles.configColumns]: display === "columns",
-        })}
-      >
+    <Container namedGroup={groupId !== ""}>
+      {groupId === "" ? null : <Title>{GroupHeader}</Title>}
+      <GroupContent display={display}>
         {items.map((item) => (
-          <div className={styles.items} key={item.itemId}>
+          <Items key={item.itemId}>
             <Controller mode={mode} groups={groups} state={item} />
-          </div>
+          </Items>
         ))}
-      </div>
-    </div>
+      </GroupContent>
+    </Container>
   );
 };

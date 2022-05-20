@@ -4,7 +4,7 @@ import {
   nanoid,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import type { Group, Sheet } from "type/space";
+import type { CreateGroup, Group, Sheet } from "type/space";
 import { setSpaceId } from "state/slice";
 import type { RootState } from "state/store";
 
@@ -35,12 +35,9 @@ const groups = createSlice({
     });
   },
   reducers: {
-    newGroup(
-      state,
-      { payload: { sheetId, key } }: PayloadAction<{ sheetId: string; key: string }>
-    ) {
+    newGroup(state, { payload }: PayloadAction<CreateGroup>) {
       const groupId = nanoid();
-      groupData.addOne(state, { sheetId, groupId, key });
+      groupData.addOne(state, { ...payload, groupId });
     },
 
     setGroupParameters(

@@ -1,15 +1,26 @@
-import classNames from "classnames";
 import { uniqueId } from "lodash";
-import { PropsWithChildren, useState } from "react";
-import styles from "./Field.module.css";
+import { useState } from "react";
+import styled from "styled-components";
 
-export type FieldsProps = PropsWithChildren<{
-  className?: string;
-}>;
+const Field = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0.2rem;
+`;
 
-export const Fields: React.FC<FieldsProps> = ({ className, children }: FieldsProps) => (
-  <div className={classNames([styles.fields, className])}>{children}</div>
-);
+const Label = styled.label`
+  font-size: small;
+`;
+
+export const Fields = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  &:not(:last-child) {
+    margin-bottom: 0.5rem;
+  }
+`;
 
 export type FieldProps<T> = {
   name: string;
@@ -27,17 +38,15 @@ export const FieldString: React.FC<FieldStringProps> = ({
   const [id] = useState(uniqueId("FieldString"));
 
   return (
-    <div className={styles.field}>
-      <label htmlFor={id} className={styles.label}>
-        {name}
-      </label>
+    <Field>
+      <Label htmlFor={id}>{name}</Label>
       <input
         id={id}
         type="text"
         value={value}
         onChange={(ev) => onChange(ev.target.value)}
       />
-    </div>
+    </Field>
   );
 };
 
@@ -51,17 +60,15 @@ export const FieldCheckbox: React.FC<FieldCheckboxProps> = ({
   const [id] = useState(uniqueId("FieldCheckbox"));
 
   return (
-    <div className={styles.field}>
-      <label htmlFor={id} className={styles.label}>
-        {name}
-      </label>
+    <Field>
+      <Label htmlFor={id}>{name}</Label>
       <input
         id={id}
         type="checkbox"
         checked={value}
         onChange={(ev) => onChange(ev.target.checked)}
       />
-    </div>
+    </Field>
   );
 };
 
@@ -76,15 +83,13 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
   const [id] = useState(uniqueId("FieldSelect"));
 
   return (
-    <div className={styles.field}>
-      <label htmlFor={id} className={styles.label}>
-        {name}
-      </label>
+    <Field>
+      <Label htmlFor={id}>{name}</Label>
       <select id={id} value={value} onChange={(ev) => onChange(ev.target.value)}>
         {options.map((v) => (
           <option key={v}>{v}</option>
         ))}
       </select>
-    </div>
+    </Field>
   );
 };

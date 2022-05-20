@@ -1,20 +1,61 @@
-import styles from "./Sheet.module.css";
 import { useState } from "react";
-import { SheetState, groupItems } from "util/evalItems";
+import { SheetState } from "util/evalItems";
+import { SheetDisplay } from "./SheetDisplay";
+import { SheetEditTemplate } from "./SheetEditTemplate";
 import { Mode } from "./common";
-import { Group } from "./Group";
-import classNames from "classnames";
-import { updateSheet, newItem, newGroup } from "state/slice";
-import { useAppDispatch } from "state/hook";
+import styled, { css } from "styled-components";
+
+const Container = styled.div`
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 0.5rem;
+  box-shadow: 4px 4px 4px 0 lightgray;
+`;
+
+const Header = styled.div`
+  padding: 0.5rem;
+  background-color: lightgray;
+  border-radius: 0.5rem 0.5rem 0 0;
+  display: flex;
+  justify-content: space-between;
+`;
+
+type Hide = { hide: boolean };
+
+const Body = styled.div<Hide>`
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  ${(props) =>
+    props.hide
+      ? css`
+          height: 0.5rem;
+          overflow: clip;
+        `
+      : ""}
+`;
+
+const SheetName = styled.div`
+  font-size: x-large;
+  font-weight: 700;
+  padding-left: 0.5rem;
+`;
+
+const EditButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+`;
 
 export type SheetProps = {
   state: SheetState;
 };
 
 export const Sheet: React.FC<SheetProps> = ({ state }: SheetProps) => {
-  const dispatch = useAppDispatch();
-  const { sheetId } = state;
-
   const [mode, setMode] = useState<Mode>("display");
   const setDisplay = () => setMode("display");
   const setEdit = () => setMode("edit");
@@ -23,78 +64,31 @@ export const Sheet: React.FC<SheetProps> = ({ state }: SheetProps) => {
   const [hidden, _setHidden] = useState(false);
   const toggleHidden = () => {
     _setHidden((prev) => !prev);
-    setDisplay();
   };
 
-  const [groupName, setGroupName] = useState("");
-
-  const groups = groupItems(state);
-
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        {mode === "display" ? (
-          <h2>{state.name}</h2>
-        ) : (
-          <input
-            placeholder="Sheet Name"
-            value={state.name}
-            onChange={(ev) => dispatch(updateSheet({ sheetId, name: ev.target.value }))}
-          />
-        )}
-        <div>
-          <button disabled={mode === "display"} onClick={setDisplay}>
+    <Container>
+      <Header>
+        <SheetName>{state.name}</SheetName>
+        <EditButtons>
+          <button onClick={() => toggleHidden()}>{hidden ? "v" : "^"}</button>
+          <button disabled={mode === "display"} onClick={() => setDisplay()}>
             display
           </button>
-          <button disabled={mode === "edit"} onClick={setEdit}>
+          <button disabled={mode === "edit"} onClick={() => setEdit()}>
             edit
           </button>
-          <button disabled={mode === "edit_template"} onClick={setEditTemplate}>
+          <button disabled={mode === "edit_template"} onClick={() => setEditTemplate()}>
             edit template
           </button>
-          <button onClick={toggleHidden}>{hidden ? "v" : "^"}</button>
-        </div>
-      </div>
-
-      <div className={classNames({ [styles.body]: true, [styles.hidden]: hidden })}>
-        {groups.map((group) => (
-          <Group
-            key={group.groupId}
-            mode={mode}
-            group={group}
-            groups={state.groups.map((group) => group.key)}
-          />
-        ))}
-
-        {mode !== "edit_template" ? null : (
-          <div className={styles.editButtons}>
-            <button
-              className={styles.newItem}
-              onClick={() => {
-                dispatch(newItem({ sheetId }));
-              }}
-            >
-              New Item
-            </button>
-            <div>
-              <input
-                type="text"
-                value={groupName}
-                onChange={(ev) => setGroupName(ev.target.value)}
-              />
-              <button
-                className={styles.newItem}
-                onClick={() => {
-                  dispatch(newGroup({ sheetId, key: groupName }));
-                  setGroupName("");
-                }}
-              >
-                New Group
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+        </EditButtons>
+      </Header>
+      <Body hide={hidden}>
+        {mode === "display" || mode === "edit" ? (
+          <SheetDisplay state={state} edit={mode === "edit"} />
+        ) : null}
+        {mode === "edit_template" ? <SheetEditTemplate state={state} /> : null}
+      </Body>
+    </Container>
   );
 };

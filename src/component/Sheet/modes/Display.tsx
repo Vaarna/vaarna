@@ -1,6 +1,6 @@
-import styles from "./Display.module.css";
 import { Item } from "type/space";
-import classNames from "classnames";
+import { PropsWithExactlyTwoChildren } from "util/react";
+import { ClickableText, Container, Name, Value } from "./common";
 
 export type DisplayProps = React.PropsWithChildren<{
   state: Item;
@@ -14,11 +14,8 @@ export const Display: React.FC<DisplayProps> = ({
   // const dispatch = useAppDispatch();
 
   return (
-    <div
-      className={classNames({
-        [styles.container]: true,
-        [styles.clickable]: onclickEnabled,
-      })}
+    <Container
+      clickable={onclickEnabled}
       onClick={
         onclickEnabled
           ? () => console.log("CLICK", { itemId })
@@ -27,12 +24,26 @@ export const Display: React.FC<DisplayProps> = ({
             }
       }
     >
-      <div className={styles.name}>
-        <span className={classNames({ [styles.clickableText]: onclickEnabled })}>
-          {name}
-        </span>
-      </div>
-      <div className={styles.value}>{children}</div>
-    </div>
+      <Name>
+        <ClickableText clickable={onclickEnabled}>{name}</ClickableText>
+      </Name>
+      <Value>{children}</Value>
+    </Container>
   );
 };
+
+export type EditProps = PropsWithExactlyTwoChildren<{
+  state: Pick<Item, "name" | "readOnly">;
+}>;
+
+export const Edit: React.FC<EditProps> = ({
+  state: { name, readOnly },
+  children,
+}: EditProps) => (
+  <Container clickable={false}>
+    <Name>
+      <ClickableText clickable={false}>{name}</ClickableText>
+    </Name>
+    <Value>{readOnly ? children[0] : children[1]}</Value>
+  </Container>
+);

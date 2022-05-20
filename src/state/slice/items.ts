@@ -35,13 +35,18 @@ const items = createSlice({
     });
   },
   reducers: {
-    newItem(state, { payload: { sheetId } }: PayloadAction<{ sheetId: string }>) {
+    newItem(
+      state,
+      {
+        payload: { sheetId, group },
+      }: PayloadAction<{ sheetId: string; group?: string }>
+    ) {
       const itemId = nanoid();
       itemData.addOne(state, {
         sheetId,
         itemId,
         type: "omni",
-        group: "",
+        group: group ?? "",
         key: "",
         sortKey: "",
         name: "",
