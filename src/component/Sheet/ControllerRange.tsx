@@ -16,7 +16,7 @@ export const ControllerRange: React.FC<ControllerRangeProps> = ({
   mode,
   state,
   groups,
-}: ControllerRangeProps) => {
+}) => {
   const dispatch = useAppDispatch();
   const { itemId } = state;
 

@@ -30,11 +30,7 @@ export type FieldProps<T> = {
 
 export type FieldStringProps = FieldProps<string>;
 
-export const FieldString: React.FC<FieldStringProps> = ({
-  name,
-  value,
-  onChange,
-}: FieldStringProps) => {
+export const FieldString: React.FC<FieldStringProps> = ({ name, value, onChange }) => {
   const [id] = useState(uniqueId("FieldString"));
 
   return (
@@ -56,7 +52,7 @@ export const FieldCheckbox: React.FC<FieldCheckboxProps> = ({
   name,
   value,
   onChange,
-}: FieldCheckboxProps) => {
+}) => {
   const [id] = useState(uniqueId("FieldCheckbox"));
 
   return (
@@ -79,7 +75,7 @@ export const FieldSelect: React.FC<FieldSelectProps> = ({
   value,
   options,
   onChange,
-}: FieldSelectProps) => {
+}) => {
   const [id] = useState(uniqueId("FieldSelect"));
 
   return (

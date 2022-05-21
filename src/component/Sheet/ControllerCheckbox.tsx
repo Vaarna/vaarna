@@ -15,7 +15,7 @@ export const ControllerCheckbox: React.FC<ControllerCheckboxProps> = ({
   mode,
   groups,
   state,
-}: ControllerCheckboxProps) => {
+}) => {
   const dispatch = useAppDispatch();
   const { itemId } = state;
 
