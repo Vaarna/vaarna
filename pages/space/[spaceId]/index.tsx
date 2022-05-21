@@ -55,7 +55,7 @@ export default function Space(): React.ReactNode {
       <Header>
         <button
           disabled={createSheetInProgress}
-          onClick={() => dispatch(createSheet({ name: "" }))}
+          onClick={() => dispatch(createSheet({ spaceId, name: "" }))}
         >
           New Sheet
         </button>

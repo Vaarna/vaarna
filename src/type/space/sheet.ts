@@ -1,8 +1,10 @@
 import z from "zod";
 import { CreatedUpdated, OmitCreatedUpdated } from "../createdUpdated";
+import { Space } from "./space";
 
 export const Sheet = z
   .object({
+    spaceId: Space.shape.spaceId,
     sheetId: z.string().uuid(),
     name: z.string(),
   })

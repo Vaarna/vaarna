@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { evaluate } from "../render";
-import { Item, Group } from "type/space";
+import { Item, Group, Sheet, Space } from "type/space";
 import { sortBy } from "util/sortBy";
 import { getCreatedUpdated } from "type/createdUpdated";
 
@@ -24,7 +24,8 @@ export const itemToKeyValues = (item: Item): [string, string][] => {
 // --- Sheet state and dispatch types ---
 
 export const SheetState = z.object({
-  sheetId: z.string().uuid(),
+  spaceId: Space.shape.spaceId,
+  sheetId: Sheet.shape.sheetId,
   name: z.string(),
   groups: z.array(Group),
   items: z.array(Item),
@@ -72,6 +73,7 @@ const evaluateAndGroupItems = (sheet: SheetState): SheetGroupedItems[] => {
 
   // default group is used for items with empty group key
   const defaultGroup: SheetGroupedItems = {
+    spaceId: sheet.spaceId,
     sheetId: sheet.sheetId,
     groupId: "",
     key: "",

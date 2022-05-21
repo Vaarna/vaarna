@@ -1,6 +1,7 @@
 import z from "zod";
 import { CreatedUpdated, OmitCreatedUpdated } from "../createdUpdated";
 import { Sheet } from "./sheet";
+import { Space } from "./space";
 
 const display = {
   rows: z.literal("rows"),
@@ -35,19 +36,21 @@ export type GroupSortOrder = z.infer<typeof GroupSortOrder>;
 
 export const Group = z
   .object({
-    name: z.string(),
-    sortKey: z.string(),
-    display: GroupDisplay,
-    sortBy: z.array(GroupSortBy),
-    sortOrder: GroupSortOrder,
+    spaceId: Space.shape.spaceId,
+    sheetId: Sheet.shape.sheetId,
+    groupId: z.union([z.literal(""), z.string().uuid()]),
+    key: z.string(),
   })
-  .partial()
   .merge(
-    z.object({
-      groupId: z.union([z.literal(""), z.string().uuid()]),
-      sheetId: Sheet.shape.sheetId,
-      key: z.string(),
-    })
+    z
+      .object({
+        name: z.string(),
+        sortKey: z.string(),
+        display: GroupDisplay,
+        sortBy: z.array(GroupSortBy),
+        sortOrder: GroupSortOrder,
+      })
+      .partial()
   )
   .merge(CreatedUpdated);
 export type Group = z.infer<typeof Group>;

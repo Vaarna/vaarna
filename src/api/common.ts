@@ -1,11 +1,16 @@
-import { DynamoDBClient, DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
+import {
+  AttributeValue,
+  DynamoDBClient,
+  DynamoDBClientConfig,
+} from "@aws-sdk/client-dynamodb";
 import axios, { AxiosInstance } from "axios";
 import P from "pino";
 import config from "config";
-import { Sheet, Space } from "type/space";
+import { Group, ItemBase, Sheet, Space } from "type/space";
 import { RequestWithLogger } from "util/withDefaults";
 import { z } from "zod";
 import { asAWSLogger } from "logger";
+import { marshall } from "@aws-sdk/util-dynamodb";
 
 // --- BACKEND ---
 
@@ -40,6 +45,44 @@ export const dynamoDbConfigFromRequest = (req: RequestWithLogger): DynamoDbConfi
   };
 };
 
+type DynamoDbUpdateParams = {
+  ExpressionAttributeNames: Record<string, string>;
+  ExpressionAttributeValues: Record<string, AttributeValue>;
+  UpdateExpression: string;
+};
+
+export const createDynamoDbUpdate = (
+  conf: CommonBackendConfig,
+  v: Record<string, string | number | boolean>,
+  ignoreKeys?: string[]
+): DynamoDbUpdateParams => {
+  const ExpressionAttributeNames: Record<string, string> = {};
+  const ExpressionAttributeValues: Record<string, string | number | boolean> = {};
+  const ks: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(v)) {
+    if (ignoreKeys?.includes(key)) continue;
+
+    ExpressionAttributeNames[`#${key}`] = key;
+    ExpressionAttributeValues[`:${key}`] = value;
+    ks[`#${key}`] = `:${key}`;
+  }
+
+  const UpdateExpression = `SET ${Object.entries(ks)
+    .map(([k, v]) => `${k} = ${v}`)
+    .join(", ")}`;
+
+  const out = {
+    ExpressionAttributeNames,
+    ExpressionAttributeValues: marshall(ExpressionAttributeValues),
+    UpdateExpression,
+  };
+
+  conf.logger.info(out, "constructed UpdateItem parameters");
+
+  return out;
+};
+
 // --- FRONTEND ---
 
 export type FrontendOptions = {
@@ -65,3 +108,9 @@ export type SpaceIdParam = z.infer<typeof SpaceIdParam>;
 
 export const SheetIdParam = z.object({ sheetId: Sheet.shape.sheetId });
 export type SheetIdParam = z.infer<typeof SheetIdParam>;
+
+export const GroupIdParam = z.object({ groupId: Group.shape.groupId });
+export type GroupIdParam = z.infer<typeof GroupIdParam>;
+
+export const ItemIdParam = z.object({ itemId: ItemBase.shape.itemId });
+export type ItemIdParam = z.infer<typeof ItemIdParam>;

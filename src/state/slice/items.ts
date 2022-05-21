@@ -39,11 +39,12 @@ const items = createSlice({
     newItem(
       state,
       {
-        payload: { sheetId, group },
-      }: PayloadAction<{ sheetId: string; group?: string }>
+        payload: { spaceId, sheetId, group },
+      }: PayloadAction<{ spaceId: string; sheetId: string; group?: string }>
     ) {
       const itemId = nanoid();
       itemData.addOne(state, {
+        spaceId,
         sheetId,
         itemId,
         type: "omni",

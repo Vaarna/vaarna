@@ -1,6 +1,6 @@
 import { UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-import { Sheet, UpdateSheet } from "type/space";
+import { Item, UpdateItem } from "type/space";
 import { getUpdated } from "type/createdUpdated";
 import { parseBody, RequestWithBody } from "util/parseRequest";
 import {
@@ -11,25 +11,25 @@ import {
   CommonBackendConfig,
 } from "./common";
 
-const Output = Sheet;
-type Output = Sheet;
+const Output = Item;
+type Output = Item;
 
 const fs = {
   backend: {
-    updateSheet: async (
+    updateItem: async (
       req: CommonBackendConfig & RequestWithBody,
       c: DynamoDbConfig
     ): Promise<Output> => {
-      const body = parseBody(req, UpdateSheet);
+      const body = parseBody(req, UpdateItem);
 
       const cmd = new UpdateItemCommand({
         TableName: c.tableName,
         Key: marshall({
           pk: `space:${body.spaceId}`,
-          sk: `sheet:${body.sheetId}`,
+          sk: `item:${body.itemId}`,
         }),
         ReturnValues: "ALL_NEW",
-        ...createDynamoDbUpdate(req, { ...body, ...getUpdated() }, ["sheetId"]),
+        ...createDynamoDbUpdate(req, { ...body, ...getUpdated() }, ["itemId"]),
       });
 
       const res = await c.db.send(cmd);
@@ -38,8 +38,8 @@ const fs = {
   },
 
   frontend: {
-    updateSheet: async (sheet: UpdateSheet, o?: FrontendOptions): Promise<Output> => {
-      const res = await fetchBase(o).patch("/api/space/sheet", sheet);
+    updateItem: async (item: UpdateItem, o?: FrontendOptions): Promise<Output> => {
+      const res = await fetchBase(o).patch("/api/space/item", item);
       return Output.parse(res.data);
     },
   },

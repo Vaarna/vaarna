@@ -1,9 +1,10 @@
 import { CollapsibleGroup } from "component/CollapsibleGroup";
 import React, { useMemo } from "react";
-import { useAppDispatch } from "state/hook";
+import { useAppDispatch, useAppSelector } from "state/hook";
 import {
   newGroup,
   newItem,
+  selectSpaceId,
   setGroupParameters,
   setItemParameters,
   setItemType,
@@ -175,6 +176,8 @@ export type SheetEditTemplateProps = {
 export const SheetEditTemplate: React.FC<SheetEditTemplateProps> = ({ state }) => {
   const dispatch = useAppDispatch();
 
+  const spaceId = useAppSelector(selectSpaceId);
+
   const groups = useMemo(() => groupItems(state), [state]);
   const groupKeys = [...new Set(["", ...state.groups.map((group) => group.key)])];
 
@@ -182,17 +185,28 @@ export const SheetEditTemplate: React.FC<SheetEditTemplateProps> = ({ state }) =
     <Container>
       {groups.map((group) =>
         group.groupId === "" ? (
-          <Items groups={groupKeys} state={group.items} />
+          <Items key="" groups={groupKeys} state={group.items} />
         ) : (
-          <Group groups={groupKeys} state={group} />
+          <Group key={group.groupId} groups={groupKeys} state={group} />
         )
       )}
-      <button onClick={() => dispatch(newItem({ sheetId: state.sheetId }))}>
-        new item
-      </button>
-      <button onClick={() => dispatch(newGroup({ sheetId: state.sheetId, key: "" }))}>
-        new group
-      </button>
+
+      {spaceId !== null && (
+        <>
+          <button
+            onClick={() => dispatch(newItem({ spaceId, sheetId: state.sheetId }))}
+          >
+            New Item
+          </button>
+          <button
+            onClick={() =>
+              dispatch(newGroup({ spaceId, sheetId: state.sheetId, key: "" }))
+            }
+          >
+            New Group
+          </button>
+        </>
+      )}
     </Container>
   );
 };

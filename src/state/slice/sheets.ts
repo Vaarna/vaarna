@@ -73,8 +73,7 @@ export const createSheet = createAsyncThunk<Sheet, CreateSheet, { state: RootSta
     const spaceId = selectSpaceId(getState());
     if (spaceId === null) throw new Error("spaceId is not set");
 
-    const res = await frontend.createSheet({ spaceId, sheet }, { signal, requestId });
-    return res.sheet;
+    return frontend.createSheet(sheet, { signal, requestId });
   },
   {
     condition: (_state, { getState }) => !selectSheetCreateInProgress(getState()),
@@ -87,7 +86,7 @@ export const updateSheet = createAsyncThunk<Sheet, UpdateSheet, { state: RootSta
     const spaceId = selectSpaceId(getState());
     if (spaceId === null) throw new Error("spaceId is not set");
 
-    const res = await frontend.updateSheet({ spaceId, sheet }, { signal, requestId });
+    const res = await frontend.updateSheet(sheet, { signal, requestId });
     return res;
   }
 );
