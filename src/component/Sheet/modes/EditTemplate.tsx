@@ -1,88 +1,106 @@
-import { useAppDispatch } from "state/hook";
-import { copyItem, removeItem, setItemParameters, setItemType } from "state/slice";
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "state/hook";
+import { createItem, selectSpaceId, updateItem } from "state/slice";
 import { Item, ItemType } from "type/space";
 import { callIfParsed, unionMembers } from "util/zod";
 import { Fields, FieldString, FieldCheckbox, FieldSelect } from "./Field";
 
-export type EditTemplateProps = React.PropsWithChildren<{
+export type EditTemplateProps = {
   state: Item;
   groups: string[];
-}>;
+};
 
-export const EditTemplate: React.FC<EditTemplateProps> = ({
-  state: {
-    itemId,
-    key,
-    sortKey,
-    group,
-    value,
-    name,
-    onclickEnabled,
-    onclick,
-    readOnly,
-    type,
-  },
-  groups,
-  children,
-}) => {
+export const EditTemplate: React.FC<EditTemplateProps> = ({ state, groups }) => {
   const dispatch = useAppDispatch();
+
+  const spaceId = useAppSelector(selectSpaceId);
+
+  const [item, setItem] = useState(state);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (spaceId === null) return;
+      dispatch(updateItem(item));
+    }, 1000);
+
+    return () => clearTimeout(t);
+  }, [dispatch, item, spaceId]);
 
   return (
     <Fields>
       <FieldSelect
         name="Group"
-        value={group}
+        value={item.group}
         options={groups}
-        onChange={(v) => dispatch(setItemParameters({ itemId, group: v }))}
+        onChange={(group) => setItem((item) => ({ ...item, group }))}
       />
       <FieldString
         name="Key"
-        value={key}
-        onChange={(v) => dispatch(setItemParameters({ itemId, key: v }))}
+        value={item.key}
+        onChange={(key) => setItem((item) => ({ ...item, key }))}
       />
       <FieldString
         name="Sort Key"
-        value={sortKey}
-        onChange={(v) => dispatch(setItemParameters({ itemId, sortKey: v }))}
+        value={item.sortKey}
+        onChange={(sortKey) => setItem((item) => ({ ...item, sortKey }))}
       />
       <FieldString
         name="Name"
-        value={name}
-        onChange={(v) => dispatch(setItemParameters({ itemId, name: v }))}
+        value={item.name}
+        onChange={(name) => setItem((item) => ({ ...item, name }))}
       />
       <FieldSelect
         name="Type"
-        value={type}
+        value={item.type}
         options={unionMembers(ItemType)}
         onChange={callIfParsed(ItemType, (type) =>
-          dispatch(setItemType({ itemId, type }))
+          setItem((item) => ({ ...item, type }))
         )}
       />
       <FieldCheckbox
         name="Readonly"
-        value={readOnly}
-        onChange={(v) => dispatch(setItemParameters({ itemId, readOnly: v }))}
+        value={item.readOnly}
+        onChange={(readOnly) => setItem((item) => ({ ...item, readOnly }))}
       />
       <FieldString
         name="Value"
-        value={value}
-        onChange={(v) => dispatch(setItemParameters({ itemId, value: v }))}
+        value={item.value}
+        onChange={(value) => setItem((item) => ({ ...item, value }))}
       />
       <FieldCheckbox
         name="Click Enabled"
-        value={onclickEnabled}
-        onChange={(v) => dispatch(setItemParameters({ itemId, onclickEnabled: v }))}
+        value={item.onclickEnabled}
+        onChange={(onclickEnabled) => setItem((item) => ({ ...item, onclickEnabled }))}
       />
       <FieldString
         name="Click"
-        value={onclick}
-        onChange={(v) => dispatch(setItemParameters({ itemId, onclick: v }))}
+        value={item.onclick}
+        onChange={(onclick) => setItem((item) => ({ ...item, onclick }))}
       />
 
-      {children}
+      {item.type === "range" && (
+        <>
+          <FieldString
+            name="Min"
+            value={item.min ?? ""}
+            onChange={(max) => setItem((item) => ({ ...item, max }))}
+          />
+          <FieldString
+            name="Max"
+            value={item.max ?? ""}
+            onChange={(max) => setItem((item) => ({ ...item, max }))}
+          />
+        </>
+      )}
 
-      <button onClick={() => dispatch(copyItem(itemId))}>Copy</button>
-      <button onClick={() => dispatch(removeItem(itemId))}>Remove</button>
+      <button
+        disabled={spaceId === null}
+        onClick={() => {
+          if (spaceId === null) return;
+          dispatch(createItem(item));
+        }}
+      >
+        Copy
+      </button>
     </Fields>
   );
 };

@@ -7,19 +7,13 @@ import {
   selectCreateItemInProgress,
   selectSpaceId,
   setGroupParameters,
-  setItemParameters,
-  setItemType,
 } from "state/slice";
 import styled from "styled-components";
-import { GroupSortOrder, Item, ItemType } from "type/space";
-import {
-  groupItems,
-  ItemEvaluated,
-  SheetGroupedItems,
-  SheetState,
-} from "util/evalItems";
+import { GroupSortOrder } from "type/space";
+import { groupItems, SheetGroupedItems, SheetState } from "util/evalItems";
 import { callIfParsed, unionMembers } from "util/zod";
-import { Fields, FieldSelect, FieldString, FieldCheckbox } from "./modes/Field";
+import { EditTemplate } from "./modes";
+import { Fields, FieldSelect, FieldString } from "./modes/Field";
 
 const Container = styled.div`
   display: flex;
@@ -34,83 +28,6 @@ const ItemsContainer = styled.div`
   flex-direction: column;
 `;
 
-type ItemProps = {
-  groups: string[];
-  state: ItemEvaluated<Item>;
-};
-
-const ItemComponent: React.FC<ItemProps> = ({
-  groups,
-  state: {
-    itemId,
-    group,
-    key,
-    sortKey,
-    name,
-    type,
-    readOnly,
-    value,
-    onclickEnabled,
-    onclick,
-  },
-}) => {
-  const dispatch = useAppDispatch();
-
-  return (
-    <Fields>
-      <FieldSelect
-        name="Group"
-        value={group}
-        options={groups}
-        onChange={(v) => dispatch(setItemParameters({ itemId, group: v }))}
-      />
-      <FieldString
-        name="Key"
-        value={key}
-        onChange={(v) => dispatch(setItemParameters({ itemId, key: v }))}
-      />
-      <FieldString
-        name="Sort Key"
-        value={sortKey}
-        onChange={(v) => dispatch(setItemParameters({ itemId, sortKey: v }))}
-      />
-      <FieldString
-        name="Name"
-        value={name}
-        onChange={(v) => dispatch(setItemParameters({ itemId, name: v }))}
-      />
-      <FieldSelect
-        name="Type"
-        value={type}
-        options={unionMembers(ItemType)}
-        onChange={callIfParsed(ItemType, (type) =>
-          dispatch(setItemType({ itemId, type }))
-        )}
-      />
-      <FieldCheckbox
-        name="Readonly"
-        value={readOnly}
-        onChange={(v) => dispatch(setItemParameters({ itemId, readOnly: v }))}
-      />
-      <FieldString
-        name="Value"
-        value={value}
-        onChange={(v) => dispatch(setItemParameters({ itemId, value: v }))}
-      />
-      <FieldCheckbox
-        name="Click Enabled"
-        value={onclickEnabled}
-        onChange={(v) => dispatch(setItemParameters({ itemId, onclickEnabled: v }))}
-      />
-      <FieldString
-        name="Click"
-        value={onclick}
-        onChange={(v) => dispatch(setItemParameters({ itemId, onclick: v }))}
-      />
-    </Fields>
-  );
-};
-
 type ItemsProps = {
   groups: string[];
   state: SheetGroupedItems["items"];
@@ -120,7 +37,7 @@ const Items: React.FC<ItemsProps> = ({ groups, state }) => {
   return (
     <ItemsContainer>
       {state.map((item) => (
-        <ItemComponent key={item.itemId} groups={groups} state={item} />
+        <EditTemplate key={item.itemId} groups={groups} state={item} />
       ))}
     </ItemsContainer>
   );

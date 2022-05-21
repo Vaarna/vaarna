@@ -1,20 +1,5 @@
-import {
-  createAsyncThunk,
-  createEntityAdapter,
-  createSlice,
-  nanoid,
-  PayloadAction,
-} from "@reduxjs/toolkit";
-import {
-  CreateItem,
-  Group,
-  Item,
-  ItemBase,
-  ItemRange,
-  ItemType,
-  Sheet,
-  UpdateItem,
-} from "type/space";
+import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import { CreateItem, Group, Item, Sheet, UpdateItem } from "type/space";
 import { setSpaceId } from "state/slice";
 import { RootState } from "state/store";
 import { frontend } from "api";
@@ -61,68 +46,10 @@ const items = createSlice({
       state.createItemInProgress = false;
     });
   },
-  reducers: {
-    setItemParameters(
-      state,
-      {
-        payload,
-      }: PayloadAction<
-        { itemId: Item["itemId"] } & Partial<Omit<ItemBase, "sheetId" | "itemId">>
-      >
-    ) {
-      itemData.updateOne(state, { id: payload.itemId, changes: payload });
-    },
-
-    setItemType(
-      state,
-      {
-        payload: { itemId, type },
-      }: PayloadAction<{ itemId: Item["itemId"]; type: ItemType }>
-    ) {
-      itemData.updateOne(state, { id: itemId, changes: { type } });
-    },
-
-    setItemMinMax(
-      state,
-      {
-        payload: { itemId, min, max },
-      }: PayloadAction<{
-        itemId: Item["itemId"];
-        min?: ItemRange["min"];
-        max?: ItemRange["max"];
-      }>
-    ) {
-      const changes: { min?: ItemRange["min"]; max?: ItemRange["max"] } = {};
-
-      if (min !== undefined) changes.min = min;
-      if (max !== undefined) changes.max = max;
-
-      // TODO: check item.type before changing anything
-      const item = state.entities[itemId];
-      if (item === undefined) return;
-      if (item.type !== "range")
-        return console.error("tried to set min/max of non-range item");
-
-      itemData.updateOne(state, { id: itemId, changes });
-    },
-
-    removeItem(state, action: PayloadAction<Item["itemId"]>) {
-      itemData.removeOne(state, action.payload);
-    },
-
-    copyItem(state, action: PayloadAction<Item["itemId"]>) {
-      const item = state.entities[action.payload];
-      if (item === undefined) return;
-
-      const itemId = nanoid();
-      itemData.addOne(state, { ...item, itemId });
-    },
-  },
+  reducers: {},
 });
 
 export default items.reducer;
-export const { setItemParameters, setItemType, setItemMinMax, removeItem, copyItem } =
-  items.actions;
 
 // --- SELECT ---
 
@@ -151,6 +78,6 @@ export const createItem = createAsyncThunk<Item, CreateItem, { state: RootState 
 );
 
 export const updateItem = createAsyncThunk<Item, UpdateItem, { state: RootState }>(
-  "item/create",
+  "item/update",
   (item, thunkApi) => frontend.updateItem(item, thunkApi)
 );
