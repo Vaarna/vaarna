@@ -29,7 +29,11 @@ const fs = {
           sk: `item:${body.itemId}`,
         }),
         ReturnValues: "ALL_NEW",
-        ...createDynamoDbUpdate(req, { ...body, ...getUpdated() }, ["itemId"]),
+        ...createDynamoDbUpdate(req, { ...body, ...getUpdated() }, [
+          "spaceId",
+          "sheetId",
+          "itemId",
+        ]),
       });
 
       const res = await c.db.send(cmd);

@@ -42,7 +42,7 @@ export type ItemOmni = z.infer<typeof ItemOmni>;
 export const CreateItemOmni = ItemOmni.omit({ itemId: true, ...OmitCreatedUpdated });
 export type CreateItemOmni = z.infer<typeof CreateItemOmni>;
 
-export const UpdateItemOmni = ItemOmni.pick({ itemId: true }).and(
+export const UpdateItemOmni = ItemOmni.pick({ spaceId: true, itemId: true }).and(
   ItemOmni.omit({
     sheetId: true,
     ...OmitCreatedUpdated,
@@ -66,7 +66,7 @@ export const CreateItemBoolean = ItemBoolean.omit({
 });
 export type CreateItemBoolean = z.infer<typeof CreateItemBoolean>;
 
-export const UpdateItemBoolean = ItemBoolean.pick({ itemId: true }).and(
+export const UpdateItemBoolean = ItemBoolean.pick({ spaceId: true, itemId: true }).and(
   ItemBoolean.omit({
     sheetId: true,
     ...OmitCreatedUpdated,
@@ -88,7 +88,7 @@ export type ItemRange = z.infer<typeof ItemRange>;
 export const CreateItemRange = ItemRange.omit({ itemId: true, ...OmitCreatedUpdated });
 export type CreateItemRange = z.infer<typeof CreateItemRange>;
 
-export const UpdateItemRange = ItemRange.pick({ itemId: true }).and(
+export const UpdateItemRange = ItemRange.pick({ spaceId: true, itemId: true }).and(
   ItemRange.omit({ sheetId: true, ...OmitCreatedUpdated }).partial()
 );
 export type UpdateItemRange = z.infer<typeof UpdateItemRange>;

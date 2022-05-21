@@ -2,8 +2,9 @@ import { CollapsibleGroup } from "component/CollapsibleGroup";
 import React, { useMemo } from "react";
 import { useAppDispatch, useAppSelector } from "state/hook";
 import {
+  createItem,
   newGroup,
-  newItem,
+  selectCreateItemInProgress,
   selectSpaceId,
   setGroupParameters,
   setItemParameters,
@@ -181,6 +182,8 @@ export const SheetEditTemplate: React.FC<SheetEditTemplateProps> = ({ state }) =
   const groups = useMemo(() => groupItems(state), [state]);
   const groupKeys = [...new Set(["", ...state.groups.map((group) => group.key)])];
 
+  const createItemInProgress = useAppSelector(selectCreateItemInProgress);
+
   return (
     <Container>
       {groups.map((group) =>
@@ -194,7 +197,24 @@ export const SheetEditTemplate: React.FC<SheetEditTemplateProps> = ({ state }) =
       {spaceId !== null && (
         <>
           <button
-            onClick={() => dispatch(newItem({ spaceId, sheetId: state.sheetId }))}
+            disabled={createItemInProgress}
+            onClick={() =>
+              dispatch(
+                createItem({
+                  spaceId,
+                  sheetId: state.sheetId,
+                  name: "",
+                  type: "omni",
+                  group: "",
+                  key: "",
+                  onclick: "",
+                  onclickEnabled: false,
+                  readOnly: false,
+                  sortKey: "",
+                  value: "",
+                })
+              )
+            }
           >
             New Item
           </button>

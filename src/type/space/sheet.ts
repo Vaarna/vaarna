@@ -14,10 +14,10 @@ export type Sheet = z.infer<typeof Sheet>;
 export const CreateSheet = Sheet.omit({ sheetId: true, ...OmitCreatedUpdated });
 export type CreateSheet = z.infer<typeof CreateSheet>;
 
-export const UpdateSheet = Sheet.pick({ sheetId: true }).and(
-  Sheet.omit(OmitCreatedUpdated).partial()
+export const UpdateSheet = Sheet.pick({ spaceId: true, sheetId: true }).and(
+  Sheet.omit({ ...OmitCreatedUpdated }).partial()
 );
 export type UpdateSheet = z.infer<typeof UpdateSheet>;
 
-export const RemoveSheet = Sheet.pick({ sheetId: true });
+export const RemoveSheet = Sheet.pick({ spaceId: true, sheetId: true });
 export type RemoveSheet = z.infer<typeof RemoveSheet>;

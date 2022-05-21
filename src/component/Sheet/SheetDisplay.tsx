@@ -1,9 +1,14 @@
-import React, { useMemo } from "react";
-import { useAppDispatch } from "state/hook";
-import { setItemParameters } from "state/slice";
+import React, { useEffect, useMemo, useState } from "react";
+import { useAppDispatch, useAppSelector } from "state/hook";
+import { selectSpaceId, updateItem } from "state/slice";
 import styled from "styled-components";
-import { GroupDisplay } from "type/space";
-import { groupItems, SheetGroupedItems, SheetState } from "util/evalItems";
+import { GroupDisplay, Item } from "type/space";
+import {
+  groupItems,
+  ItemEvaluated,
+  SheetGroupedItems,
+  SheetState,
+} from "util/evalItems";
 import { Display, Edit } from "./modes";
 
 const Container = styled.div`
@@ -27,6 +32,34 @@ const ItemsContainer = styled.div<Reverse>`
   flex-direction: ${(props) => (props.display === "rows" ? "column" : "row")};
 `;
 
+type ItemEditProps = {
+  state: ItemEvaluated<Item>;
+};
+
+const ItemValueEdit: React.FC<ItemEditProps> = ({ state }) => {
+  const spaceId = useAppSelector(selectSpaceId);
+  const dispatch = useAppDispatch();
+
+  const [value, setValue] = useState(state.value);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (spaceId === null) return;
+      dispatch(updateItem({ spaceId, itemId: state.itemId, value }));
+    }, 500);
+
+    return () => clearTimeout(t);
+  }, [value, dispatch, state.itemId, spaceId]);
+
+  return (
+    <Edit state={state}>
+      <>{state.valueEvaluated}</>
+      <>
+        <input value={value} onChange={(ev) => setValue(ev.target.value)} />
+      </>
+    </Edit>
+  );
+};
+
 type ItemsProps = {
   display: SheetGroupedItems["display"];
   state: SheetGroupedItems["items"];
@@ -34,26 +67,13 @@ type ItemsProps = {
 };
 
 const Items: React.FC<ItemsProps> = ({ display, state, edit }) => {
-  const dispatch = useAppDispatch();
   const displayWithDefault = display ?? "rows";
 
   return (
     <ItemsContainer display={displayWithDefault}>
       {state.map((item) =>
         edit ? (
-          <Edit key={item.itemId} state={item}>
-            <>{item.valueEvaluated}</>
-            <>
-              <input
-                value={item.value}
-                onChange={(ev) =>
-                  dispatch(
-                    setItemParameters({ itemId: item.itemId, value: ev.target.value })
-                  )
-                }
-              />
-            </>
-          </Edit>
+          <ItemValueEdit key={item.itemId} state={item} />
         ) : (
           <Display key={item.itemId} state={item}>
             {item.valueEvaluated}

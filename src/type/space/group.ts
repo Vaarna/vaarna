@@ -58,7 +58,7 @@ export type Group = z.infer<typeof Group>;
 export const CreateGroup = Group.omit({ groupId: true, ...OmitCreatedUpdated });
 export type CreateGroup = z.infer<typeof CreateGroup>;
 
-export const UpdateGroup = Group.pick({ groupId: true }).and(
+export const UpdateGroup = Group.pick({ spaceId: true, groupId: true }).and(
   Group.omit({ sheetId: true, ...OmitCreatedUpdated }).partial()
 );
 export type UpdateGroup = z.infer<typeof UpdateGroup>;
