@@ -29,7 +29,7 @@ const Children = styled.div`
 
 export type HeaderProps = React.PropsWithChildren<unknown>;
 
-export const Header: React.FC<HeaderProps> = ({ children }: HeaderProps) => {
+export const Header: React.FC<HeaderProps> = ({ children }) => {
   return (
     <Container>
       <Title>

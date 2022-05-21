@@ -15,7 +15,7 @@ export const ControllerOmni: React.FC<ControllerOmniProps> = ({
   mode,
   state,
   groups,
-}: ControllerOmniProps) => {
+}) => {
   const dispatch = useAppDispatch();
   const { itemId } = state;
 

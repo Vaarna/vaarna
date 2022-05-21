@@ -60,7 +60,7 @@ export const Group: React.FC<GroupProps> = ({
   mode,
   group: { groupId, items, key, name, sortKey, sortBy, sortOrder, display },
   groups,
-}: GroupProps) => {
+}) => {
   const dispatch = useAppDispatch();
 
   let GroupHeader: React.ReactNode = null;

@@ -18,11 +18,7 @@ export type UploadProps = React.PropsWithChildren<{
   params: Record<string, string>;
 }>;
 
-export const Upload: React.FC<UploadProps> = ({
-  url,
-  params,
-  children,
-}: UploadProps) => {
+export const Upload: React.FC<UploadProps> = ({ url, params, children }) => {
   const [uploads, setUploads] = useState<UploadProgress[]>([]);
 
   const onUploadProgress =

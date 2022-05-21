@@ -9,7 +9,7 @@ export type DisplayProps = React.PropsWithChildren<{
 export const Display: React.FC<DisplayProps> = ({
   state: { itemId, name, onclickEnabled },
   children,
-}: DisplayProps) => {
+}) => {
   // TODO: implement click
   // const dispatch = useAppDispatch();
 
@@ -36,10 +36,7 @@ export type EditProps = PropsWithExactlyTwoChildren<{
   state: Pick<Item, "name" | "readOnly">;
 }>;
 
-export const Edit: React.FC<EditProps> = ({
-  state: { name, readOnly },
-  children,
-}: EditProps) => (
+export const Edit: React.FC<EditProps> = ({ state: { name, readOnly }, children }) => (
   <Container clickable={false}>
     <Name>
       <ClickableText clickable={false}>{name}</ClickableText>

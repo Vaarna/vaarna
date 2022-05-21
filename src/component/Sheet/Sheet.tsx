@@ -24,7 +24,7 @@ export type SheetProps = {
   state: SheetState;
 };
 
-export const Sheet: React.FC<SheetProps> = ({ state }: SheetProps) => {
+export const Sheet: React.FC<SheetProps> = ({ state }) => {
   const dispatch = useAppDispatch();
 
   const [mode, setMode] = useState<Mode>("display");

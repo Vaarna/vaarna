@@ -97,7 +97,7 @@ export const SideBySide: React.FC<SideBySideProps> = ({
   showRight,
   send,
   children,
-}: SideBySideProps) => {
+}) => {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
 

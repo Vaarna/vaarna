@@ -4,10 +4,10 @@ import { Item, ItemType } from "type/space";
 import { callIfParsed, unionMembers } from "util/zod";
 import { Fields, FieldString, FieldCheckbox, FieldSelect } from "./Field";
 
-export type EditTemplateProps = {
+export type EditTemplateProps = React.PropsWithChildren<{
   state: Item;
   groups: string[];
-};
+}>;
 
 export const EditTemplate: React.FC<EditTemplateProps> = ({
   state: {
@@ -24,7 +24,7 @@ export const EditTemplate: React.FC<EditTemplateProps> = ({
   },
   groups,
   children,
-}: React.PropsWithChildren<EditTemplateProps>) => {
+}) => {
   const dispatch = useAppDispatch();
 
   return (

@@ -15,7 +15,7 @@ export const Loading: React.FC<LoadingProps> = ({
   fast,
   slow,
   hidden,
-}: LoadingProps) => (
+}) => (
   <div
     className={classnames(s.center, {
       [s.small]: small,
