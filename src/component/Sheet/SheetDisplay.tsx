@@ -90,9 +90,9 @@ export const SheetDisplay: React.FC<SheetDisplayProps> = ({ state, edit }) => {
     <Container>
       {groups.map((group) =>
         group.groupId === "" ? (
-          <Items display={group.display} state={group.items} edit={edit} />
+          <Items key="" display={group.display} state={group.items} edit={edit} />
         ) : (
-          <Group state={group} edit={edit} />
+          <Group key={group.groupId} state={group} edit={edit} />
         )
       )}
     </Container>
