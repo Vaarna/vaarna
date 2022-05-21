@@ -1,18 +1,21 @@
 import z from "zod";
+import { CreatedUpdated } from "../createdUpdated";
 import { Sheet } from "./sheet";
 
-export const ItemBase = z.object({
-  sheetId: Sheet.shape.sheetId,
-  itemId: z.string().uuid(),
-  group: z.string(),
-  key: z.string(),
-  sortKey: z.string(),
-  name: z.string(),
-  value: z.string(),
-  readOnly: z.boolean(),
-  onclickEnabled: z.boolean(),
-  onclick: z.string(),
-});
+export const ItemBase = z
+  .object({
+    sheetId: Sheet.shape.sheetId,
+    itemId: z.string().uuid(),
+    group: z.string(),
+    key: z.string(),
+    sortKey: z.string(),
+    name: z.string(),
+    value: z.string(),
+    readOnly: z.boolean(),
+    onclickEnabled: z.boolean(),
+    onclick: z.string(),
+  })
+  .merge(CreatedUpdated);
 export type ItemBase = z.infer<typeof ItemBase>;
 
 const type = {

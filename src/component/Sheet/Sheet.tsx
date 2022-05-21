@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SheetState } from "util/evalItems";
 import { SheetDisplay } from "./SheetDisplay";
 import { SheetEditTemplate } from "./SheetEditTemplate";
 import { Mode } from "./common";
 import styled from "styled-components";
 import { CollapsibleGroup } from "component/CollapsibleGroup";
+import { useAppDispatch } from "state/hook";
+import { updateSheet } from "state/slice";
 
 const SheetName = styled.div`
   font-size: x-large;
@@ -23,6 +25,8 @@ export type SheetProps = {
 };
 
 export const Sheet: React.FC<SheetProps> = ({ state }: SheetProps) => {
+  const dispatch = useAppDispatch();
+
   const [mode, setMode] = useState<Mode>("display");
   const setDisplay = () => setMode("display");
   const setEdit = () => setMode("edit");
@@ -33,10 +37,25 @@ export const Sheet: React.FC<SheetProps> = ({ state }: SheetProps) => {
     _setHidden((prev) => !prev);
   };
 
+  const [sheetName, setSheetName] = useState(state.name);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      dispatch(updateSheet({ sheetId: state.sheetId, name: sheetName }));
+    }, 500);
+
+    return () => clearTimeout(t);
+  }, [sheetName, dispatch, state.sheetId]);
+
   return (
     <CollapsibleGroup collapsed={hidden}>
       <>
-        <SheetName>{state.name}</SheetName>
+        <SheetName>
+          {mode === "display" ? (
+            state.name
+          ) : (
+            <input value={sheetName} onChange={(ev) => setSheetName(ev.target.value)} />
+          )}
+        </SheetName>
         <EditButtons>
           <button onClick={() => toggleHidden()}>{hidden ? "v" : "^"}</button>
           <button disabled={mode === "display"} onClick={() => setDisplay()}>

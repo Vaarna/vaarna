@@ -1,4 +1,5 @@
 import z from "zod";
+import { CreatedUpdated, OmitCreatedUpdated } from "../createdUpdated";
 import { Sheet } from "./sheet";
 
 const display = {
@@ -47,14 +48,15 @@ export const Group = z
       sheetId: Sheet.shape.sheetId,
       key: z.string(),
     })
-  );
+  )
+  .merge(CreatedUpdated);
 export type Group = z.infer<typeof Group>;
 
-export const CreateGroup = Group.omit({ groupId: true });
+export const CreateGroup = Group.omit({ groupId: true, ...OmitCreatedUpdated });
 export type CreateGroup = z.infer<typeof CreateGroup>;
 
 export const UpdateGroup = Group.pick({ groupId: true }).and(
-  Group.omit({ sheetId: true }).partial()
+  Group.omit({ sheetId: true, ...OmitCreatedUpdated }).partial()
 );
 export type UpdateGroup = z.infer<typeof UpdateGroup>;
 

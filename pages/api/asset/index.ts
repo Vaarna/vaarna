@@ -9,6 +9,7 @@ import { AssetService, GetAssetHeaders } from "service/asset";
 import { RequestWithLogger, withDefaults } from "util/withDefaults";
 import { AssetData, Space } from "type/space";
 import { z } from "zod";
+import { getCreatedUpdated } from "type/createdUpdated";
 
 async function asset(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
   const svc = new AssetService(req);
@@ -24,6 +25,7 @@ async function asset(req: RequestWithLogger, res: NextApiResponse): Promise<void
           filename: file.originalFilename,
           size: file.size,
           contentType: file.headers["content-type"],
+          ...getCreatedUpdated(),
         };
         await svc.uploadAsset(s, data);
 

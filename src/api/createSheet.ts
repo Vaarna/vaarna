@@ -1,6 +1,7 @@
 import { PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { marshall } from "@aws-sdk/util-dynamodb";
 import { CreateSheet, Sheet } from "type/space";
+import { getCreatedUpdated } from "type/createdUpdated";
 import {
   parseBody,
   parseQuery,
@@ -25,8 +26,9 @@ const fs = {
 
       const sheetId = uuid();
 
-      const sheet = {
+      const sheet: Sheet = {
         ...body,
+        ...getCreatedUpdated(),
         sheetId,
       };
 

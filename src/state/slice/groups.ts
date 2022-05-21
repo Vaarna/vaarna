@@ -7,6 +7,7 @@ import {
 import type { CreateGroup, Group, Sheet } from "type/space";
 import { setSpaceId } from "state/slice";
 import type { RootState } from "state/store";
+import { getCreatedUpdated } from "type/createdUpdated";
 
 // --- REDUCER ---
 
@@ -37,7 +38,7 @@ const groups = createSlice({
   reducers: {
     newGroup(state, { payload }: PayloadAction<CreateGroup>) {
       const groupId = nanoid();
-      groupData.addOne(state, { ...payload, groupId });
+      groupData.addOne(state, { ...payload, groupId, ...getCreatedUpdated() });
     },
 
     setGroupParameters(

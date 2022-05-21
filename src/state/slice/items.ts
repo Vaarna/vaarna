@@ -7,6 +7,7 @@ import {
 import { Group, Item, ItemBase, ItemRange, ItemType, Sheet } from "type/space";
 import { setSpaceId } from "state/slice";
 import { RootState } from "state/store";
+import { getCreatedUpdated } from "type/createdUpdated";
 
 // --- REDUCER ---
 
@@ -54,6 +55,7 @@ const items = createSlice({
         readOnly: false,
         onclickEnabled: false,
         onclick: "",
+        ...getCreatedUpdated(),
       });
     },
 

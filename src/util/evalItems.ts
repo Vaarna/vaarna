@@ -2,6 +2,7 @@ import { z } from "zod";
 import { evaluate } from "../render";
 import { Item, Group } from "type/space";
 import { sortBy } from "util/sortBy";
+import { getCreatedUpdated } from "type/createdUpdated";
 
 export type ItemEvaluated<T> = T & {
   valueEvaluated: string;
@@ -74,6 +75,7 @@ const evaluateAndGroupItems = (sheet: SheetState): SheetGroupedItems[] => {
     sheetId: sheet.sheetId,
     groupId: "",
     key: "",
+    ...getCreatedUpdated(),
     items: [],
   };
 
