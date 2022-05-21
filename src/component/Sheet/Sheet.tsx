@@ -5,8 +5,8 @@ import { SheetEditTemplate } from "./SheetEditTemplate";
 import { Mode } from "./common";
 import styled from "styled-components";
 import { CollapsibleGroup } from "component/CollapsibleGroup";
-import { useAppDispatch } from "state/hook";
-import { updateSheet } from "state/slice";
+import { useAppDispatch, useAppSelector } from "state/hook";
+import { selectSpaceId, updateSheet } from "state/slice";
 
 const SheetName = styled.div`
   font-size: x-large;
@@ -37,14 +37,17 @@ export const Sheet: React.FC<SheetProps> = ({ state }: SheetProps) => {
     _setHidden((prev) => !prev);
   };
 
+  const spaceId = useAppSelector(selectSpaceId);
+
   const [sheetName, setSheetName] = useState(state.name);
   useEffect(() => {
     const t = setTimeout(() => {
-      dispatch(updateSheet({ sheetId: state.sheetId, name: sheetName }));
+      if (spaceId === null) return;
+      dispatch(updateSheet({ spaceId, sheetId: state.sheetId, name: sheetName }));
     }, 500);
 
     return () => clearTimeout(t);
-  }, [sheetName, dispatch, state.sheetId]);
+  }, [sheetName, dispatch, state.sheetId, spaceId]);
 
   return (
     <CollapsibleGroup collapsed={hidden}>
