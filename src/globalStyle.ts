@@ -1,11 +1,24 @@
+import { createGlobalStyle } from "styled-components";
+
+export const GlobalStyle = createGlobalStyle`
+
+// set default font family to sans serif everywhere
+body {
+  font-family: ${({ theme }) => theme.fontFamily.sansSerif};
+}
+
+// make the nextjs root component behave nicely
+#__next {
+  height: 100%;
+  isolation: isolate;
+}
+
 /* from https://www.joshwcomeau.com/css/custom-css-reset/ */
 
 /*
   1. Use a more-intuitive box-sizing model.
 */
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
@@ -67,11 +80,4 @@ h5,
 h6 {
   overflow-wrap: break-word;
 }
-
-/*
-  9. Create a root stacking context
-*/
-#root,
-#__next {
-  isolation: isolate;
-}
+`;

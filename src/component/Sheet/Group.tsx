@@ -15,12 +15,11 @@ const Container = styled.div<NamedGroup>`
   flex-direction: column;
 
   ${(props) =>
-    props.namedGroup
-      ? css`
-          border: 1px solid black;
-          border-radius: 4px;
-        `
-      : ""}
+    props.namedGroup &&
+    css`
+      border: 1px solid black;
+      border-radius: ${({ theme }) => theme.borderRadius};
+    `}
 `;
 
 const Title = styled.div`

@@ -27,7 +27,7 @@ export const ControllerOmni: React.FC<ControllerOmniProps> = ({
       return (
         <Edit state={state}>
           <span>{state.valueEvaluated}</span>
-          <SendInput
+          <input
             value={state.value}
             onChange={(ev) =>
               dispatch(setItemParameters({ itemId, value: ev.target.value }))

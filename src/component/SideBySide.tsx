@@ -13,7 +13,6 @@ const Container = styled.div`
 type HideRight = { hideRight: boolean };
 
 const Left = styled.main<HideRight>`
-  /* width: calc(100% * (2 / 3)); */
   flex-grow: 2;
   overflow-y: scroll;
   padding: 0.5rem;
@@ -26,17 +25,15 @@ const Left = styled.main<HideRight>`
 
   @media only screen and (max-width: 801px) {
     ${(props) =>
-      props.hideRight
-        ? css`
-            width: 100%;
-          `
-        : ""}
+      props.hideRight &&
+      css`
+        width: 100%;
+      `}
     ${(props) =>
-      props.hideRight
-        ? ""
-        : css`
-            display: none;
-          `}
+      !props.hideRight &&
+      css`
+        display: none;
+      `}
   }
 `;
 
@@ -45,20 +42,18 @@ const Right = styled.aside<HideRight>`
   flex-grow: 1;
 
   ${(props) =>
-    props.hideRight
-      ? css`
-          display: none;
-        `
-      : ""}
+    props.hideRight &&
+    css`
+      display: none;
+    `}
 
   @media only screen and (max-width: 801px) {
     ${(props) =>
-      props.hideRight
-        ? ""
-        : css`
-            display: revert;
-            width: 100%;
-          `}
+      !props.hideRight &&
+      css`
+        display: revert;
+        width: 100%;
+      `}
   }
 `;
 
@@ -70,7 +65,7 @@ const LogItems = styled.div`
   height: calc(100% - 64px);
 
   & > *:nth-child(odd) {
-    background-color: lightgray;
+    background-color: ${({ theme }) => theme.color.main};
   }
 `;
 

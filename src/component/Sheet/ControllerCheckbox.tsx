@@ -25,15 +25,15 @@ export const ControllerCheckbox: React.FC<ControllerCheckboxProps> = ({
     case "display":
       return (
         <Display state={state}>
-          <SendInput type="checkbox" checked={valueEvaluatedBool} disabled />
+          <input type="checkbox" checked={valueEvaluatedBool} disabled />
         </Display>
       );
 
     case "edit":
       return (
         <Edit state={state}>
-          <SendInput type="checkbox" disabled={true} checked={valueEvaluatedBool} />
-          <SendInput
+          <input type="checkbox" disabled={true} checked={valueEvaluatedBool} />
+          <input
             type="checkbox"
             checked={valueEvaluatedBool}
             onChange={(ev) =>

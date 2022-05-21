@@ -1,3 +1,4 @@
+import { CollapsibleGroup } from "component/CollapsibleGroup";
 import React, { useMemo } from "react";
 import { useAppDispatch } from "state/hook";
 import {
@@ -23,24 +24,6 @@ const Container = styled.div`
   flex-direction: column;
   gap: 1rem;
   padding: 1rem;
-`;
-
-const GroupContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  border-radius: 0.25rem;
-  border: 1px solid black;
-  box-shadow: 4px 4px 4px 0 lightgray;
-`;
-
-const GroupHeader = styled.div`
-  padding: 0.5rem;
-  border-radius: 0.25rem 0.25rem 0 0;
-  background-color: lightgray;
-`;
-
-const GroupBody = styled.div`
-  padding: 0.5rem;
 `;
 
 const ItemsContainer = styled.div`
@@ -153,38 +136,35 @@ const Group: React.FC<GroupProps> = ({
   const dispatch = useAppDispatch();
 
   return (
-    <GroupContainer>
-      <GroupHeader>
-        <Fields>
-          <FieldString
-            name="Group Name"
-            value={name ?? ""}
-            onChange={(name) => dispatch(setGroupParameters({ groupId, name }))}
-          />
-          <FieldString
-            name="Group Key"
-            value={key}
-            onChange={(key) => dispatch(setGroupParameters({ groupId, key }))}
-          />
-          <FieldString
-            name="Group Sort Key"
-            value={sortKey ?? ""}
-            onChange={(sortKey) => dispatch(setGroupParameters({ groupId, sortKey }))}
-          />
-          <FieldSelect
-            name="Sort Order"
-            value={sortOrder ?? "desc"}
-            options={unionMembers(GroupSortOrder)}
-            onChange={callIfParsed(GroupSortOrder, (sortOrder) =>
-              dispatch(setGroupParameters({ groupId, sortOrder }))
-            )}
-          />
-        </Fields>
-      </GroupHeader>
-      <GroupBody>
-        <Items groups={groups} state={items} />
-      </GroupBody>
-    </GroupContainer>
+    <CollapsibleGroup>
+      <Fields>
+        <FieldString
+          name="Group Name"
+          value={name ?? ""}
+          onChange={(name) => dispatch(setGroupParameters({ groupId, name }))}
+        />
+        <FieldString
+          name="Group Key"
+          value={key}
+          onChange={(key) => dispatch(setGroupParameters({ groupId, key }))}
+        />
+        <FieldString
+          name="Group Sort Key"
+          value={sortKey ?? ""}
+          onChange={(sortKey) => dispatch(setGroupParameters({ groupId, sortKey }))}
+        />
+        <FieldSelect
+          name="Sort Order"
+          value={sortOrder ?? "desc"}
+          options={unionMembers(GroupSortOrder)}
+          onChange={callIfParsed(GroupSortOrder, (sortOrder) =>
+            dispatch(setGroupParameters({ groupId, sortOrder }))
+          )}
+        />
+      </Fields>
+
+      <Items groups={groups} state={items} />
+    </CollapsibleGroup>
   );
 };
 

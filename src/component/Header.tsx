@@ -38,9 +38,7 @@ export const Header: React.FC<HeaderProps> = ({ children }: HeaderProps) => {
         </Link>
       </Title>
 
-      <Children>
-        <>{children}</>
-      </Children>
+      <Children>{children}</Children>
     </Container>
   );
 };
