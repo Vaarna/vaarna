@@ -1,12 +1,13 @@
 import { CollapsibleGroup } from "component/CollapsibleGroup";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "state/hook";
 import {
+  createGroup,
   createItem,
-  newGroup,
+  selectCreateGroupInProgress,
   selectCreateItemInProgress,
   selectSpaceId,
-  setGroupParameters,
+  updateGroup,
 } from "state/slice";
 import styled from "styled-components";
 import { GroupSortOrder } from "type/space";
@@ -48,36 +49,44 @@ type GroupProps = {
   state: SheetGroupedItems;
 };
 
-const Group: React.FC<GroupProps> = ({
-  groups,
-  state: { groupId, name, key, sortKey, sortOrder, items },
-}) => {
+const Group: React.FC<GroupProps> = ({ groups, state }) => {
   const dispatch = useAppDispatch();
+
+  const { items, ...group } = state;
+
+  const [groupState, setGroup] = useState(group);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      dispatch(updateGroup(groupState));
+    }, 1000);
+
+    return () => clearTimeout(t);
+  }, [dispatch, groupState]);
 
   return (
     <CollapsibleGroup>
       <Fields>
         <FieldString
           name="Group Name"
-          value={name ?? ""}
-          onChange={(name) => dispatch(setGroupParameters({ groupId, name }))}
+          value={groupState.name ?? ""}
+          onChange={(name) => setGroup((group) => ({ ...group, name }))}
         />
         <FieldString
           name="Group Key"
-          value={key}
-          onChange={(key) => dispatch(setGroupParameters({ groupId, key }))}
+          value={groupState.key}
+          onChange={(key) => setGroup((group) => ({ ...group, key }))}
         />
         <FieldString
           name="Group Sort Key"
-          value={sortKey ?? ""}
-          onChange={(sortKey) => dispatch(setGroupParameters({ groupId, sortKey }))}
+          value={groupState.sortKey ?? ""}
+          onChange={(sortKey) => setGroup((group) => ({ ...group, sortKey }))}
         />
         <FieldSelect
           name="Sort Order"
-          value={sortOrder ?? "desc"}
+          value={groupState.sortOrder ?? "desc"}
           options={unionMembers(GroupSortOrder)}
           onChange={callIfParsed(GroupSortOrder, (sortOrder) =>
-            dispatch(setGroupParameters({ groupId, sortOrder }))
+            setGroup((group) => ({ ...group, sortOrder }))
           )}
         />
       </Fields>
@@ -99,6 +108,7 @@ export const SheetEditTemplate: React.FC<SheetEditTemplateProps> = ({ state }) =
   const groups = useMemo(() => groupItems(state), [state]);
   const groupKeys = [...new Set(["", ...state.groups.map((group) => group.key)])];
 
+  const createGroupInProgress = useAppSelector(selectCreateGroupInProgress);
   const createItemInProgress = useAppSelector(selectCreateItemInProgress);
 
   return (
@@ -136,8 +146,9 @@ export const SheetEditTemplate: React.FC<SheetEditTemplateProps> = ({ state }) =
             New Item
           </button>
           <button
+            disabled={createGroupInProgress}
             onClick={() =>
-              dispatch(newGroup({ spaceId, sheetId: state.sheetId, key: "" }))
+              dispatch(createGroup({ spaceId, sheetId: state.sheetId, key: "" }))
             }
           >
             New Group

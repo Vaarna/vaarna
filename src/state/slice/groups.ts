@@ -1,13 +1,9 @@
-import {
-  createEntityAdapter,
-  createSlice,
-  nanoid,
-  PayloadAction,
-} from "@reduxjs/toolkit";
-import type { CreateGroup, Group, Sheet } from "type/space";
+import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
+import type { CreateGroup, Group, Sheet, UpdateGroup } from "type/space";
 import { setSpaceId } from "state/slice";
 import type { RootState } from "state/store";
-import { getCreatedUpdated } from "type/createdUpdated";
+import { frontend } from "api";
+import { getSpace } from "./getSpace";
 
 // --- REDUCER ---
 
@@ -20,11 +16,11 @@ export const groupData = createEntityAdapter<Group>({
 });
 
 type GroupsState = {
-  newGroupInProgress: boolean;
+  createGroupInProgress: boolean;
 } & ReturnType<typeof groupData.getInitialState>;
 
 const initialState: GroupsState = groupData.getInitialState({
-  newGroupInProgress: false,
+  createGroupInProgress: false,
 });
 
 const groups = createSlice({
@@ -34,28 +30,26 @@ const groups = createSlice({
     b.addCase(setSpaceId, (state) => {
       groupData.removeAll(state);
     });
-  },
-  reducers: {
-    newGroup(state, { payload }: PayloadAction<CreateGroup>) {
-      const groupId = nanoid();
-      groupData.addOne(state, { ...payload, groupId, ...getCreatedUpdated() });
-    },
 
-    setGroupParameters(
-      state,
-      {
-        payload,
-      }: PayloadAction<
-        { groupId: Group["groupId"] } & Partial<Omit<Group, "sheetId" | "groupId">>
-      >
-    ) {
-      groupData.updateOne(state, { id: payload.groupId, changes: payload });
-    },
+    b.addCase(getSpace.fulfilled, (state, { payload }) => {
+      groupData.upsertMany(state, payload?.groups ?? []);
+    });
+
+    b.addCase(createGroup.pending, (state) => {
+      state.createGroupInProgress = true;
+    });
+    b.addCase(createGroup.fulfilled, (state, item) => {
+      state.createGroupInProgress = false;
+      groupData.addOne(state, item);
+    });
+    b.addCase(createGroup.rejected, (state) => {
+      state.createGroupInProgress = false;
+    });
   },
+  reducers: {},
 });
 
 export default groups.reducer;
-export const { newGroup, setGroupParameters } = groups.actions;
 
 // --- SELECT ---
 
@@ -68,3 +62,19 @@ export const selectGroupsInSheet = (
   state: RootState,
   sheetId: Sheet["sheetId"]
 ): Group[] => selectGroups(state).filter((group) => group.sheetId === sheetId);
+
+export const selectCreateGroupInProgress = (state: RootState): boolean =>
+  state.groups.createGroupInProgress;
+
+// --- ACTION ---
+
+export const createGroup = createAsyncThunk<Group, CreateGroup, { state: RootState }>(
+  "group/create",
+  frontend.createGroup,
+  { condition: (_state, { getState }) => !selectCreateGroupInProgress(getState()) }
+);
+
+export const updateGroup = createAsyncThunk<Group, UpdateGroup, { state: RootState }>(
+  "group/update",
+  frontend.updateGroup
+);

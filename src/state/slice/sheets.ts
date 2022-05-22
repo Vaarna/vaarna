@@ -1,6 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
 import { frontend } from "api";
-import { setSpaceId, selectSpaceId } from "state/slice";
+import { setSpaceId } from "state/slice";
 import { RootState } from "state/store";
 import { CreateSheet, Sheet, UpdateSheet } from "type/space";
 import { getSpace } from "./getSpace";
@@ -69,12 +69,7 @@ export const selectSheetCreateInProgress = (state: RootState): boolean =>
 
 export const createSheet = createAsyncThunk<Sheet, CreateSheet, { state: RootState }>(
   "sheet/create",
-  async (sheet, { getState, signal, requestId }) => {
-    const spaceId = selectSpaceId(getState());
-    if (spaceId === null) throw new Error("spaceId is not set");
-
-    return frontend.createSheet(sheet, { signal, requestId });
-  },
+  frontend.createSheet,
   {
     condition: (_state, { getState }) => !selectSheetCreateInProgress(getState()),
   }
@@ -82,11 +77,5 @@ export const createSheet = createAsyncThunk<Sheet, CreateSheet, { state: RootSta
 
 export const updateSheet = createAsyncThunk<Sheet, UpdateSheet, { state: RootState }>(
   "sheet/update",
-  async (sheet, { getState, signal, requestId }) => {
-    const spaceId = selectSpaceId(getState());
-    if (spaceId === null) throw new Error("spaceId is not set");
-
-    const res = await frontend.updateSheet(sheet, { signal, requestId });
-    return res;
-  }
+  frontend.updateSheet
 );

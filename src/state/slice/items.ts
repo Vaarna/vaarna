@@ -73,11 +73,11 @@ export const selectCreateItemInProgress = (state: RootState): boolean =>
 
 export const createItem = createAsyncThunk<Item, CreateItem, { state: RootState }>(
   "item/create",
-  (item, thunkApi) => frontend.createItem(item, thunkApi),
+  frontend.createItem,
   { condition: (_state, { getState }) => !selectCreateItemInProgress(getState()) }
 );
 
 export const updateItem = createAsyncThunk<Item, UpdateItem, { state: RootState }>(
   "item/update",
-  (item, thunkApi) => frontend.updateItem(item, thunkApi)
+  frontend.updateItem
 );

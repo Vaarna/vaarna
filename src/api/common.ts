@@ -51,13 +51,18 @@ type DynamoDbUpdateParams = {
   UpdateExpression: string;
 };
 
+type DynamoDbScalar = string | number | boolean | null;
+type DynamoDbDocument = DynamoDbScalar[];
+
+type DynamoDbValue = DynamoDbScalar | DynamoDbDocument;
+
 export const createDynamoDbUpdate = (
   conf: CommonBackendConfig,
-  v: Record<string, string | number | boolean>,
+  v: Record<string, DynamoDbValue>,
   ignoreKeys?: string[]
 ): DynamoDbUpdateParams => {
   const ExpressionAttributeNames: Record<string, string> = {};
-  const ExpressionAttributeValues: Record<string, string | number | boolean> = {};
+  const ExpressionAttributeValues: Record<string, DynamoDbValue> = {};
   const ks: Record<string, string> = {};
 
   for (const [key, value] of Object.entries(v)) {
