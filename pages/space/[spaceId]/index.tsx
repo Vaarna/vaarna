@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Sheet } from "component/Sheet";
-import { Upload } from "component/Upload";
 import { useRouter } from "next/router";
 import { z } from "zod";
 import { SideBySide } from "component/SideBySide";
@@ -26,7 +25,7 @@ export default function Space(): React.ReactNode {
     (function f() {
       if (spaceId === null) return;
       dispatch(getSpace(spaceId));
-      t = setTimeout(f, 5000);
+      t = setTimeout(f, 5_000);
     })();
 
     return () => clearInterval(t);
@@ -35,10 +34,10 @@ export default function Space(): React.ReactNode {
   useEffect(() => {
     const parsed = z.string().safeParse(router.query.spaceId);
     if (parsed.success) dispatch(setSpaceId(parsed.data));
-  }, [router, dispatch]);
+  }, [router.query.spaceId, dispatch]);
 
   const createSheetInProgress = useAppSelector(selectSheetCreateInProgress);
-  const sheets = useAppSelector((state) => selectSheetStateAll(state));
+  const sheets = useAppSelector(selectSheetStateAll);
 
   const [logItems, setLogItems] = useState<string[]>([]);
   const addLogItem = (item: string) => {
@@ -48,14 +47,14 @@ export default function Space(): React.ReactNode {
   const [showRight, setShowRight] = useState(true);
   const send = (v: string) => Promise.resolve(addLogItem(v));
 
-  if (spaceId === null) return <span>redirecting...</span>;
-
   return (
-    <Upload url="/api/asset" params={{ spaceId }}>
+    <>
       <Header>
         <button
-          disabled={createSheetInProgress}
-          onClick={() => dispatch(createSheet({ spaceId, name: "" }))}
+          disabled={createSheetInProgress || spaceId === null}
+          onClick={() =>
+            spaceId !== null && dispatch(createSheet({ spaceId, name: "" }))
+          }
         >
           New Sheet
         </button>
@@ -75,6 +74,6 @@ export default function Space(): React.ReactNode {
           ))}
         </>
       </SideBySide>
-    </Upload>
+    </>
   );
 }
