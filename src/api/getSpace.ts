@@ -5,6 +5,16 @@ import { parseQuery, RequestWithQuery } from "util/parseRequest";
 import { z } from "zod";
 import { DynamoDbConfig, FrontendOptions, fetchBase } from "./common";
 
+class InvalidSpaceItem extends Error {
+  constructor(
+    public readonly pk: string,
+    public readonly sk: string,
+    public readonly data: unknown
+  ) {
+    super(`cannot parse space item with sk ${sk}`);
+  }
+}
+
 // TODO: move this to a better place
 const pksk = z
   .object({
@@ -38,7 +48,7 @@ const parseSpaceElement = (
     return { type: "item", value: Item.parse(parsed) };
   }
 
-  throw new Error("unexpected");
+  throw new InvalidSpaceItem(parsed.pk, parsed.sk, parsed);
 };
 
 const Output = z.object({
