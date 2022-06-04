@@ -82,9 +82,12 @@ test("rounding any number with accuracy of 0 equals itself", () => {
 
 test("rounding 10^x with accuracy 1-x equals 10^x", () => {
   fc.assert(
-    fc.property(fc.integer(0, Math.floor(Math.log10(Number.MAX_SAFE_INTEGER))), (x) => {
-      const pow = Math.pow(10, x);
-      expect(round(pow, 1 - x)).toEqual(pow);
-    })
+    fc.property(
+      fc.integer({ min: 0, max: Math.floor(Math.log10(Number.MAX_SAFE_INTEGER)) }),
+      (x) => {
+        const pow = Math.pow(10, x);
+        expect(round(pow, 1 - x)).toEqual(pow);
+      }
+    )
   );
 });
