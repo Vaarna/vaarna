@@ -1,4 +1,4 @@
-import { AssetData } from "@gm-screen/type";
+import { AssetData } from "./space";
 
 export function getKind(contentType: string): AssetData["kind"] {
   switch (contentType) {
