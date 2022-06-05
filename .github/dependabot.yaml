@@ -17,3 +17,15 @@ updates:
     schedule:
       interval: "weekly"
       day: "saturday"
+
+  - package-ecosystem: "npm"
+    directory: "/package/component"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "npm"
+    directory: "/package/type"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
