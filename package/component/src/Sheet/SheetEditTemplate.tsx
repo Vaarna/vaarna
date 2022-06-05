@@ -10,15 +10,14 @@ import {
   updateGroup,
 } from "@gm-screen/all/dist/state/slice";
 import styled from "styled-components";
-import { GroupSortOrder } from "@gm-screen/all/dist/type/space";
+import { GroupSortOrder, callIfParsed, unionMembers } from "@gm-screen/type";
 import {
-  groupItems,
   SheetGroupedItems,
   SheetState,
+  groupItems,
 } from "@gm-screen/all/dist/util/evalItems";
-import { callIfParsed, unionMembers } from "@gm-screen/all/dist/util/zod";
 import { EditTemplate } from "./modes";
-import { Fields, FieldSelect, FieldString } from "./modes/Field";
+import { FieldSelect, FieldString, Fields } from "./modes/Field";
 
 const Container = styled.div`
   display: flex;

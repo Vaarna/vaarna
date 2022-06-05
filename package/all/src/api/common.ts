@@ -6,7 +6,7 @@ import {
 import axios, { AxiosInstance } from "axios";
 import P from "pino";
 import config from "../config";
-import { Group, ItemBase, Sheet, Space } from "../type/space";
+import { Group, ItemBase, Sheet, Space } from "@gm-screen/type";
 import { RequestWithLogger } from "../util/withDefaults";
 import { z } from "zod";
 import { asAWSLogger } from "../logger";

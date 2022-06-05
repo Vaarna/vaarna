@@ -1,5 +1,5 @@
 import React from "react";
-import { Item } from "@gm-screen/all/dist/type/space";
+import { Item } from "@gm-screen/type";
 import { PropsWithExactlyTwoChildren } from "../../util";
 import { ClickableText, Container, Name, Value } from "./common";
 

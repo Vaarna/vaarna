@@ -2,12 +2,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
 import { selectSpaceId, updateItem } from "@gm-screen/all/dist/state/slice";
 import styled from "styled-components";
-import { GroupDisplay, Item } from "@gm-screen/all/dist/type/space";
+import { GroupDisplay, Item } from "@gm-screen/type";
 import {
-  groupItems,
   ItemEvaluated,
   SheetGroupedItems,
   SheetState,
+  groupItems,
 } from "@gm-screen/all/dist/util/evalItems";
 import { Display, Edit } from "./modes";
 

@@ -2,7 +2,7 @@ import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/too
 import { frontend } from "../../api";
 import { setSpaceId } from "../../state/slice";
 import { RootState } from "../../state/store";
-import { CreateSheet, Sheet, UpdateSheet } from "../../type/space";
+import { CreateSheet, Sheet, UpdateSheet } from "@gm-screen/type";
 import { getSpace } from "./getSpace";
 
 // --- REDUCER ---

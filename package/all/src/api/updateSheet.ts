@@ -1,14 +1,18 @@
 import { UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-import { Sheet, UpdateSheet } from "../type/space";
-import { getUpdated } from "../type/createdUpdated";
-import { parseBody, RequestWithBody } from "../util/parseRequest";
 import {
+  Sheet,
+  UpdateSheet,
+  getUpdated,
+  RequestWithBody,
+  parseBody,
+} from "@gm-screen/type";
+import {
+  CommonBackendConfig,
   DynamoDbConfig,
   FrontendOptions,
-  fetchBase,
   createDynamoDbUpdate,
-  CommonBackendConfig,
+  fetchBase,
 } from "./common";
 
 const Output = Sheet;

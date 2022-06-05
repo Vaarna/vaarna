@@ -13,11 +13,10 @@ import config from "../config";
 import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
-import { ApiInternalServerError } from "../type/error";
+import { ApiInternalServerError, AssetData, Space } from "@gm-screen/type";
 import { getItemsFromTable } from "../util/dynamodb";
 import { z } from "zod";
-import { dynamoDbConfig, s3Config, Service, ServiceParams } from "./common";
-import { AssetData, Space } from "../type/space";
+import { Service, ServiceParams, dynamoDbConfig, s3Config } from "./common";
 import { getKind } from "../util/getKind";
 
 export const GetAssetHeaders = z

@@ -1,7 +1,13 @@
-import { ApiNotFoundError } from "../type/error";
-import { Group, Item, Sheet, Space } from "../type/space";
+import {
+  ApiNotFoundError,
+  Group,
+  Item,
+  Sheet,
+  Space,
+  RequestWithQuery,
+  parseQuery,
+} from "@gm-screen/type";
 import { getItemsFromTable } from "../util/dynamodb";
-import { parseQuery, RequestWithQuery } from "../util/parseRequest";
 import { z } from "zod";
 import { DynamoDbConfig, FrontendOptions, fetchBase } from "./common";
 

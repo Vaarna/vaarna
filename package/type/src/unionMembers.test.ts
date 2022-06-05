@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { unionMembers } from "./zod";
+import { unionMembers } from "./unionMembers";
 
 describe("unionMembers", () => {
   test("works with string literals", () => {

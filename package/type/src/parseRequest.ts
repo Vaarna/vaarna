@@ -1,12 +1,5 @@
 import { z } from "zod";
-import {
-  ApiParseQueryError,
-  ApiParseHeadersError,
-  ApiParseBodyError,
-  ApiError,
-} from "../type/error";
-
-export { ApiError };
+import { ApiParseBodyError, ApiParseHeadersError, ApiParseQueryError } from "./error";
 
 type RequestId = { requestId: string };
 export type RequestWithQuery = RequestId & { query: unknown };

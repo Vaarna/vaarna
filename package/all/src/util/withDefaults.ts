@@ -1,8 +1,8 @@
 import { requestLogger } from "../logger";
 import { NextApiRequest, NextApiResponse } from "next";
 import P from "pino";
-import { ApiError } from "../type/error";
-import { z, ZodError } from "zod";
+import { ApiError } from "@gm-screen/type";
+import { ZodError, z } from "zod";
 
 export type RequestWithLogger = NextApiRequest & {
   requestId: string;

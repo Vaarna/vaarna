@@ -1,8 +1,7 @@
 import { z } from "zod";
 import { evaluate } from "../render";
-import { Item, Group, Sheet, Space } from "../type/space";
+import { Group, Item, Sheet, Space, getCreatedUpdated } from "@gm-screen/type";
 import { sortBy } from "../util/sortBy";
-import { getCreatedUpdated } from "../type/createdUpdated";
 
 export type ItemEvaluated<T> = T & {
   valueEvaluated: string;

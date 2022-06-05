@@ -1,13 +1,11 @@
-import { ApiNotFoundError } from "../type/error";
-import { Item } from "../type/space";
+import { ApiNotFoundError, Item, RequestWithQuery, parseQuery } from "@gm-screen/type";
 import { getItemsFromTable } from "../util/dynamodb";
-import { parseQuery, RequestWithQuery } from "../util/parseRequest";
 import {
   DynamoDbConfig,
   FrontendOptions,
-  fetchBase,
-  SpaceIdParam,
   ItemIdParam,
+  SpaceIdParam,
+  fetchBase,
 } from "./common";
 
 const Output = Item;

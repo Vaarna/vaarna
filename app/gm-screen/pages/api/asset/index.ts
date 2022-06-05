@@ -2,7 +2,7 @@ import { createReadStream } from "fs";
 import { unlink } from "fs/promises";
 import { uuid } from "@gm-screen/all/dist/util/uuid";
 import { NextApiResponse } from "next";
-import { parseRequest } from "@gm-screen/all/dist/util/parseRequest";
+import { parseRequest, AssetData, Space, getCreatedUpdated } from "@gm-screen/type";
 import { pathToFileURL } from "url";
 import {
   ParsedMultipartBody,
@@ -10,9 +10,7 @@ import {
 } from "@gm-screen/all/dist/util/multipart";
 import { AssetService, GetAssetHeaders } from "@gm-screen/all/dist/service/asset";
 import { RequestWithLogger, withDefaults } from "@gm-screen/all/dist/util/withDefaults";
-import { AssetData, Space } from "@gm-screen/all/dist/type/space";
 import { z } from "zod";
-import { getCreatedUpdated } from "@gm-screen/all/dist/type/createdUpdated";
 
 async function asset(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
   const svc = new AssetService(req);

@@ -1,13 +1,17 @@
 import { UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-import { Group, UpdateGroup } from "../type/space";
-import { getUpdated } from "../type/createdUpdated";
-import { parseBody, RequestWithBody } from "../util/parseRequest";
+import {
+  Group,
+  UpdateGroup,
+  getUpdated,
+  RequestWithBody,
+  parseBody,
+} from "@gm-screen/type";
 import {
   DynamoDbConfig,
   FrontendOptions,
-  fetchBase,
   createDynamoDbUpdate,
+  fetchBase,
 } from "./common";
 
 const Output = Group;

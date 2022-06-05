@@ -1,14 +1,12 @@
-import { ApiNotFoundError } from "../type/error";
-import { Sheet } from "../type/space";
+import { ApiNotFoundError, Sheet, RequestWithQuery, parseQuery } from "@gm-screen/type";
 import { getItemsFromTable } from "../util/dynamodb";
-import { parseQuery, RequestWithQuery } from "../util/parseRequest";
 import { z } from "zod";
 import {
   DynamoDbConfig,
   FrontendOptions,
-  fetchBase,
-  SpaceIdParam,
   SheetIdParam,
+  SpaceIdParam,
+  fetchBase,
 } from "./common";
 
 const Output = z.object({ sheet: Sheet });

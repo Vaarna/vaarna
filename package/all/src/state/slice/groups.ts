@@ -1,5 +1,5 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
-import type { CreateGroup, Group, Sheet, UpdateGroup } from "../../type/space";
+import type { CreateGroup, Group, Sheet, UpdateGroup } from "@gm-screen/type";
 import { setSpaceId } from "../../state/slice";
 import type { RootState } from "../../state/store";
 import { frontend } from "../../api";

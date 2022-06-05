@@ -1,7 +1,6 @@
 import { NextApiResponse } from "next";
 import { AssetService } from "@gm-screen/all/dist/service/asset";
-import { Space } from "@gm-screen/all/dist/type/space";
-import { parseRequest } from "@gm-screen/all/dist/util/parseRequest";
+import { Space, parseRequest } from "@gm-screen/type";
 import { RequestWithLogger, withDefaults } from "@gm-screen/all/dist/util/withDefaults";
 import { z } from "zod";
 

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@gm-screen/all": "*",
+    "@gm-screen/type": "*",
     "@reduxjs/toolkit": "^1.8.1",
     "next": "^12.1.6",
     "zod": "^3.1.0"
