@@ -11,10 +11,14 @@
       "dependsOn": ["build"]
     },
 
-    "lint:tsc": {},
-    "lint:eslint": {},
+    "lint:tsc": {
+      "dependsOn": ["^build"]
+    },
+    "lint:eslint": {
+      "dependsOn": ["^build"]
+    },
     "lint": {
-      "dependsOn": ["//#root:lint", "build", "lint:tsc", "lint:eslint"]
+      "dependsOn": ["//#root:lint", "lint:tsc", "lint:eslint"]
     },
 
     "test": {},
