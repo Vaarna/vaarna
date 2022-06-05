@@ -1,8 +1,9 @@
 import { DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
 import { S3ClientConfig } from "@aws-sdk/client-s3";
-import { asAWSLogger } from "../logger";
 import P from "pino";
+
 import config from "../config";
+import { asAWSLogger } from "../logger";
 
 export const dynamoDbConfig = (logger: P.Logger): DynamoDBClientConfig => ({
   logger: asAWSLogger("DynamoDB", logger),

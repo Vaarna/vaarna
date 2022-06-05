@@ -1,9 +1,10 @@
-import React from "react";
 import { AppProps } from "next/app";
-import { wrapper } from "@gm-screen/all/dist/state/store";
+import React from "react";
 import { ThemeProvider } from "styled-components";
-import { defaultTheme } from "@gm-screen/all/dist/theme";
+
 import { GlobalStyle } from "@gm-screen/all/dist/globalStyle";
+import { wrapper } from "@gm-screen/all/dist/state/store";
+import { defaultTheme } from "@gm-screen/all/dist/theme";
 
 const WrappedApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

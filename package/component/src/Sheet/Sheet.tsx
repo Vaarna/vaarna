@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { SheetState } from "@gm-screen/all/dist/util/evalItems";
-import { SheetDisplay } from "./SheetDisplay";
-import { SheetEditTemplate } from "./SheetEditTemplate";
-import { Mode } from "./common";
 import styled from "styled-components";
-import { CollapsibleGroup } from "../CollapsibleGroup";
+
 import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
 import { selectSpaceId, updateSheet } from "@gm-screen/all/dist/state/slice";
+import { SheetState } from "@gm-screen/all/dist/util/evalItems";
+
+import { CollapsibleGroup } from "../CollapsibleGroup";
+import { Mode } from "./common";
+import { SheetDisplay } from "./SheetDisplay";
+import { SheetEditTemplate } from "./SheetEditTemplate";
 
 const SheetName = styled.div`
   font-size: x-large;

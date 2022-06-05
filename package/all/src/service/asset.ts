@@ -9,15 +9,17 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import { marshall } from "@aws-sdk/util-dynamodb";
-import config from "../config";
 import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
-import { ApiInternalServerError, AssetData, Space } from "@gm-screen/type";
-import { getItemsFromTable } from "../util/dynamodb";
 import { z } from "zod";
-import { Service, ServiceParams, dynamoDbConfig, s3Config } from "./common";
+
+import { ApiInternalServerError, AssetData, Space } from "@gm-screen/type";
+
+import config from "../config";
+import { getItemsFromTable } from "../util/dynamodb";
 import { getKind } from "../util/getKind";
+import { dynamoDbConfig, s3Config, Service, ServiceParams } from "./common";
 
 export const GetAssetHeaders = z
   .object({

@@ -5,7 +5,7 @@
     "dev": "next dev | pino-pretty",
     "build": "next build --no-lint",
     "start": "NODE_ENV=production next start --port $PORT",
-    "lint": "next lint"
+    "lint:eslint": "eslint 'pages/**/*.{ts,tsx}'"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.100.0",

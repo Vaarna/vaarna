@@ -1,14 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
+import styled from "styled-components";
+
 import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
 import { selectSpaceId, updateItem } from "@gm-screen/all/dist/state/slice";
-import styled from "styled-components";
-import { GroupDisplay, Item } from "@gm-screen/type";
 import {
+  groupItems,
   ItemEvaluated,
   SheetGroupedItems,
   SheetState,
-  groupItems,
 } from "@gm-screen/all/dist/util/evalItems";
+import { GroupDisplay, Item } from "@gm-screen/type";
+
 import { Display, Edit } from "./modes";
 
 const Container = styled.div`

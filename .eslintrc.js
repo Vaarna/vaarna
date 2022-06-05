@@ -40,7 +40,13 @@ module.exports = {
     "next.config.js",
     "styled.d.ts",
   ],
-  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "prettier",
+  ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaFeatures: {
@@ -48,10 +54,18 @@ module.exports = {
     },
     ecmaVersion: 12,
   },
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "simple-import-sort", "import"],
   rules: {
     ...warns,
     ...errors,
+
+    "simple-import-sort/imports": [
+      "error",
+      {
+        groups: [["^\\u0000"], ["^@?\\w"], ["^@gm-screen/"]],
+      },
+    ],
+    "simple-import-sort/exports": ["error"],
 
     "@typescript-eslint/no-unused-vars": [
       "error",

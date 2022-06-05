@@ -1,14 +1,16 @@
 import { PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { marshall } from "@aws-sdk/util-dynamodb";
+
 import {
   CreateSpace,
-  Space,
   getCreatedUpdated,
-  RequestWithBody,
   parseBody,
+  RequestWithBody,
+  Space,
 } from "@gm-screen/type";
+
 import { uuid } from "../util/uuid";
-import { DynamoDbConfig, FrontendOptions, fetchBase } from "./common";
+import { DynamoDbConfig, fetchBase, FrontendOptions } from "./common";
 
 const Output = Space;
 type Output = Space;

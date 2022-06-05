@@ -1,6 +1,7 @@
-import { uuid } from "./util/uuid";
 import { NextApiRequest, NextApiResponse } from "next";
 import P from "pino";
+
+import { uuid } from "./util/uuid";
 
 export const rootLogger = P({
   nestedKey: "data",

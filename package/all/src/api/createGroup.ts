@@ -1,14 +1,16 @@
 import { PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { marshall } from "@aws-sdk/util-dynamodb";
+
 import {
   CreateGroup,
-  Group,
-  RequestWithBody,
   getCreatedUpdated,
+  Group,
   parseBody,
+  RequestWithBody,
 } from "@gm-screen/type";
+
 import { uuid } from "../util/uuid";
-import { DynamoDbConfig, FrontendOptions, fetchBase } from "./common";
+import { DynamoDbConfig, fetchBase, FrontendOptions } from "./common";
 
 const Output = Group;
 type Output = Group;

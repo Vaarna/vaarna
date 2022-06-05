@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+
 import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
 import { createItem, selectSpaceId, updateItem } from "@gm-screen/all/dist/state/slice";
-import { Item, ItemType, callIfParsed, unionMembers } from "@gm-screen/type";
-import { FieldCheckbox, FieldSelect, FieldString, Fields } from "./Field";
+import { callIfParsed, Item, ItemType, unionMembers } from "@gm-screen/type";
+
+import { FieldCheckbox, Fields, FieldSelect, FieldString } from "./Field";
 
 export type EditTemplateProps = {
   state: Item;

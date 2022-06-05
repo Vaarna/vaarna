@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { Space } from "./space";
 
 export const LogItem = z.object({

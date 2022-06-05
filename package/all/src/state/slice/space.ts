@@ -1,7 +1,9 @@
 import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+import { CreateSpace, Space, UpdateSpace } from "@gm-screen/type";
+
 import { frontend } from "../../api";
 import type { RootState } from "../../state/store";
-import { CreateSpace, Space, UpdateSpace } from "@gm-screen/type";
 
 // --- REDUCER ---
 

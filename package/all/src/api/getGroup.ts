@@ -1,11 +1,12 @@
-import { ApiNotFoundError, Group, RequestWithQuery, parseQuery } from "@gm-screen/type";
+import { ApiNotFoundError, Group, parseQuery, RequestWithQuery } from "@gm-screen/type";
+
 import { getItemsFromTable } from "../util/dynamodb";
 import {
   DynamoDbConfig,
+  fetchBase,
   FrontendOptions,
   GroupIdParam,
   SpaceIdParam,
-  fetchBase,
 } from "./common";
 
 const Output = Group;
