@@ -45,7 +45,7 @@
     "@types/jest": "^27.0.3",
     "@types/lodash": "^4.14.170",
     "@types/multiparty": "^0.0.33",
-    "@types/mustache": "^4.1.2",
+    "@types/mustache": "^4.1.3",
     "@types/node": "^18.0.0",
     "@types/pino": "^6.3.12",
     "@types/react": "^18.0.12",
