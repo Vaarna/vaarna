@@ -6,14 +6,24 @@ updates:
       interval: "weekly"
       day: "saturday"
 
+  # --- APPS ---
+
   - package-ecosystem: "npm"
     directory: "/app/gm-screen"
     schedule:
       interval: "weekly"
       day: "saturday"
 
+  # --- PACKAGES ---
+
   - package-ecosystem: "npm"
     directory: "/package/all"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "npm"
+    directory: "/package/api"
     schedule:
       interval: "weekly"
       day: "saturday"
@@ -25,7 +35,37 @@ updates:
       day: "saturday"
 
   - package-ecosystem: "npm"
+    directory: "/package/logging"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "npm"
+    directory: "/package/sheet-logic"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "npm"
+    directory: "/package/state"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "npm"
     directory: "/package/type"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "npm"
+    directory: "/package/util"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "npm"
+    directory: "/package/window-upload"
     schedule:
       interval: "weekly"
       day: "saturday"
