@@ -31,7 +31,7 @@
   "devDependencies": {
     "@swc/core": "^1.2.196",
     "@swc/jest": "^0.2.21",
-    "@types/jest": "^27.0.3",
+    "@types/jest": "^28.1.4",
     "@types/lodash": "^4.14.170",
     "@types/multiparty": "^0.0.33",
     "@types/mustache": "^4.1.2",
@@ -39,7 +39,7 @@
     "@types/pino": "^6.3.12",
     "@types/uuid": "^8.3.3",
     "fast-check": "^3.0.0",
-    "jest": "^27.5.1",
+    "jest": "^28.1.2",
     "typescript": "^4.7.3"
   }
 }
