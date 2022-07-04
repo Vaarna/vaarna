@@ -13,7 +13,7 @@
     "@gm-screen/logging": "*",
     "@gm-screen/type": "*",
     "@gm-screen/util": "*",
-    "@reduxjs/toolkit": "^1.8.1"
+    "@reduxjs/toolkit": "^1.8.3"
   },
   "devDependencies": {
     "typescript": "^4.7.3"
