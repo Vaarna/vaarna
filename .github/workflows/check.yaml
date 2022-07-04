@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "16"
-          cache: "yarn"
+          cache: "npm"
 
       - name: Install dependencies
         run: make init
@@ -21,4 +21,4 @@ jobs:
         run: make -j check test-jest
 
       - name: Build next app
-        run: yarn build
+        run: npm run --workspaces --if-present build

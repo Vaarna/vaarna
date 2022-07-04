@@ -1,8 +1,6 @@
 .next/
 .vscode/
-cdk.out/
 dist/
 node_modules/
-screenshots/
 .env.local
 tsconfig.tsbuildinfo

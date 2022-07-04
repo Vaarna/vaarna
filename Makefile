@@ -1,7 +1,7 @@
 .SUFFIXES:
 
-YARN := yarn
-BIN := ${shell ${YARN} bin}
+NPM := npm
+BIN := ${shell ${NPM} bin}
 
 DOCKER := docker
 DOCKER_COMPOSE := docker-compose
@@ -21,7 +21,7 @@ help:
 
 .PHONY: init
 init:
-	${YARN} install --frozen-lockfile
+	${NPM} install
 
 .PHONY: clean
 clean: clean-dev-services
@@ -35,7 +35,7 @@ clean-dev-services: dev-services-down
 
 .PHONY: dev
 dev: dev-services init
-	NODE_OPTIONS='--inspect' ${NEXT} dev | ${PINO_PRETTY}
+	cd app/gm-screen && NODE_OPTIONS='--inspect' ${NEXT} dev | ${PINO_PRETTY}
 
 .PHONY: dev-services
 dev-services:
@@ -75,7 +75,7 @@ fix-prettier:
 # --- TEST ---
 
 .PHONY: test
-test: test-jest test-testcafe
+test: test-jest
 
 .PHONY: test-jest
 test-jest:
