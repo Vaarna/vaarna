@@ -1,0 +1,19 @@
+{
+  "name": "@gm-screen/state",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "fix:eslint": "eslint --fix 'src/**/*.ts'",
+    "lint:eslint": "eslint 'src/**/*.ts'",
+    "lint:tsc": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gm-screen/type": "*",
+    "@reduxjs/toolkit": "^1.8.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.7.3"
+  }
+}

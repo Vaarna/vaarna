@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
-import { createItem, selectSpaceId, updateItem } from "@gm-screen/all/dist/state/slice";
+import {
+  createItem,
+  selectSpaceId,
+  updateItem,
+  useAppDispatch,
+  useAppSelector,
+} from "@gm-screen/state";
 import { callIfParsed, Item, ItemType, unionMembers } from "@gm-screen/type";
 
 import { FieldCheckbox, Fields, FieldSelect, FieldString } from "./Field";

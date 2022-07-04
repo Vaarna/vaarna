@@ -8,7 +8,7 @@ import {
 } from "@gm-screen/all/dist/context/UploadProgress";
 import { useFileUpload } from "@gm-screen/all/dist/hook/useFileUpload";
 import { rootLogger } from "@gm-screen/all/dist/logger";
-import { uuid } from "@gm-screen/all/dist/util/uuid";
+import { uuid } from "@gm-screen/util";
 
 const ProgressEvent = z.object({
   type: z.literal("progress"),

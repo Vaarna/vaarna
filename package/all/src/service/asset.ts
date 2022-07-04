@@ -14,10 +14,10 @@ import { NextApiResponse } from "next";
 import { Readable } from "stream";
 import { z } from "zod";
 
+import { getItemsFromTable } from "@gm-screen/api";
 import { ApiInternalServerError, AssetData, getKind, Space } from "@gm-screen/type";
 
 import config from "../config";
-import { getItemsFromTable } from "../util/dynamodb";
 import { dynamoDbConfig, s3Config, Service, ServiceParams } from "./common";
 
 export const GetAssetHeaders = z

@@ -9,9 +9,9 @@ import {
   ParsedMultipartBody,
   parseMultipartBody,
 } from "@gm-screen/all/dist/util/multipart";
-import { uuid } from "@gm-screen/all/dist/util/uuid";
 import { RequestWithLogger, withDefaults } from "@gm-screen/all/dist/util/withDefaults";
 import { AssetData, getCreatedUpdated, parseRequest, Space } from "@gm-screen/type";
+import { uuid } from "@gm-screen/util";
 
 async function asset(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
   const svc = new AssetService(req);

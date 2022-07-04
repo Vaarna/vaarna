@@ -4,12 +4,13 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsc --watch",
-    "build": "tsc --outDir dist",
+    "build": "tsc",
     "lint:tsc": "tsc --noEmit",
     "lint:eslint": "eslint 'src/**/*.{ts,tsx}'"
   },
   "dependencies": {
     "@gm-screen/all": "*",
+    "@gm-screen/state": "*",
     "@gm-screen/type": "*",
     "@reduxjs/toolkit": "^1.8.1",
     "next": "^12.1.6",

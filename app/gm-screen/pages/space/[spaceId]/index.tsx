@@ -2,16 +2,17 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
-import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
-import { selectSheetStateAll } from "@gm-screen/all/dist/state/select";
+import { Header, Sheet, SideBySide } from "@gm-screen/component";
 import {
   createSheet,
+  getSpace,
   selectSheetCreateInProgress,
+  selectSheetStateAll,
   selectSpaceId,
   setSpaceId,
-} from "@gm-screen/all/dist/state/slice";
-import { getSpace } from "@gm-screen/all/dist/state/slice/getSpace";
-import { Header, Sheet, SideBySide } from "@gm-screen/component";
+  useAppDispatch,
+  useAppSelector,
+} from "@gm-screen/state";
 
 export default function Space(): React.ReactNode {
   const router = useRouter();

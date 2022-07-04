@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsc --watch",
     "build": "tsc",
-    "lint:tsc": "tsc --noEmit",
+    "dev": "tsc --watch",
+    "fix:eslint": "eslint --fix 'src/**/*.{ts,tsx}'",
     "lint:eslint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:tsc": "tsc --noEmit",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "dependencies": {

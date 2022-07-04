@@ -23,8 +23,11 @@
 
     "test": {},
 
-    "format": {
-      "dependsOn": ["//#root:format"]
+    "fix:eslint": {
+      "dependsOn": ["^build"]
+    },
+    "fix": {
+      "dependsOn": ["//#root:format", "fix:eslint"]
     },
 
     "dev": {

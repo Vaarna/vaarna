@@ -11,7 +11,7 @@
     "start": "turbo run start",
     "test": "turbo run test",
     "lint": "turbo run lint",
-    "format": "turbo run format",
+    "fix": "turbo run fix",
     "dev": "turbo run dev",
     "dev-services": "docker-compose up -d && script/create-dev.sh",
     "dev-services-down": "docker-compose down"

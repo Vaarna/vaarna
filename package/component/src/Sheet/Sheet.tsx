@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
-import { selectSpaceId, updateSheet } from "@gm-screen/all/dist/state/slice";
 import { SheetState } from "@gm-screen/all/dist/util/evalItems";
+import {
+  selectSpaceId,
+  updateSheet,
+  useAppDispatch,
+  useAppSelector,
+} from "@gm-screen/state";
 
 import { CollapsibleGroup } from "../CollapsibleGroup";
 import { Mode } from "./common";

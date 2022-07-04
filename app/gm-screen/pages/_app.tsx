@@ -3,8 +3,8 @@ import React from "react";
 import { ThemeProvider } from "styled-components";
 
 import { GlobalStyle } from "@gm-screen/all/dist/globalStyle";
-import { wrapper } from "@gm-screen/all/dist/state/store";
 import { defaultTheme } from "@gm-screen/all/dist/theme";
+import { wrapper } from "@gm-screen/state";
 
 const WrappedApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
