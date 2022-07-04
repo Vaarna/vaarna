@@ -1,11 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 
-import {
-  groupItems,
-  SheetGroupedItems,
-  SheetState,
-} from "@gm-screen/all/dist/util/evalItems";
+import { groupItems, SheetGroupedItems, SheetState } from "@gm-screen/sheet-logic";
 import {
   createGroup,
   createItem,

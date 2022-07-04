@@ -2,7 +2,7 @@ import { NextApiResponse } from "next";
 import { z } from "zod";
 
 import { AssetService } from "@gm-screen/all/dist/service/asset";
-import { RequestWithLogger, withDefaults } from "@gm-screen/all/dist/util/withDefaults";
+import { RequestWithLogger, withDefaults } from "@gm-screen/logging";
 import { parseRequest, Space } from "@gm-screen/type";
 
 async function assetData(req: RequestWithLogger, res: NextApiResponse): Promise<void> {

@@ -12,10 +12,10 @@
     },
 
     "lint:tsc": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["build"]
     },
     "lint:eslint": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["build"]
     },
     "lint": {
       "dependsOn": ["//#root:lint", "lint:tsc", "lint:eslint"]
@@ -24,7 +24,7 @@
     "test": {},
 
     "fix:eslint": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["build"]
     },
     "fix": {
       "dependsOn": ["//#root:format", "fix:eslint"]

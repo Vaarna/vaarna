@@ -9,7 +9,9 @@
     "lint:eslint": "eslint 'src/**/*.ts'",
     "lint:tsc": "tsc --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@gm-screen/type": "*"
+  },
   "devDependencies": {
     "typescript": "^4.7.3"
   }

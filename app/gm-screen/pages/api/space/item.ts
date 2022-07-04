@@ -1,7 +1,7 @@
 import { NextApiResponse } from "next";
 
-import { backend } from "@gm-screen/all/dist/api";
-import { RequestWithLogger, withDefaults } from "@gm-screen/all/dist/util/withDefaults";
+import { backend } from "@gm-screen/api";
+import { RequestWithLogger, withDefaults } from "@gm-screen/logging";
 
 async function item(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
   const conf = backend.dynamoDbConfigFromRequest(req);

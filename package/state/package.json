@@ -10,6 +10,8 @@
     "lint:tsc": "tsc --noEmit"
   },
   "dependencies": {
+    "@gm-screen/api": "*",
+    "@gm-screen/sheet-logic": "*",
     "@gm-screen/type": "*",
     "@reduxjs/toolkit": "^1.8.1"
   },

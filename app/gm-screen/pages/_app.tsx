@@ -2,8 +2,7 @@ import { AppProps } from "next/app";
 import React from "react";
 import { ThemeProvider } from "styled-components";
 
-import { GlobalStyle } from "@gm-screen/all/dist/globalStyle";
-import { defaultTheme } from "@gm-screen/all/dist/theme";
+import { defaultTheme, GlobalStyle } from "@gm-screen/component";
 import { wrapper } from "@gm-screen/state";
 
 const WrappedApp: React.FC<AppProps> = ({ Component, pageProps }) => {

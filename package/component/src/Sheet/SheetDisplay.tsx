@@ -6,7 +6,7 @@ import {
   ItemEvaluated,
   SheetGroupedItems,
   SheetState,
-} from "@gm-screen/all/dist/util/evalItems";
+} from "@gm-screen/sheet-logic";
 import {
   selectSpaceId,
   updateItem,

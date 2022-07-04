@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-import { SheetState } from "@gm-screen/all/dist/util/evalItems";
+import { SheetState } from "@gm-screen/sheet-logic";
 import {
   selectSpaceId,
   updateSheet,

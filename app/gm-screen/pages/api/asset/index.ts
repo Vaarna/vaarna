@@ -9,7 +9,7 @@ import {
   ParsedMultipartBody,
   parseMultipartBody,
 } from "@gm-screen/all/dist/util/multipart";
-import { RequestWithLogger, withDefaults } from "@gm-screen/all/dist/util/withDefaults";
+import { RequestWithLogger, withDefaults } from "@gm-screen/logging";
 import { AssetData, getCreatedUpdated, parseRequest, Space } from "@gm-screen/type";
 import { uuid } from "@gm-screen/util";
 

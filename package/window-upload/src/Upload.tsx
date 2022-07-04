@@ -2,13 +2,11 @@ import axios from "axios";
 import React, { useState } from "react";
 import { z } from "zod";
 
-import {
-  UploadContext,
-  UploadProgress,
-} from "@gm-screen/all/dist/context/UploadProgress";
-import { useFileUpload } from "@gm-screen/all/dist/hook/useFileUpload";
-import { rootLogger } from "@gm-screen/all/dist/logger";
+import { rootLogger } from "@gm-screen/logging";
 import { uuid } from "@gm-screen/util";
+
+import { UploadContext, UploadProgress } from "./UploadProgress";
+import { useFileUpload } from "./useFileUpload";
 
 const ProgressEvent = z.object({
   type: z.literal("progress"),

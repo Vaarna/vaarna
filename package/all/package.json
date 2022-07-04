@@ -6,8 +6,7 @@
     "dev": "tsc --watch",
     "build": "tsc",
     "lint:tsc": "tsc --noEmit",
-    "lint:eslint": "eslint 'src/**/*.{ts,tsx}'",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "lint:eslint": "eslint 'src/**/*.{ts,tsx}'"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.100.0",

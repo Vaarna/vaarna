@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getCreatedUpdated, Group, Item, Sheet, Space } from "@gm-screen/type";
 import { sortBy } from "@gm-screen/util";
 
-import { evaluate } from "../render";
+import { evaluate } from "./render";
 
 export type ItemEvaluated<T> = T & {
   valueEvaluated: string;
