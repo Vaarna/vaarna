@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../state/hook";
-import { selectSpaceId, updateItem } from "../../state/slice";
+import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
+import { selectSpaceId, updateItem } from "@gm-screen/all/dist/state/slice";
 import styled from "styled-components";
-import { GroupDisplay, Item } from "../../type/space";
+import { GroupDisplay, Item } from "@gm-screen/all/dist/type/space";
 import {
   groupItems,
   ItemEvaluated,
   SheetGroupedItems,
   SheetState,
-} from "../../util/evalItems";
+} from "@gm-screen/all/dist/util/evalItems";
 import { Display, Edit } from "./modes";
 
 const Container = styled.div`

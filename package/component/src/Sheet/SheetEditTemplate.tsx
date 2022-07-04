@@ -1,6 +1,6 @@
-import { CollapsibleGroup } from "../../component/CollapsibleGroup";
+import { CollapsibleGroup } from "../CollapsibleGroup";
 import React, { useEffect, useMemo, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../state/hook";
+import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
 import {
   createGroup,
   createItem,
@@ -8,11 +8,15 @@ import {
   selectCreateItemInProgress,
   selectSpaceId,
   updateGroup,
-} from "../../state/slice";
+} from "@gm-screen/all/dist/state/slice";
 import styled from "styled-components";
-import { GroupSortOrder } from "../../type/space";
-import { groupItems, SheetGroupedItems, SheetState } from "../../util/evalItems";
-import { callIfParsed, unionMembers } from "../../util/zod";
+import { GroupSortOrder } from "@gm-screen/all/dist/type/space";
+import {
+  groupItems,
+  SheetGroupedItems,
+  SheetState,
+} from "@gm-screen/all/dist/util/evalItems";
+import { callIfParsed, unionMembers } from "@gm-screen/all/dist/util/zod";
 import { EditTemplate } from "./modes";
 import { Fields, FieldSelect, FieldString } from "./modes/Field";
 

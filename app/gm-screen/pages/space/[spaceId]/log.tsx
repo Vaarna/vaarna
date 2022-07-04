@@ -1,4 +1,4 @@
-import { Header } from "@gm-screen/all/dist/component/Header";
+import { Header } from "@gm-screen/component";
 
 export default function Log(): React.ReactNode {
   return (

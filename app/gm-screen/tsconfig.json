@@ -2,5 +2,6 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "es5"
-  }
+  },
+  "include": ["next-env.d.ts", "pages/**/*.ts", "pages/**/*.tsx"]
 }

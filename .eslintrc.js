@@ -28,17 +28,19 @@ const errors = Object.fromEntries(
 );
 
 module.exports = {
+  root: true,
   env: {
     browser: true,
     es2021: true,
   },
-  ignorePatterns: [".eslintrc.js", "jest.config.js", "next-env.d.ts", "next.config.js"],
-  extends: [
-    "eslint:recommended",
-    "next/core-web-vitals",
-    "plugin:@typescript-eslint/recommended",
-    "prettier",
+  ignorePatterns: [
+    ".eslintrc.js",
+    "jest.config.js",
+    "next-env.d.ts",
+    "next.config.js",
+    "styled.d.ts",
   ],
+  extends: ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaFeatures: {

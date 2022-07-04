@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import { PropsWithExactlyTwoChildren } from "../util/react";
+import { PropsWithExactlyTwoChildren } from "./util";
 
 const Container = styled.div`
   display: flex;

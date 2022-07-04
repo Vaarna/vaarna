@@ -1,6 +1,6 @@
-import { PropsWithExactlyTwoChildren } from "../util/react";
+import { PropsWithExactlyTwoChildren } from "./util";
 import React, { useState } from "react";
-import { delay } from "../util/timeout";
+import { delay } from "@gm-screen/all/dist/util/timeout";
 import styled, { css } from "styled-components";
 
 const Container = styled.div`

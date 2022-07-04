@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../state/hook";
-import { createItem, selectSpaceId, updateItem } from "../../../state/slice";
-import { Item, ItemType } from "../../../type/space";
-import { callIfParsed, unionMembers } from "../../../util/zod";
+import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
+import { createItem, selectSpaceId, updateItem } from "@gm-screen/all/dist/state/slice";
+import { Item, ItemType } from "@gm-screen/all/dist/type/space";
+import { callIfParsed, unionMembers } from "@gm-screen/all/dist/util/zod";
 import { Fields, FieldString, FieldCheckbox, FieldSelect } from "./Field";
 
 export type EditTemplateProps = {

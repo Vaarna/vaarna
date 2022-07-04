@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import { Sheet } from "@gm-screen/all/dist/component/Sheet";
 import { useRouter } from "next/router";
 import { z } from "zod";
-import { SideBySide } from "@gm-screen/all/dist/component/SideBySide";
-import { Header } from "@gm-screen/all/dist/component/Header";
+import { Sheet, SideBySide, Header } from "@gm-screen/component";
 import { selectSheetStateAll } from "@gm-screen/all/dist/state/select";
 import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
 import {

@@ -1,10 +1,13 @@
 import { z } from "zod";
 import React, { useState } from "react";
-import { uuid } from "../util/uuid";
-import { useFileUpload } from "../hook/useFileUpload";
-import { UploadContext, UploadProgress } from "../context/UploadProgress";
+import { uuid } from "@gm-screen/all/dist/util/uuid";
+import { useFileUpload } from "@gm-screen/all/dist/hook/useFileUpload";
+import {
+  UploadContext,
+  UploadProgress,
+} from "@gm-screen/all/dist/context/UploadProgress";
 import axios from "axios";
-import { rootLogger } from "../logger";
+import { rootLogger } from "@gm-screen/all/dist/logger";
 
 const ProgressEvent = z.object({
   type: z.literal("progress"),

@@ -16,6 +16,5 @@
     "downlevelIteration": true,
     "preserveWatchOutput": true
   },
-  "include": ["styled.d.ts"],
   "exclude": ["node_modules"]
 }

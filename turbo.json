@@ -3,16 +3,8 @@
   "baseBranch": "origin/master",
   "pipeline": {
     "build": {
-      "dependsOn": ["lint", "^build"],
-      "outputs": [".next/**", "dist/**"],
-      "inputs": [
-        "package.json",
-        "tsconfig.json",
-        "src/**/*.ts",
-        "src/**/*.tsx",
-        "pages/**/*.ts",
-        "pages/**/*.tsx"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"]
     },
 
     "start": {
@@ -22,7 +14,7 @@
     "lint:tsc": {},
     "lint:eslint": {},
     "lint": {
-      "dependsOn": ["//#root:lint", "lint:tsc", "lint:eslint"]
+      "dependsOn": ["//#root:lint", "build", "lint:tsc", "lint:eslint"]
     },
 
     "test": {},

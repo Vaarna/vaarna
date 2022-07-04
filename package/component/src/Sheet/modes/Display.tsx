@@ -1,6 +1,6 @@
 import React from "react";
-import { Item } from "../../../type/space";
-import { PropsWithExactlyTwoChildren } from "../../../util/react";
+import { Item } from "@gm-screen/all/dist/type/space";
+import { PropsWithExactlyTwoChildren } from "../../util";
 import { ClickableText, Container, Name, Value } from "./common";
 
 export type DisplayProps = React.PropsWithChildren<{

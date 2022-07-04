@@ -13,6 +13,7 @@
     "@aws-sdk/util-dynamodb": "^3.95.0",
     "@dice-roller/rpg-dice-roller": "^5.1.0",
     "@gm-screen/all": "*",
+    "@gm-screen/component": "*",
     "@reduxjs/toolkit": "^1.8.1",
     "axios": "^0.27.2",
     "bytes": "^3.1.1",
