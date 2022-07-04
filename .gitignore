@@ -1,8 +1,11 @@
+.turbo/
 .next/
-.vscode/
-cdk.out/
 dist/
+build/
+
 node_modules/
-screenshots/
+
+.vscode/
+.env
 .env.local
 tsconfig.tsbuildinfo

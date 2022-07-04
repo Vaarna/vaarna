@@ -1,0 +1,24 @@
+{
+  "name": "@gm-screen/window-upload",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "fix:eslint": "eslint --fix 'src/**/*.{ts,tsx}'",
+    "lint:eslint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:tsc": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gm-screen/logging": "*",
+    "@gm-screen/util": "*",
+    "axios": "^0.27.2",
+    "zod": "^3.17.3"
+  },
+  "devDependencies": {
+    "typescript": "^4.7.3"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  }
+}

@@ -28,15 +28,23 @@ const errors = Object.fromEntries(
 );
 
 module.exports = {
+  root: true,
   env: {
     browser: true,
     es2021: true,
   },
-  ignorePatterns: [".eslintrc.js", "jest.config.js", "next-env.d.ts", "next.config.js"],
+  ignorePatterns: [
+    ".eslintrc.js",
+    "jest.config.js",
+    "next-env.d.ts",
+    "next.config.js",
+    "styled.d.ts",
+  ],
   extends: [
     "eslint:recommended",
-    "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
     "prettier",
   ],
   parser: "@typescript-eslint/parser",
@@ -46,10 +54,18 @@ module.exports = {
     },
     ecmaVersion: 12,
   },
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "simple-import-sort", "import"],
   rules: {
     ...warns,
     ...errors,
+
+    "simple-import-sort/imports": [
+      "error",
+      {
+        groups: [["^\\u0000"], ["^@?\\w"], ["^@gm-screen/"]],
+      },
+    ],
+    "simple-import-sort/exports": ["error"],
 
     "@typescript-eslint/no-unused-vars": [
       "error",

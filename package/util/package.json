@@ -1,0 +1,25 @@
+{
+  "name": "@gm-screen/util",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "fix:eslint": "eslint --fix 'src/**/*.{ts,tsx}'",
+    "lint:eslint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:tsc": "tsc --noEmit",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+  },
+  "dependencies": {
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.2.196",
+    "@swc/jest": "^0.2.21",
+    "@types/jest": "^27.0.3",
+    "@types/uuid": "^8.3.3",
+    "fast-check": "^3.0.0",
+    "jest": "^27.5.1",
+    "typescript": "^4.7.3"
+  }
+}

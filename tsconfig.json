@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src/",
-    "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": true,
@@ -15,8 +13,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "preserveWatchOutput": true
   },
-  "include": ["next-env.d.ts", "styled.d.ts", "pages/**/*", "src/**/*"],
   "exclude": ["node_modules"]
 }

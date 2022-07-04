@@ -1,0 +1,5 @@
+{
+  "extends": "../../tsconfig.package.json",
+  "compilerOptions": { "outDir": "dist" },
+  "include": ["./styled.d.ts", "src/**/*.ts", "src/**/*.tsx"]
+}
