@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": false,
     "skipLibCheck": true,
@@ -14,8 +13,9 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "preserveWatchOutput": true
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["styled.d.ts"],
   "exclude": ["node_modules"]
 }

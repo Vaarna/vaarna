@@ -1,3 +1,4 @@
+import React from "react";
 import { Item } from "../../../type/space";
 import { PropsWithExactlyTwoChildren } from "../../../util/react";
 import { ClickableText, Container, Name, Value } from "./common";

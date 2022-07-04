@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
-import { useAppDispatch, useAppSelector } from "@gm-screen/all/src/state/hook";
+import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
 import {
   createSpace,
   selectSpaceCreateInProgress,
-} from "@gm-screen/all/src/state/slice";
+} from "@gm-screen/all/dist/state/slice";
 
 export default function Index(): React.ReactNode {
   const dispatch = useAppDispatch();

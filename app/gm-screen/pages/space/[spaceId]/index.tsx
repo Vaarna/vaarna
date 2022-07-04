@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import { Sheet } from "@gm-screen/all/src/component/Sheet";
+import { Sheet } from "@gm-screen/all/dist/component/Sheet";
 import { useRouter } from "next/router";
 import { z } from "zod";
-import { SideBySide } from "@gm-screen/all/src/component/SideBySide";
-import { Header } from "@gm-screen/all/src/component/Header";
-import { selectSheetStateAll } from "@gm-screen/all/src/state/select";
-import { useAppDispatch, useAppSelector } from "@gm-screen/all/src/state/hook";
+import { SideBySide } from "@gm-screen/all/dist/component/SideBySide";
+import { Header } from "@gm-screen/all/dist/component/Header";
+import { selectSheetStateAll } from "@gm-screen/all/dist/state/select";
+import { useAppDispatch, useAppSelector } from "@gm-screen/all/dist/state/hook";
 import {
   selectSheetCreateInProgress,
   selectSpaceId,
   setSpaceId,
   createSheet,
-} from "@gm-screen/all/src/state/slice";
-import { getSpace } from "@gm-screen/all/src/state/slice/getSpace";
+} from "@gm-screen/all/dist/state/slice";
+import { getSpace } from "@gm-screen/all/dist/state/slice/getSpace";
 
 export default function Space(): React.ReactNode {
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function Space(): React.ReactNode {
     (function f() {
       if (spaceId === null) return;
       dispatch(getSpace(spaceId));
-      t = setTimeout(f, 5_000);
+      // t = setTimeout(f, 5_000);
     })();
 
     return () => clearInterval(t);

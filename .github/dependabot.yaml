@@ -5,3 +5,15 @@ updates:
     schedule:
       interval: "weekly"
       day: "saturday"
+
+  - package-ecosystem: "npm"
+    directory: "/app/gm-screen"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+
+  - package-ecosystem: "npm"
+    directory: "/package/all"
+    schedule:
+      interval: "weekly"
+      day: "saturday"

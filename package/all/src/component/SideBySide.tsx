@@ -1,5 +1,5 @@
 import { PropsWithExactlyTwoChildren } from "../util/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { delay } from "../util/timeout";
 import styled, { css } from "styled-components";
 

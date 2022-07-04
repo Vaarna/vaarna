@@ -15,10 +15,10 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: make init
+        run: npm ci
 
-      - name: Run all checks and tests
-        run: make -j check test-jest
+      - name: Run all lints and tests
+        run: npm run lint test
 
-      - name: Build next app
-        run: npm run --workspaces --if-present build
+      - name: Build application
+        run: npm run build

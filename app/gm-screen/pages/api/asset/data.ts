@@ -1,8 +1,8 @@
 import { NextApiResponse } from "next";
-import { AssetService } from "@gm-screen/all/src/service/asset";
-import { Space } from "@gm-screen/all/src/type/space";
-import { parseRequest } from "@gm-screen/all/src/util/parseRequest";
-import { RequestWithLogger, withDefaults } from "@gm-screen/all/src/util/withDefaults";
+import { AssetService } from "@gm-screen/all/dist/service/asset";
+import { Space } from "@gm-screen/all/dist/type/space";
+import { parseRequest } from "@gm-screen/all/dist/util/parseRequest";
+import { RequestWithLogger, withDefaults } from "@gm-screen/all/dist/util/withDefaults";
 import { z } from "zod";
 
 async function assetData(req: RequestWithLogger, res: NextApiResponse): Promise<void> {

@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 import { CreatedUpdated, OmitCreatedUpdated } from "../createdUpdated";
 
 export const Space = z

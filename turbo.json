@@ -1,0 +1,41 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "baseBranch": "origin/master",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["lint", "^build"],
+      "outputs": [".next/**", "dist/**"],
+      "inputs": [
+        "package.json",
+        "tsconfig.json",
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "pages/**/*.ts",
+        "pages/**/*.tsx"
+      ]
+    },
+
+    "start": {
+      "dependsOn": ["build"]
+    },
+
+    "lint:tsc": {},
+    "lint:eslint": {},
+    "lint": {
+      "dependsOn": ["//#root:lint", "lint:tsc", "lint:eslint"]
+    },
+
+    "test": {},
+
+    "format": {
+      "dependsOn": ["//#root:format"]
+    },
+
+    "dev": {
+      "cache": false
+    },
+
+    "//#root:lint": {},
+    "//#root:format": {}
+  }
+}

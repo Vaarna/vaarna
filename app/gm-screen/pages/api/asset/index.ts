@@ -1,18 +1,18 @@
 import { createReadStream } from "fs";
 import { unlink } from "fs/promises";
-import { uuid } from "@gm-screen/all/src/util/uuid";
+import { uuid } from "@gm-screen/all/dist/util/uuid";
 import { NextApiResponse } from "next";
-import { parseRequest } from "@gm-screen/all/src/util/parseRequest";
+import { parseRequest } from "@gm-screen/all/dist/util/parseRequest";
 import { pathToFileURL } from "url";
 import {
   ParsedMultipartBody,
   parseMultipartBody,
-} from "@gm-screen/all/src/util/multipart";
-import { AssetService, GetAssetHeaders } from "@gm-screen/all/src/service/asset";
-import { RequestWithLogger, withDefaults } from "@gm-screen/all/src/util/withDefaults";
-import { AssetData, Space } from "@gm-screen/all/src/type/space";
+} from "@gm-screen/all/dist/util/multipart";
+import { AssetService, GetAssetHeaders } from "@gm-screen/all/dist/service/asset";
+import { RequestWithLogger, withDefaults } from "@gm-screen/all/dist/util/withDefaults";
+import { AssetData, Space } from "@gm-screen/all/dist/type/space";
 import { z } from "zod";
-import { getCreatedUpdated } from "@gm-screen/all/src/type/createdUpdated";
+import { getCreatedUpdated } from "@gm-screen/all/dist/type/createdUpdated";
 
 async function asset(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
   const svc = new AssetService(req);
