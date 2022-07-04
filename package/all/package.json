@@ -35,7 +35,7 @@
     "@types/lodash": "^4.14.170",
     "@types/multiparty": "^0.0.33",
     "@types/mustache": "^4.1.2",
-    "@types/node": "^16.11.38",
+    "@types/node": "^18.0.1",
     "@types/pino": "^6.3.12",
     "@types/uuid": "^8.3.3",
     "fast-check": "^3.0.0",
