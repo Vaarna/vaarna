@@ -13,7 +13,7 @@
     "@gm-screen/api": "*",
     "@gm-screen/sheet-logic": "*",
     "@gm-screen/type": "*",
-    "@reduxjs/toolkit": "^1.8.1"
+    "@reduxjs/toolkit": "^1.8.3"
   },
   "devDependencies": {
     "typescript": "^4.7.3"
