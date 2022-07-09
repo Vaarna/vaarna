@@ -43,7 +43,7 @@
     "@types/lodash": "^4.14.170",
     "@types/multiparty": "^0.0.33",
     "@types/mustache": "^4.1.2",
-    "@types/node": "^16.11.38",
+    "@types/node": "^18.0.3",
     "@types/pino": "^6.3.12",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
