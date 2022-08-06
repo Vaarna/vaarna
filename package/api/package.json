@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.121.0",
-    "@aws-sdk/util-dynamodb": "^3.95.0",
+    "@aws-sdk/util-dynamodb": "^3.142.0",
     "@gm-screen/logging": "*",
     "@gm-screen/type": "*",
     "@gm-screen/util": "*",
