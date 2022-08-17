@@ -10,12 +10,13 @@
     "lint:tsc": "tsc --noEmit"
   },
   "dependencies": {
-    "@gm-screen/api": "*",
-    "@gm-screen/sheet-logic": "*",
-    "@gm-screen/type": "*",
-    "@reduxjs/toolkit": "^1.8.3"
-  },
-  "devDependencies": {
-    "typescript": "^4.7.3"
+    "@gm-screen/api": "workspace:0.1.0",
+    "@gm-screen/sheet-logic": "workspace:0.1.0",
+    "@gm-screen/type": "workspace:0.1.0",
+    "@reduxjs/toolkit": "^1.8.3",
+    "next": "12.2.3",
+    "next-redux-wrapper": "^7.0.5",
+    "react-redux": "^8.0.2",
+    "redux": "4.2.0"
   }
 }

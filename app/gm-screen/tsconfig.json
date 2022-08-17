@@ -1,7 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "es5"
+    "target": "ES5",
+    "moduleResolution": "node"
   },
-  "include": ["next-env.d.ts", "pages/**/*.ts", "pages/**/*.tsx"]
+  "include": [
+    "next-env.d.ts",
+    "pages/**/*.ts",
+    "pages/**/*.tsx"
+  ]
 }

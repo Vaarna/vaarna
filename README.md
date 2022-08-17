@@ -16,9 +16,9 @@ Unit tests live next to the file which they test, e.g. `round.test.ts` tests exp
 
 ## Getting Started
 
-For running the application locally you will need `node`, `npm`, and `docker-compose` (and `docker` of course).
+For running the application locally you will need `node`, `pnpm`, and `docker-compose` (and `docker` of course).
 
-After running `npm i` to install all packages, use `npm run dev-services` to start the Docker containers. Then you may start the development environment with `npm run dev`. The application will be available on `http://localhost:3000`.
+After running `pnpm i` to install all packages, use `pnpm run dev-services` to start the Docker containers. Then you may start the development environment with `pnpm run dev`. The application will be available on `http://localhost:3000`.
 
 If you wish to stop the started Docker containers you can use `npm run dev-services-down`.
 
