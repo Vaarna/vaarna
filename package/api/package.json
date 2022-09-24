@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.121.0",
-    "@aws-sdk/util-dynamodb": "^3.95.0",
+    "@aws-sdk/util-dynamodb": "^3.178.0",
     "@reduxjs/toolkit": "^1.8.5",
     "@vaarna/logging": "*",
     "@vaarna/type": "*",
