@@ -2,6 +2,7 @@ version: 2
 updates:
   - package-ecosystem: "npm"
     directory: "/"
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "saturday"
@@ -10,6 +11,7 @@ updates:
 
   - package-ecosystem: "npm"
     directory: "/app/app"
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "saturday"
@@ -18,54 +20,63 @@ updates:
 
   - package-ecosystem: "npm"
     directory: "/package/all"
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "saturday"
 
   - package-ecosystem: "npm"
     directory: "/package/api"
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "saturday"
 
   - package-ecosystem: "npm"
     directory: "/package/component"
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "saturday"
 
   - package-ecosystem: "npm"
     directory: "/package/logging"
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "saturday"
 
   - package-ecosystem: "npm"
     directory: "/package/sheet-logic"
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "saturday"
 
   - package-ecosystem: "npm"
     directory: "/package/state"
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "saturday"
 
   - package-ecosystem: "npm"
     directory: "/package/type"
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "saturday"
 
   - package-ecosystem: "npm"
     directory: "/package/util"
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "saturday"
 
   - package-ecosystem: "npm"
     directory: "/package/window-upload"
+    versioning-strategy: "increase"
     schedule:
       interval: "weekly"
       day: "saturday"
