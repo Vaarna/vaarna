@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.0.3",
-    "@types/lodash": "^4.14.170",
+    "@types/lodash": "^4.14.185",
     "@types/multiparty": "^0.0.33",
     "@types/mustache": "^4.2.1",
     "@types/node": "^18.7.20",
