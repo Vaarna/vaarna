@@ -9,7 +9,7 @@
     "lint:tsc": "tsc --noEmit"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^1.8.3",
+    "@reduxjs/toolkit": "^1.8.5",
     "@vaarna/api": "*",
     "@vaarna/sheet-logic": "*",
     "@vaarna/type": "*"
