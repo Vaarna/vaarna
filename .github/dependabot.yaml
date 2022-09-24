@@ -9,7 +9,7 @@ updates:
   # --- APPS ---
 
   - package-ecosystem: "npm"
-    directory: "/app/gm-screen"
+    directory: "/app/app"
     schedule:
       interval: "weekly"
       day: "saturday"
