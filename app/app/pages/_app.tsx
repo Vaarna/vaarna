@@ -1,9 +1,8 @@
+import { defaultTheme, GlobalStyle } from "@vaarna/component";
+import { wrapper } from "@vaarna/state";
 import { AppProps } from "next/app";
 import React from "react";
 import { ThemeProvider } from "styled-components";
-
-import { defaultTheme, GlobalStyle } from "@gm-screen/component";
-import { wrapper } from "@gm-screen/state";
 
 const WrappedApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

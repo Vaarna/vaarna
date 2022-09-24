@@ -1,24 +1,24 @@
 {
-  "name": "@gm-screen/sheet-logic",
-  "version": "0.1.0",
-  "main": "dist/index.js",
+  "name": "@vaarna/sheet-logic",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "tsc --watch",
-    "build": "tsc",
-    "lint:tsc": "tsc --noEmit",
+    "fix:eslint": "eslint --fix 'src/**/*.{ts,tsx}'",
     "lint:eslint": "eslint 'src/**/*.{ts,tsx}'",
+    "lint:tsc": "tsc --noEmit",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "dependencies": {
     "@dice-roller/rpg-dice-roller": "^5.1.0",
-    "@gm-screen/type": "*",
-    "@gm-screen/util": "*",
+    "@vaarna/type": "*",
+    "@vaarna/util": "*",
     "mustache": "^4.2.0",
     "zod": "^3.17.3"
   },
   "devDependencies": {
     "fast-check": "^3.0.0",
     "jest": "^28.1.2",
-    "typescript": "^4.7.3"
+    "typescript": "^4.8.3"
   }
 }

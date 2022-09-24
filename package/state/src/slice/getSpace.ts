@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-
-import { frontend } from "@gm-screen/api";
-import { Group, Item, Sheet, Space } from "@gm-screen/type";
+import { frontend } from "@vaarna/api";
+import { Group, Item, Sheet, Space } from "@vaarna/type";
 
 import { RootState } from "../store";
 

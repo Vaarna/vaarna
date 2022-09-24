@@ -1,11 +1,10 @@
-import { useRouter } from "next/router";
-
 import {
   createSpace,
   selectSpaceCreateInProgress,
   useAppDispatch,
   useAppSelector,
-} from "@gm-screen/state";
+} from "@vaarna/state";
+import { useRouter } from "next/router";
 
 export default function Index(): React.ReactNode {
   const dispatch = useAppDispatch();

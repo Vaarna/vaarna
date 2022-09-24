@@ -1,6 +1,5 @@
+import { ApiNotFoundError, parseQuery, RequestWithQuery, Sheet } from "@vaarna/type";
 import { z } from "zod";
-
-import { ApiNotFoundError, parseQuery, RequestWithQuery, Sheet } from "@gm-screen/type";
 
 import { SheetIdParam, SpaceIdParam } from "./common";
 import { DynamoDbConfig, fetchBase, FrontendOptions, getItemsFromTable } from "./util";

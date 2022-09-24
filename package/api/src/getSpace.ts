@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 import {
   ApiNotFoundError,
   Group,
@@ -8,7 +6,8 @@ import {
   RequestWithQuery,
   Sheet,
   Space,
-} from "@gm-screen/type";
+} from "@vaarna/type";
+import { z } from "zod";
 
 import { DynamoDbConfig, fetchBase, FrontendOptions, getItemsFromTable } from "./util";
 

@@ -1,7 +1,6 @@
+import { backend } from "@vaarna/api";
+import { RequestWithLogger, withDefaults } from "@vaarna/logging";
 import { NextApiResponse } from "next";
-
-import { backend } from "@gm-screen/api";
-import { RequestWithLogger, withDefaults } from "@gm-screen/logging";
 
 async function space(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
   const conf = backend.dynamoDbConfigFromRequest(req);

@@ -1,7 +1,6 @@
+import { getCreatedUpdated, Group, Item, Sheet, Space } from "@vaarna/type";
+import { sortBy } from "@vaarna/util";
 import { z } from "zod";
-
-import { getCreatedUpdated, Group, Item, Sheet, Space } from "@gm-screen/type";
-import { sortBy } from "@gm-screen/util";
 
 import { evaluate } from "./render";
 

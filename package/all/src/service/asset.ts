@@ -9,13 +9,12 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import { marshall } from "@aws-sdk/util-dynamodb";
+import { getItemsFromTable } from "@vaarna/api";
+import { ApiInternalServerError, AssetData, getKind, Space } from "@vaarna/type";
 import { formatRFC7231 } from "date-fns";
 import { NextApiResponse } from "next";
 import { Readable } from "stream";
 import { z } from "zod";
-
-import { getItemsFromTable } from "@gm-screen/api";
-import { ApiInternalServerError, AssetData, getKind, Space } from "@gm-screen/type";
 
 import config from "../config";
 import { dynamoDbConfig, s3Config, Service, ServiceParams } from "./common";

@@ -1,6 +1,5 @@
+import { RequestWithLogger } from "@vaarna/logging";
 import type P from "pino";
-
-import { RequestWithLogger } from "@gm-screen/logging";
 
 export type CommonBackendConfig = {
   requestId: string;

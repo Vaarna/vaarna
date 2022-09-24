@@ -1,8 +1,7 @@
+import { ApiError } from "@vaarna/type";
 import { NextApiRequest, NextApiResponse } from "next";
 import P from "pino";
 import { z, ZodError } from "zod";
-
-import { ApiError } from "@gm-screen/type";
 
 import { requestLogger } from "./requestLogger";
 

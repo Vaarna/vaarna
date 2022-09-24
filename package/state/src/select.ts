@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { createSelector } from "@reduxjs/toolkit";
-
-import { SheetState } from "@gm-screen/sheet-logic";
+import { SheetState } from "@vaarna/sheet-logic";
 
 import {
   selectGroups,

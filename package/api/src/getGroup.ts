@@ -1,4 +1,4 @@
-import { ApiNotFoundError, Group, parseQuery, RequestWithQuery } from "@gm-screen/type";
+import { ApiNotFoundError, Group, parseQuery, RequestWithQuery } from "@vaarna/type";
 
 import { GroupIdParam, SpaceIdParam } from "./common";
 import { DynamoDbConfig, fetchBase, FrontendOptions, getItemsFromTable } from "./util";

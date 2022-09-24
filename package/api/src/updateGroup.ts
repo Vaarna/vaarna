@@ -1,13 +1,12 @@
 import { UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-
 import {
   getUpdated,
   Group,
   parseBody,
   RequestWithBody,
   UpdateGroup,
-} from "@gm-screen/type";
+} from "@vaarna/type";
 
 import {
   createDynamoDbUpdate,

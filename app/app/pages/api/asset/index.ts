@@ -1,17 +1,16 @@
+import { AssetService, GetAssetHeaders } from "@vaarna/all/src/service/asset";
+import {
+  ParsedMultipartBody,
+  parseMultipartBody,
+} from "@vaarna/all/src/util/multipart";
+import { RequestWithLogger, withDefaults } from "@vaarna/logging";
+import { AssetData, getCreatedUpdated, parseRequest, Space } from "@vaarna/type";
+import { uuid } from "@vaarna/util";
 import { createReadStream } from "fs";
 import { unlink } from "fs/promises";
 import { NextApiResponse } from "next";
 import { pathToFileURL } from "url";
 import { z } from "zod";
-
-import { AssetService, GetAssetHeaders } from "@gm-screen/all/dist/service/asset";
-import {
-  ParsedMultipartBody,
-  parseMultipartBody,
-} from "@gm-screen/all/dist/util/multipart";
-import { RequestWithLogger, withDefaults } from "@gm-screen/logging";
-import { AssetData, getCreatedUpdated, parseRequest, Space } from "@gm-screen/type";
-import { uuid } from "@gm-screen/util";
 
 async function asset(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
   const svc = new AssetService(req);

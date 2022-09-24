@@ -1,12 +1,13 @@
 {
-  "name": "gm-screen",
-  "version": "0.1.0",
+  "name": "app",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "build": "next build --no-lint",
-    "dev": "next dev | pino-pretty",
     "fix:eslint": "eslint --fix 'pages/**/*.{ts,tsx}'",
     "lint:eslint": "eslint 'pages/**/*.{ts,tsx}'",
     "lint:tsc": "tsc --noEmit",
+    "dev": "next dev | pino-pretty",
+    "build": "next build --no-lint",
     "start": "NODE_ENV=production next start --port $PORT"
   },
   "dependencies": {
@@ -14,12 +15,12 @@
     "@aws-sdk/client-s3": "^3.100.0",
     "@aws-sdk/util-dynamodb": "^3.95.0",
     "@dice-roller/rpg-dice-roller": "^5.1.0",
-    "@gm-screen/all": "*",
-    "@gm-screen/component": "*",
-    "@gm-screen/logging": "*",
-    "@gm-screen/type": "*",
-    "@gm-screen/util": "*",
     "@reduxjs/toolkit": "^1.8.3",
+    "@vaarna/all": "*",
+    "@vaarna/component": "*",
+    "@vaarna/logging": "*",
+    "@vaarna/type": "*",
+    "@vaarna/util": "*",
     "axios": "^0.27.2",
     "bytes": "^3.1.1",
     "classnames": "^2.3.1",
@@ -58,6 +59,6 @@
     "jest": "^28.1.2",
     "pino-pretty": "^8.1.0",
     "ts-jest": "^27.1.2",
-    "typescript": "^4.7.3"
+    "typescript": "^4.8.3"
   }
 }

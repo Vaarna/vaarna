@@ -1,21 +1,22 @@
 {
-  "name": "@gm-screen/api",
-  "version": "0.1.0",
-  "main": "dist/index.js",
+  "name": "@vaarna/api",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "tsc --watch",
-    "build": "tsc",
+    "fix:eslint": "eslint --fix 'src/**/*.{ts,tsx}'",
+    "lint:eslint": "eslint 'src/**/*.{ts,tsx}'",
     "lint:tsc": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.121.0",
     "@aws-sdk/util-dynamodb": "^3.95.0",
-    "@gm-screen/logging": "*",
-    "@gm-screen/type": "*",
-    "@gm-screen/util": "*",
-    "@reduxjs/toolkit": "^1.8.3"
+    "@reduxjs/toolkit": "^1.8.3",
+    "@vaarna/logging": "*",
+    "@vaarna/type": "*",
+    "@vaarna/util": "*"
   },
   "devDependencies": {
-    "typescript": "^4.7.3"
+    "typescript": "^4.8.3"
   }
 }

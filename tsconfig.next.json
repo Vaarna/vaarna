@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "jsx": "preserve"
+    "lib": ["DOM", "ESNext"],
+    "jsx": "react-jsx"
   }
 }

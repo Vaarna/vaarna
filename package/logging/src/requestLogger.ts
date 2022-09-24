@@ -1,7 +1,6 @@
+import { uuid } from "@vaarna/util";
 import { NextApiRequest, NextApiResponse } from "next";
 import P from "pino";
-
-import { uuid } from "@gm-screen/util";
 
 import { rootLogger } from "./rootLogger";
 

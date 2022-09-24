@@ -1,8 +1,4 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { z } from "zod";
-
-import { Header, Sheet, SideBySide } from "@gm-screen/component";
+import { Header, Sheet, SideBySide } from "@vaarna/component";
 import {
   createSheet,
   getSpace,
@@ -12,7 +8,10 @@ import {
   setSpaceId,
   useAppDispatch,
   useAppSelector,
-} from "@gm-screen/state";
+} from "@vaarna/state";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { z } from "zod";
 
 export default function Space(): React.ReactNode {
   const router = useRouter();

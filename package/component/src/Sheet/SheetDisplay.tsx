@@ -1,19 +1,18 @@
-import React, { useEffect, useMemo, useState } from "react";
-import styled from "styled-components";
-
 import {
   groupItems,
   ItemEvaluated,
   SheetGroupedItems,
   SheetState,
-} from "@gm-screen/sheet-logic";
+} from "@vaarna/sheet-logic";
 import {
   selectSpaceId,
   updateItem,
   useAppDispatch,
   useAppSelector,
-} from "@gm-screen/state";
-import { GroupDisplay, Item } from "@gm-screen/type";
+} from "@vaarna/state";
+import { GroupDisplay, Item } from "@vaarna/type";
+import React, { useEffect, useMemo, useState } from "react";
+import styled from "styled-components";
 
 import { Display, Edit } from "./modes";
 

@@ -1,13 +1,6 @@
 import { UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-
-import {
-  getUpdated,
-  Item,
-  parseBody,
-  RequestWithBody,
-  UpdateItem,
-} from "@gm-screen/type";
+import { getUpdated, Item, parseBody, RequestWithBody, UpdateItem } from "@vaarna/type";
 
 import {
   CommonBackendConfig,

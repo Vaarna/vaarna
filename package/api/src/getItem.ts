@@ -1,4 +1,4 @@
-import { ApiNotFoundError, Item, parseQuery, RequestWithQuery } from "@gm-screen/type";
+import { ApiNotFoundError, Item, parseQuery, RequestWithQuery } from "@vaarna/type";
 
 import { ItemIdParam, SpaceIdParam } from "./common";
 import { DynamoDbConfig, fetchBase, FrontendOptions, getItemsFromTable } from "./util";

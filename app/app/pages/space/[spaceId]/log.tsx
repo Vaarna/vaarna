@@ -1,4 +1,4 @@
-import { Header } from "@gm-screen/component";
+import { Header } from "@vaarna/component";
 
 export default function Log(): React.ReactNode {
   return (

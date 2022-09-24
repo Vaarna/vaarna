@@ -1,7 +1,6 @@
 import { createAsyncThunk, createEntityAdapter, createSlice } from "@reduxjs/toolkit";
-
-import { frontend } from "@gm-screen/api";
-import { CreateSheet, Sheet, UpdateSheet } from "@gm-screen/type";
+import { frontend } from "@vaarna/api";
+import { CreateSheet, Sheet, UpdateSheet } from "@vaarna/type";
 
 import { setSpaceId } from "../slice";
 import { RootState } from "../store";

@@ -5,14 +5,10 @@
   "author": "Maximilian Remming <maximilian@remming.fi>",
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "root:format": "prettier --write --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,yaml,css,md}'",
-    "root:lint": "prettier --check --ignore-path .gitignore './**/*.{js,jsx,ts,tsx,json,yaml,css,md}'",
-    "build": "turbo run build",
-    "start": "turbo run start",
-    "test": "turbo run test",
     "lint": "turbo run lint",
     "fix": "turbo run fix",
-    "dev": "turbo run dev",
+    "root:format": "prettier --write --ignore-path .gitignore './**/*.{ts,tsx,json,yaml,css,md}'",
+    "root:lint": "prettier --check --ignore-path .gitignore './**/*.{ts,tsx,json,yaml,css,md}'",
     "dev-services": "docker-compose up -d && script/create-dev.sh",
     "dev-services-down": "docker-compose down"
   },
@@ -24,7 +20,7 @@
     "printWidth": 88
   },
   "engines": {
-    "node": "^16",
+    "node": "^18",
     "npm": "^8"
   },
   "devDependencies": {

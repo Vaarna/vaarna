@@ -1,7 +1,6 @@
 import { DynamoDBClient, DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
+import { asAWSLogger, RequestWithLogger } from "@vaarna/logging";
 import type P from "pino";
-
-import { asAWSLogger, RequestWithLogger } from "@gm-screen/logging";
 
 import {
   CommonBackendConfig,

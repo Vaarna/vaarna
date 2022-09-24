@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.next.json",
+  "include": [
+    "next-env.d.ts",
+    "../../package/component/styled.d.ts",
+    "pages/**/*.ts",
+    "pages/**/*.tsx"
+  ]
+}

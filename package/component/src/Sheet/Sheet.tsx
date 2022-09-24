@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
-
-import { SheetState } from "@gm-screen/sheet-logic";
+import { SheetState } from "@vaarna/sheet-logic";
 import {
   selectSpaceId,
   updateSheet,
   useAppDispatch,
   useAppSelector,
-} from "@gm-screen/state";
+} from "@vaarna/state";
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
 
 import { CollapsibleGroup } from "../CollapsibleGroup";
 import { Mode } from "./common";

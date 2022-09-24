@@ -5,8 +5,7 @@ import {
   QueryCommand,
 } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-
-import { rootLogger } from "@gm-screen/logging";
+import { rootLogger } from "@vaarna/logging";
 
 const logger = rootLogger.child({ module: "dynamodb" });
 

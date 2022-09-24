@@ -1,9 +1,8 @@
+import { AssetService } from "@vaarna/all/src/service/asset";
+import { RequestWithLogger, withDefaults } from "@vaarna/logging";
+import { parseRequest, Space } from "@vaarna/type";
 import { NextApiResponse } from "next";
 import { z } from "zod";
-
-import { AssetService } from "@gm-screen/all/dist/service/asset";
-import { RequestWithLogger, withDefaults } from "@gm-screen/logging";
-import { parseRequest, Space } from "@gm-screen/type";
 
 async function assetData(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
   const svc = new AssetService(req);
