@@ -14,7 +14,7 @@
     "@vaarna/state": "*",
     "@vaarna/type": "*",
     "next": "^12.2.0",
-    "zod": "^3.1.0"
+    "zod": "^3.19.1"
   },
   "peerDependencies": {
     "react": "^18.1.0",
