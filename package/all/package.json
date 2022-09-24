@@ -29,7 +29,7 @@
     "zod": "^3.1.0"
   },
   "devDependencies": {
-    "@types/jest": "^28.1.4",
+    "@types/jest": "^29.0.3",
     "@types/lodash": "^4.14.170",
     "@types/multiparty": "^0.0.33",
     "@types/mustache": "^4.2.1",
