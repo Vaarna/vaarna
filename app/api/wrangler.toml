@@ -1,0 +1,23 @@
+name = "vaarna-api-dev"
+main = "src/index.ts"
+compatibility_date = "2022-09-24"
+workers_dev = true
+
+[vars]
+ENVIRONMENT = "development"
+SENTRY_DSN = "https://d6419da7731746659864688d809c9367@o1424842.ingest.sentry.io/6773054"
+
+
+[env.staging]
+name = "vaarna-api-staging"
+workers_dev = false
+
+  [env.staging.vars]
+  ENVIRONMENT = "staging"
+
+[env.production]
+name = "vaarna-api-production"
+workers_dev = false
+
+  [env.production.vars]
+  ENVIRONMENT = "production"
