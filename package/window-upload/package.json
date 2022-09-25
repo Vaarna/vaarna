@@ -11,11 +11,11 @@
   "dependencies": {
     "@vaarna/logging": "*",
     "@vaarna/util": "*",
-    "axios": "^0.27.2",
-    "zod": "^3.19.1"
+    "axios": "0.27.2",
+    "zod": "3.19.1"
   },
   "devDependencies": {
-    "typescript": "^4.8.3"
+    "typescript": "4.8.3"
   },
   "peerDependencies": {
     "react": "^18.2.0"
