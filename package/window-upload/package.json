@@ -12,7 +12,7 @@
     "@vaarna/logging": "*",
     "@vaarna/util": "*",
     "axios": "^0.27.2",
-    "zod": "^3.17.3"
+    "zod": "^3.19.1"
   },
   "devDependencies": {
     "typescript": "^4.8.3"
