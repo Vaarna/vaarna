@@ -3,8 +3,8 @@ name: check
 on: [push]
 
 jobs:
-  check:
-    name: Run checks and tests
+  lint:
+    name: Run lints
     runs-on: ubuntu-latest
 
     steps:
@@ -16,8 +16,38 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run all lints and tests
-        run: npm run lint test
+      - name: Run all lints
+        run: npm run lint
 
-      - name: Build application
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run all tests
+        run: npm run test
+
+  build:
+    needs: [lint, test]
+    name: Build applications
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run all tests
         run: npm run build
