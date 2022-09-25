@@ -15,7 +15,7 @@
     "@vaarna/api": "*",
     "@vaarna/logging": "*",
     "@vaarna/type": "*",
-    "date-fns": "2.28.0",
+    "date-fns": "2.29.3",
     "multiparty": "4.2.3",
     "next": "12.3.1",
     "pino": "8.6.0",
