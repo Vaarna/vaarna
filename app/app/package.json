@@ -27,7 +27,7 @@
     "zod": "3.19.1"
   },
   "devDependencies": {
-    "@types/node": "16.11.61",
+    "@types/node": "16.11.62",
     "@types/react": "18.0.21",
     "@types/styled-components": "5.1.26"
   }
