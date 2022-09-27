@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@vaarna/type": "*",
-    "toucan-js": "2.6.1"
+    "toucan-js": "2.7.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "3.16.0",
