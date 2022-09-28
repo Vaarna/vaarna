@@ -15,7 +15,7 @@
     "@vaarna/type": "*",
     "@vaarna/util": "*",
     "axios": "0.27.2",
-    "pino": "8.6.0",
+    "pino": "8.6.1",
     "zod": "3.19.1"
   }
 }
