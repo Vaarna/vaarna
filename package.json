@@ -1,7 +1,7 @@
 {
   "private": true,
-  "repository": "git@github.com:PolarPayne/gm-screen.git",
-  "homepage": "https://www.gm-screen.net",
+  "repository": "git@github.com:Vaarna/vaarna.git",
+  "homepage": "https://www.vaarna.net",
   "author": "Maximilian Remming <maximilian@remming.fi>",
   "license": "AGPL-3.0-or-later",
   "scripts": {
