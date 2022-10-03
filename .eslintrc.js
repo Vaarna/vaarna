@@ -62,7 +62,7 @@ module.exports = {
     "simple-import-sort/imports": [
       "error",
       {
-        groups: [["^\\u0000"], ["^@?\\w"], ["^@gm-screen/"]],
+        groups: [["^\\u0000"], ["^@?\\w"], ["^@vaarna/"]],
       },
     ],
     "simple-import-sort/exports": ["error"],

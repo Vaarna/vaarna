@@ -1,6 +1,7 @@
-import { delay } from "@vaarna/util";
 import React, { useState } from "react";
 import styled, { css } from "styled-components";
+
+import { delay } from "@vaarna/util";
 
 import { PropsWithExactlyTwoChildren } from "./util";
 

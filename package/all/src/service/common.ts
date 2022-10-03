@@ -1,7 +1,8 @@
 import { DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
 import { S3ClientConfig } from "@aws-sdk/client-s3";
-import { asAWSLogger } from "@vaarna/logging";
 import P from "pino";
+
+import { asAWSLogger } from "@vaarna/logging";
 
 import config from "../config";
 

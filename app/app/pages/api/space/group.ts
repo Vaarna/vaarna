@@ -1,6 +1,7 @@
+import { NextApiResponse } from "next";
+
 import { backend } from "@vaarna/api";
 import { RequestWithLogger, withDefaults } from "@vaarna/logging";
-import { NextApiResponse } from "next";
 
 async function group(req: RequestWithLogger, res: NextApiResponse): Promise<void> {
   const conf = backend.dynamoDbConfigFromRequest(req);

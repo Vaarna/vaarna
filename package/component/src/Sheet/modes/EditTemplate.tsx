@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+
 import {
   createItem,
   selectSpaceId,
@@ -6,7 +8,6 @@ import {
   useAppSelector,
 } from "@vaarna/state";
 import { callIfParsed, Item, ItemType, unionMembers } from "@vaarna/type";
-import React, { useEffect, useState } from "react";
 
 import { FieldCheckbox, Fields, FieldSelect, FieldString } from "./Field";
 

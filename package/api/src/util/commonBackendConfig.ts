@@ -1,5 +1,6 @@
-import { RequestWithLogger } from "@vaarna/logging";
 import type P from "pino";
+
+import { RequestWithLogger } from "@vaarna/logging";
 
 export type CommonBackendConfig = {
   requestId: string;

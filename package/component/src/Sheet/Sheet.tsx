@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+
 import { SheetState } from "@vaarna/sheet-logic";
 import {
   selectSpaceId,
@@ -5,8 +8,6 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@vaarna/state";
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 
 import { CollapsibleGroup } from "../CollapsibleGroup";
 import { Mode } from "./common";

@@ -1,5 +1,6 @@
-import { Item } from "@vaarna/type";
 import React from "react";
+
+import { Item } from "@vaarna/type";
 
 import { PropsWithExactlyTwoChildren } from "../../util";
 import { ClickableText, Container, Name, Value } from "./common";

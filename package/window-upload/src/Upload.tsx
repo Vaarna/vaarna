@@ -1,8 +1,9 @@
-import { rootLogger } from "@vaarna/logging";
-import { uuid } from "@vaarna/util";
 import axios from "axios";
 import React, { useState } from "react";
 import { z } from "zod";
+
+import { rootLogger } from "@vaarna/logging";
+import { uuid } from "@vaarna/util";
 
 import { UploadContext, UploadProgress } from "./UploadProgress";
 import { useFileUpload } from "./useFileUpload";

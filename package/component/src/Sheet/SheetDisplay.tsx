@@ -1,3 +1,6 @@
+import React, { useEffect, useMemo, useState } from "react";
+import styled from "styled-components";
+
 import {
   groupItems,
   ItemEvaluated,
@@ -11,8 +14,6 @@ import {
   useAppSelector,
 } from "@vaarna/state";
 import { GroupDisplay, Item } from "@vaarna/type";
-import React, { useEffect, useMemo, useState } from "react";
-import styled from "styled-components";
 
 import { Display, Edit } from "./modes";
 
