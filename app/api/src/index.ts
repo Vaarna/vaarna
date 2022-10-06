@@ -1,5 +1,6 @@
-import { ApiError, ApiNotFoundError } from "@vaarna/type";
 import Toucan from "toucan-js";
+
+import { ApiError, ApiNotFoundError } from "@vaarna/type";
 
 export type Env = {
   ENVIRONMENT: "development" | "staging" | "production";
