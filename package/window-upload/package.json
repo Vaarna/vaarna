@@ -11,7 +11,7 @@
   "dependencies": {
     "@vaarna/logging": "*",
     "@vaarna/util": "*",
-    "axios": "0.27.2",
+    "axios": "1.0.0",
     "zod": "3.19.1"
   },
   "peerDependencies": {
