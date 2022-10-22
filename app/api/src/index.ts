@@ -1,6 +1,5 @@
-import Toucan from "toucan-js";
-
 import { ApiError, ApiNotFoundError } from "@vaarna/type";
+import Toucan from "toucan-js";
 
 export type Env = {
   ENVIRONMENT: "development" | "staging" | "production";
@@ -27,7 +26,7 @@ export default {
     try {
       switch (path) {
         case "space":
-          return new Response("Hello, world!");
+          return handleSpace(request, env, sentry);
         default:
           throw new ApiNotFoundError("");
       }
@@ -44,3 +43,35 @@ export default {
     }
   },
 };
+
+type Handler = (request: Request, env: Env, sentry: Toucan) => Promise<Response>;
+
+function defaults(supportedMethods: string[], handler: Handler): Handler {
+  const ms = new Set(supportedMethods);
+  const allow = Array.from(ms).join(", ");
+
+  return async (req, env, ctx) => {
+    if (req.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: { allow },
+      });
+    }
+
+    if (!ms.has(req.method)) {
+      return new Response(null, {
+        status: 405,
+        headers: { allow },
+      });
+    }
+
+    return await handler(req, env, ctx);
+  };
+}
+
+const handleSpace = defaults(
+  ["GET", "POST", "PATCH", "DELETE"],
+  async (req, _env, _sentry) => {
+    return new Response(req.method, { status: 200 });
+  }
+);
