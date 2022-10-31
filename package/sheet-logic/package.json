@@ -10,7 +10,7 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "dependencies": {
-    "@dice-roller/rpg-dice-roller": "5.1.1",
+    "@dice-roller/rpg-dice-roller": "5.2.1",
     "@vaarna/type": "*",
     "@vaarna/util": "*",
     "mustache": "4.2.0",
