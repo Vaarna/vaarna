@@ -14,7 +14,7 @@
     "@vaarna/type": "*",
     "@vaarna/util": "*",
     "lodash": "4.17.21",
-    "next": "12.3.2"
+    "next": "13.0.0"
   },
   "peerDependencies": {
     "react": "^18.1.0",
