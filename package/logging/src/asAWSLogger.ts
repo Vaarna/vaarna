@@ -1,10 +1,14 @@
 import P from "pino";
 
 type AWSLogger = {
-  debug: (...content: never[]) => void;
-  info: (...content: never[]) => void;
-  warn: (...content: never[]) => void;
-  error: (...content: never[]) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  debug: (...content: any[]) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  info: (...content: any[]) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  warn: (...content: any[]) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  error: (...content: any[]) => void;
 };
 
 type AWSClient = "DynamoDB" | "S3";
