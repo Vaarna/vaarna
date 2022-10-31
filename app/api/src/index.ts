@@ -1,5 +1,6 @@
-import { ApiError, ApiNotFoundError } from "@vaarna/type";
 import Toucan from "toucan-js";
+
+import { ApiError, ApiNotFoundError } from "@vaarna/type";
 
 export type Env = {
   ENVIRONMENT: "development" | "staging" | "production";
@@ -65,7 +66,7 @@ function defaults(supportedMethods: string[], handler: Handler): Handler {
       });
     }
 
-    return await handler(req, env, ctx);
+    return handler(req, env, ctx);
   };
 }
 
