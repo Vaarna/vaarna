@@ -14,7 +14,7 @@
     "@vaarna/sheet-logic": "*",
     "@vaarna/type": "*",
     "next-redux-wrapper": "8.0.0",
-    "react-redux": "8.0.4"
+    "react-redux": "8.0.5"
   },
   "devDependencies": {
     "@types/mustache": "4.2.1"
