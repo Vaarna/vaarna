@@ -9,9 +9,9 @@
     "lint:tsc": "tsc --noEmit"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "3.222.0",
-    "@aws-sdk/client-s3": "3.222.0",
-    "@aws-sdk/util-dynamodb": "3.222.0",
+    "@aws-sdk/client-dynamodb": "3.315.0",
+    "@aws-sdk/client-s3": "3.315.0",
+    "@aws-sdk/util-dynamodb": "3.315.0",
     "@vaarna/api": "*",
     "@vaarna/logging": "*",
     "@vaarna/type": "*",
