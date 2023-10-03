@@ -19,7 +19,7 @@
     "multiparty": "4.2.3",
     "next": "13.0.0",
     "pino": "8.7.0",
-    "zod": "3.19.1"
+    "zod": "3.22.3"
   },
   "devDependencies": {
     "@types/multiparty": "0.0.33"

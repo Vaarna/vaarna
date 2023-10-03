@@ -10,6 +10,6 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "dependencies": {
-    "zod": "3.19.1"
+    "zod": "3.22.3"
   }
 }
