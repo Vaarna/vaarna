@@ -23,11 +23,11 @@
     "react-dom": "18.2.0",
     "react-is": "18.2.0",
     "react-redux": "8.0.5",
-    "styled-components": "5.3.10",
+    "styled-components": "5.3.11",
     "zod": "3.19.1"
   },
   "devDependencies": {
     "@types/react": "18.0.24",
-    "@types/styled-components": "5.1.26"
+    "@types/styled-components": "5.1.34"
   }
 }
