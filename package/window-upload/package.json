@@ -12,7 +12,7 @@
     "@vaarna/logging": "*",
     "@vaarna/util": "*",
     "axios": "1.2.0",
-    "zod": "3.19.1"
+    "zod": "3.22.3"
   },
   "peerDependencies": {
     "react": "^18.2.0"

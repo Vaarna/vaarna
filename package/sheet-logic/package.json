@@ -14,6 +14,6 @@
     "@vaarna/type": "*",
     "@vaarna/util": "*",
     "mustache": "4.2.0",
-    "zod": "3.19.1"
+    "zod": "3.22.3"
   }
 }
