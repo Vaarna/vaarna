@@ -14,7 +14,7 @@
     "@vaarna/logging": "*",
     "@vaarna/type": "*",
     "@vaarna/util": "*",
-    "axios": "1.2.0",
+    "axios": "1.6.0",
     "pino": "8.7.0",
     "zod": "3.19.1"
   }
