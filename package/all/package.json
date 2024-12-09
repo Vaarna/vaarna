@@ -22,6 +22,6 @@
     "zod": "3.19.1"
   },
   "devDependencies": {
-    "@types/multiparty": "0.0.33"
+    "@types/multiparty": "0.0.36"
   }
 }
