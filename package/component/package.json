@@ -26,6 +26,6 @@
   "devDependencies": {
     "@types/lodash": "4.14.191",
     "@types/react": "18.0.24",
-    "@types/styled-components": "5.1.26"
+    "@types/styled-components": "5.1.34"
   }
 }
